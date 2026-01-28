@@ -89,7 +89,14 @@ echo "Cron job active: $CRON_CMD"
 echo "--- Launching Flask Application ---"
 pkill -f "python index.py" || true
 # Run in background (&), but we track the PID
-nohup python index.py > flask_app.log 2>&1 &
+FLASK_PID=$!
+
+export FLASK_APP=index.py
+export FLASK_ENV=production
+export FLASK_RUN_HOST=0.0.0.0
+export FLASK_RUN_PORT=5000
+
+nohup python -m flask run > flask_app.log 2>&1 &
 FLASK_PID=$!
 
 echo "Flask is running (PID: $FLASK_PID)."
