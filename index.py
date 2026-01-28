@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from flask import Flask, request, Response, render_template
+from flask import Flask, request, Response, render_template, jsonify
 
 
 ADMIN_USER = "admin"
@@ -29,7 +29,20 @@ def requires_auth(f):
 @app.route("/admin")
 @requires_auth
 def admin():
-    return "hello admin"
+    groups = 3                      # number of groups
+    tasks = [
+        "Task one",
+        "Task two",
+        "Task three",
+        "Task four",
+        "Task five",
+    ]
+    return render_template(
+        "admin.html",
+        groups=groups,
+        tasks=tasks
+    )
+
 
 
 
