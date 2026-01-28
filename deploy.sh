@@ -18,6 +18,7 @@ cleanup() {
 
     # 2. Kill the Flask App
     echo "Stopping Flask Application..."
+    pkill -f "flask run" || true
     pkill -f "python index.py" || true
 
     echo "Cleanup complete. Exiting."
@@ -85,8 +86,11 @@ fi
 (crontab -l 2>/dev/null; echo "$CRON_CMD") | crontab -
 echo "Cron job active: $CRON_CMD"
 
+
 # --- 5. Launch Flask App ---
 echo "--- Launching Flask Application ---"
+
+pkill -f "flask run" || true
 pkill -f "python index.py" || true
 # Run in background (&), but we track the PID
 FLASK_PID=$!
