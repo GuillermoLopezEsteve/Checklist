@@ -1,7 +1,37 @@
 import xml.etree.ElementTree as ET
-from flask import Flask, render_template
+from flask import Flask, request, Response
+
+
+ADMIN_USER = "admin"
+ADMIN_PASS = "changeme" 
+
 
 app = Flask(__name__)
+
+def check_auth(username, password):
+    return username == ADMIN_USER and password == ADMIN_PASS
+
+def authenticate():
+    return Response(
+        "Authentication required", 401,
+        {"WWW-Authenticate": 'Basic realm="Admin Area"'}
+    )
+
+def requires_auth(f):
+    def wrapper(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    wrapper.__name__ = f.__name__  # important for Flask routing
+    return wrapper
+
+@app.route("/admin")
+@requires_auth
+def admin():
+    return "hello admin"
+
+
 
 def get_checklist_data(number):
     try:
