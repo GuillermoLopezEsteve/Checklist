@@ -43,7 +43,31 @@ def admin():
         tasks=tasks
     )
 
+@app.route("/admin-update", methods=["POST"])
+def admin_update():
+    data = request.get_json()
 
+    if data is None:
+        return jsonify({"error": "Invalid JSON"}), 400
+
+    # Ensure directory exists
+    save_dir = "./data/json"
+    os.makedirs(save_dir, exist_ok=True)
+
+    # Timestamp (safe for filenames)
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+
+    filename = f"updateAdmin-{timestamp}.json"
+    filepath = os.path.join(save_dir, filename)
+
+    # Write JSON to file
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+    return jsonify({
+        "status": "ok",
+        "saved_as": filename
+    })
 
 
 def get_checklist_data(number):
