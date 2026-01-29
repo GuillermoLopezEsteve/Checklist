@@ -1,5 +1,5 @@
 import pandas as pd
-import json
+import json, os
 
 sheet_url = "https://docs.google.com/spreadsheets/d/1cma0J7eTugMeRtG8VCHbYiHb5RlJ6TLK_SPYUoxfDFA/edit#gid=0"
 
@@ -29,3 +29,13 @@ json_data = json.dumps(
 )
 
 print(json_data)
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+output_path = os.path.join(base_dir, "../../data/json/excel.json")
+
+os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+# Write JSON file
+with open(output_path, "w", encoding="utf-8") as f:
+    json.dump(alltasks, f, ensure_ascii=False, indent=2)
+
