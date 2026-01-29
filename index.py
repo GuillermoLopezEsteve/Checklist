@@ -45,33 +45,6 @@ def admin():
         tasks=tasks
     )
 
-@app.route("/admin-update", methods=["POST"])
-def admin_update():
-    data = request.get_json()
-
-    if data is None:
-        return jsonify({"error": "Invalid JSON"}), 400
-
-    # Ensure directory exists
-    save_dir = "./data/json"
-    os.makedirs(save_dir, exist_ok=True)
-
-    # Timestamp (safe for filenames)
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-
-    filename = f"updateAdmin-{timestamp}.json"
-    filepath = os.path.join(save_dir, filename)
-
-    # Write JSON to file
-    with open(filepath, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
-
-    return jsonify({
-        "status": "ok",
-        "saved_as": filename
-    })
-
-
 def get_checklist_data(number):
     try:
         tree = ET.parse('data/data'+f'{number:02}'+'.xml')
@@ -118,6 +91,35 @@ def get_checklist_data(number):
         print(f"XML Error: {e}")
         return None
 
+def get_demo_data(group_number: int) -> dict:
+    """
+    Returns:
+    {
+      "group_name": "Grup X",
+      "demos": ["task 1", "task 2", ...]
+    }
+    """
+    JSON_PATH = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "/data/json/excel.json")
+    )
+    with open(JSON_PATH, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    group_name = f"Grup {group_number}"
+    if group_name not in data:
+        raise KeyError(f"Group not found: {group_name}")
+
+    demos = [
+        item[0]
+        for item in data[group_name]
+        if isinstance(item, list) and len(item) >= 1
+    ]
+
+    return {
+        "group_name": group_name,
+        "demos": demos
+    }
+
 @app.route('/')
 def home():
     # Generate 16 groups for the dashboard
@@ -127,7 +129,8 @@ def home():
 @app.route('/group<number>')
 def group_checklist(number):
     data = get_checklist_data(number)
-    return render_template('checklist.html', number=number, data=data)
+    demo = get_demos_data(number)
+    return render_template('checklist.html', number=number, data=data, demo=demo)
 
 if __name__ == '__main__':
     print("Server running at http://localhost:8000")

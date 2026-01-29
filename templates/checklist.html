@@ -136,8 +136,22 @@
         </div>
 
     {% else %}
-        <p style="color:red; text-align:center;">Error loading XML data.</p>
+        <p style="color:red; text-align:center;">Error loading Script data.</p>
     {% endif %}
+
+    {% if demo %}
+        <ul>
+          {% for demo in demos %}
+            <li>{{ demo }}</li>
+          {% endfor %}
+        </ul>
+
+    {% else %}
+        <p style="color:red; text-align:center;">Error loading Demostration data.</p>
+    {% endif %}
+
+
+
 </div>
 
 </body>
