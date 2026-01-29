@@ -6,7 +6,7 @@ sheet_url = "https://docs.google.com/spreadsheets/d/1cma0J7eTugMeRtG8VCHbYiHb5Rl
 csv_url = sheet_url.replace("/edit#gid=", "/export?format=csv&gid=")
 
 df = pd.read_csv(csv_url)
-print(df)
+#print(df)
 
 alltasks = {}
 for row_idx in range(len(df)):
@@ -18,7 +18,7 @@ for row_idx in range(len(df)):
 		cell_value = df.iat[row_idx, col_idx]
 		t =  [df.iat[0, col_idx], cell_value];
 		tasks.append(t)
-		print(f"Row {row_idx}, Col {col_idx} -> {cell_value}")
+		#print(f"Row {row_idx}, Col {col_idx} -> {cell_value}")
 	alltasks[g] = tasks;
 
 
@@ -28,7 +28,7 @@ json_data = json.dumps(
     indent=2
 )
 
-print(json_data)
+#print(json_data)
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 output_path = os.path.join(base_dir, "../../data/json/excel.json")
@@ -39,3 +39,5 @@ os.makedirs(os.path.dirname(output_path), exist_ok=True)
 with open(output_path, "w", encoding="utf-8") as f:
     json.dump(alltasks, f, ensure_ascii=False, indent=2)
 
+
+print("------------ACCES TO EXCEL DEMOS")

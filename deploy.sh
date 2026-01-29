@@ -64,6 +64,8 @@ echo "--- Launching Flask Application ---"
 
 pkill -f "flask run" || true
 pkill -f "python index.py" || true
+
+python scripts/class/excel.py
 # Run in background (&), but we track the PID
 FLASK_PID=$!
 

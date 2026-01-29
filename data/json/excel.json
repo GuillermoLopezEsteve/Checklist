@@ -1,5 +1,105 @@
 {
-  "Grup 1": [
+  "Grup 01": [
+    [
+      "Demostrar Backup Configuracio DNS",
+      "TRUE"
+    ],
+    [
+      "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
+      "FALSE"
+    ],
+    [
+      "Afegir un usuari nou al servidor de correu i comprovar l’enviament i recepció real",
+      "TRUE"
+    ],
+    [
+      "Buscar i recuperar un correu concret d’un usuari a partir de criteris donats",
+      "FALSE"
+    ],
+    [
+      "Migrar manualment una funcionalitat del servidor de development a producció",
+      "TRUE"
+    ],
+    [
+      "Detectar i solucionar un problema de configuració entre development i producció",
+      "TRUE"
+    ],
+    [
+      "Restaurar dades d’un usuari concret a partir d’un backup parcial",
+      "TRUE"
+    ],
+    [
+      "Configurar un client de correu extern perquè funcioni correctament amb el servidor",
+      "TRUE"
+    ],
+    [
+      "Posar en marxa el servidor web en producció després d’una caiguda intencionada",
+      "FALSE"
+    ],
+    [
+      "Canviar configuracions de seguretat i justificar-ne l’impacte",
+      "FALSE"
+    ],
+    [
+      "Simular una incidència de servei i aplicar el protocol de resolució",
+      "FALSE"
+    ],
+    [
+      "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
+      "FALSE"
+    ]
+  ],
+  "Grup 02": [
+    [
+      "Demostrar Backup Configuracio DNS",
+      "TRUE"
+    ],
+    [
+      "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
+      "FALSE"
+    ],
+    [
+      "Afegir un usuari nou al servidor de correu i comprovar l’enviament i recepció real",
+      "FALSE"
+    ],
+    [
+      "Buscar i recuperar un correu concret d’un usuari a partir de criteris donats",
+      "FALSE"
+    ],
+    [
+      "Migrar manualment una funcionalitat del servidor de development a producció",
+      "FALSE"
+    ],
+    [
+      "Detectar i solucionar un problema de configuració entre development i producció",
+      "FALSE"
+    ],
+    [
+      "Restaurar dades d’un usuari concret a partir d’un backup parcial",
+      "FALSE"
+    ],
+    [
+      "Configurar un client de correu extern perquè funcioni correctament amb el servidor",
+      "FALSE"
+    ],
+    [
+      "Posar en marxa el servidor web en producció després d’una caiguda intencionada",
+      "FALSE"
+    ],
+    [
+      "Canviar configuracions de seguretat i justificar-ne l’impacte",
+      "FALSE"
+    ],
+    [
+      "Simular una incidència de servei i aplicar el protocol de resolució",
+      "FALSE"
+    ],
+    [
+      "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
+      "FALSE"
+    ]
+  ],
+  "Grup 03": [
     [
       "Demostrar Backup Configuracio DNS",
       "FALSE"
@@ -49,7 +149,7 @@
       "FALSE"
     ]
   ],
-  "Grup 2": [
+  "Grup 04": [
     [
       "Demostrar Backup Configuracio DNS",
       "FALSE"
@@ -99,7 +199,7 @@
       "FALSE"
     ]
   ],
-  "Grup 3": [
+  "Grup 05": [
     [
       "Demostrar Backup Configuracio DNS",
       "FALSE"
@@ -149,7 +249,7 @@
       "FALSE"
     ]
   ],
-  "Grup 4": [
+  "Grup 06": [
     [
       "Demostrar Backup Configuracio DNS",
       "FALSE"
@@ -199,7 +299,7 @@
       "FALSE"
     ]
   ],
-  "Grup 5": [
+  "Grup 07": [
     [
       "Demostrar Backup Configuracio DNS",
       "FALSE"
@@ -249,7 +349,7 @@
       "FALSE"
     ]
   ],
-  "Grup 6": [
+  "Grup 08": [
     [
       "Demostrar Backup Configuracio DNS",
       "FALSE"
@@ -299,107 +399,7 @@
       "FALSE"
     ]
   ],
-  "Grup 7": [
-    [
-      "Demostrar Backup Configuracio DNS",
-      "FALSE"
-    ],
-    [
-      "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
-      "FALSE"
-    ],
-    [
-      "Afegir un usuari nou al servidor de correu i comprovar l’enviament i recepció real",
-      "FALSE"
-    ],
-    [
-      "Buscar i recuperar un correu concret d’un usuari a partir de criteris donats",
-      "FALSE"
-    ],
-    [
-      "Migrar manualment una funcionalitat del servidor de development a producció",
-      "FALSE"
-    ],
-    [
-      "Detectar i solucionar un problema de configuració entre development i producció",
-      "FALSE"
-    ],
-    [
-      "Restaurar dades d’un usuari concret a partir d’un backup parcial",
-      "FALSE"
-    ],
-    [
-      "Configurar un client de correu extern perquè funcioni correctament amb el servidor",
-      "FALSE"
-    ],
-    [
-      "Posar en marxa el servidor web en producció després d’una caiguda intencionada",
-      "FALSE"
-    ],
-    [
-      "Canviar configuracions de seguretat i justificar-ne l’impacte",
-      "FALSE"
-    ],
-    [
-      "Simular una incidència de servei i aplicar el protocol de resolució",
-      "FALSE"
-    ],
-    [
-      "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
-      "FALSE"
-    ]
-  ],
-  "Grup 8": [
-    [
-      "Demostrar Backup Configuracio DNS",
-      "FALSE"
-    ],
-    [
-      "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
-      "FALSE"
-    ],
-    [
-      "Afegir un usuari nou al servidor de correu i comprovar l’enviament i recepció real",
-      "FALSE"
-    ],
-    [
-      "Buscar i recuperar un correu concret d’un usuari a partir de criteris donats",
-      "FALSE"
-    ],
-    [
-      "Migrar manualment una funcionalitat del servidor de development a producció",
-      "FALSE"
-    ],
-    [
-      "Detectar i solucionar un problema de configuració entre development i producció",
-      "FALSE"
-    ],
-    [
-      "Restaurar dades d’un usuari concret a partir d’un backup parcial",
-      "FALSE"
-    ],
-    [
-      "Configurar un client de correu extern perquè funcioni correctament amb el servidor",
-      "FALSE"
-    ],
-    [
-      "Posar en marxa el servidor web en producció després d’una caiguda intencionada",
-      "FALSE"
-    ],
-    [
-      "Canviar configuracions de seguretat i justificar-ne l’impacte",
-      "FALSE"
-    ],
-    [
-      "Simular una incidència de servei i aplicar el protocol de resolució",
-      "FALSE"
-    ],
-    [
-      "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
-      "FALSE"
-    ]
-  ],
-  "Grup 9": [
+  "Grup 09": [
     [
       "Demostrar Backup Configuracio DNS",
       "FALSE"
@@ -602,7 +602,7 @@
   "Grup 13": [
     [
       "Demostrar Backup Configuracio DNS",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
