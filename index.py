@@ -5,8 +5,8 @@ import json
 import os
 
 ADMIN_USER = "admin"
-ADMIN_PASS = "changeme" 
-
+ADMIN_PASS = "changeme"
+DATA_DIR = "./data/"
 
 app = Flask(__name__)
 
@@ -49,10 +49,8 @@ def get_checklist_data(number):
     try:
         tree = ET.parse('data/data'+f'{number:02}'+'.xml')
         root = tree.getroot()
-        
         # 1. Parse Metadata
         last_check = root.find('lastCheck').text if root.find('lastCheck') is not None else "N/A"
-        
         # 2. Parse Zones and tasks
         zones = []
         for zone in root.findall('zone'):
@@ -60,7 +58,6 @@ def get_checklist_data(number):
                 'title': zone.find('title').text,
                 'tasks': []
             }
-            
             for task in zone.findall('task'):
                 task_data = {
                     'tarea': task.find('tarea').text,
@@ -68,7 +65,7 @@ def get_checklist_data(number):
                     'status': task.find('status').text
                 }
                 zone_data['tasks'].append(task_data)
-            zones.append(zone_data)            
+            zones.append(zone_data)
             print(zone_data)
 
         # 3. Parse Footer Stats
@@ -86,7 +83,6 @@ def get_checklist_data(number):
             'zones': zones,
             'stats': stats
         }
-        
     except Exception as e:
         print(f"XML Error: {e}")
         return None
@@ -100,7 +96,7 @@ def get_demo_data(group_number: int) -> dict:
     }
     """
     JSON_PATH = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "/data/json/excel.json")
+        os.path.join(os.path.dirname(__file__), "./data/json/excel.json")
     )
     with open(JSON_PATH, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -129,7 +125,8 @@ def home():
 @app.route('/group<number>')
 def group_checklist(number):
     data = get_checklist_data(number)
-    demo = get_demos_data(number)
+    demo = get_demo_data(number)
+    print(demo)
     return render_template('checklist.html', number=number, data=data, demo=demo)
 
 if __name__ == '__main__':

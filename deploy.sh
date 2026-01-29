@@ -43,17 +43,6 @@ done
 
 echo "--- Starting Deployment Script (Press Ctrl+C to Stop & Cleanup) ---"
 
-# --- 1. Git Branch Check & Update ---
-echo "Checking Git Status for branch: $BRANCH..."
-git fetch origin
-if git show-ref --verify --quiet "refs/heads/$BRANCH"; then
-    git checkout "$BRANCH"
-else
-    git checkout -b "$BRANCH" "origin/$BRANCH"
-fi
-git pull origin "$BRANCH"
-
-# --- 2. Install Python & Pip ---
 if ! command -v python3 &> /dev/null; then
     echo "Installing Python3..."
     sudo apt-get update && sudo apt-get install -y python3 python3-pip python3-venv
@@ -69,16 +58,6 @@ source venv/bin/activate
 if [ -f "requirements.txt" ]; then
     echo "Installing dependencies..."
     pip install -r requirements.txt
-fi
-
-# --- 4. Setup Cron Job ---
-echo "--- Configuring Cron Job ---"
-chmod +x scripts/server_check.bash scripts/server_check_test.bash
-
-if [ "$TEST_MODE" = true ]; then
-    CRON_CMD="* * * * * $PROJECT_DIR/scripts/server_check_test.bash >> $PROJECT_DIR/cron_test.log 2>&1"
-else
-    CRON_CMD="*/3 * * * * $PROJECT_DIR/scripts/server_check.bash >> $PROJECT_DIR/cron.log 2>&1"
 fi
 
 # Clean old jobs first to prevent duplicates, then add the new one
