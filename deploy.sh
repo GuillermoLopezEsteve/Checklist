@@ -41,13 +41,6 @@ for arg in "$@"; do
     esac
 done
 
-echo "--- Starting Deployment Script (Press Ctrl+C to Stop & Cleanup) ---"
-
-if ! command -v python3 &> /dev/null; then
-    echo "Installing Python3..."
-    sudo apt-get update && sudo apt-get install -y python3 python3-pip python3-venv
-fi
-
 # --- 3. Virtual Environment & Dependencies ---
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."
@@ -61,9 +54,9 @@ if [ -f "requirements.txt" ]; then
 fi
 
 # Clean old jobs first to prevent duplicates, then add the new one
-(crontab -l 2>/dev/null | grep -v "scripts/server_check") | crontab -
-(crontab -l 2>/dev/null; echo "$CRON_CMD") | crontab -
-echo "Cron job active: $CRON_CMD"
+#(crontab -l 2>/dev/null | grep -v "scripts/server_check") | crontab -
+#(crontab -l 2>/dev/null; echo "$CRON_CMD") | crontab -
+#echo "Cron job active: $CRON_CMD"
 
 
 # --- 5. Launch Flask App ---

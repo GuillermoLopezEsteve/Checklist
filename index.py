@@ -92,7 +92,8 @@ def get_demo_data(group_number: int) -> dict:
     Returns:
     {
       "group_name": "Grup X",
-      "demos": ["task 1", "task 2", ...]
+      "done_demos": "["task 1", "task 2", ....]"
+      "pending_demos": ["task 3", "task 6",....]
     }
     """
     JSON_PATH = os.path.abspath(
@@ -105,15 +106,19 @@ def get_demo_data(group_number: int) -> dict:
     if group_name not in data:
         raise KeyError(f"Group not found: {group_name}")
 
-    demos = [
-        item[0]
-        for item in data[group_name]
-        if isinstance(item, list) and len(item) >= 1
-    ]
+    done_demos = []
+    pending_demos = []
+
+    for task_name, status in data[group_name]:
+        if status == "TRUE":
+            done_demos.append(task_name)
+        else:
+            pending_demos.append(task_name)
 
     return {
         "group_name": group_name,
-        "demos": demos
+        "done_demos": done_demos,
+        "pending_demos": pending_demos,
     }
 
 @app.route('/')
@@ -126,7 +131,6 @@ def home():
 def group_checklist(number):
     data = get_checklist_data(number)
     demo = get_demo_data(number)
-    print(demo)
     return render_template('checklist.html', number=number, data=data, demo=demo)
 
 if __name__ == '__main__':
