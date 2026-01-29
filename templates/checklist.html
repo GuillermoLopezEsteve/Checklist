@@ -103,6 +103,8 @@
                 <button class="task-hide-button" onclick="hideDone()">Hide OK</button>
             </div>
         </div>
+
+
         <form id="form-tasks">
             {% for zone in data.zones %}
             <div class="zone-card">
@@ -120,32 +122,39 @@
             {% endfor %}
         </form>
 
-        <div class="stats-footer">
-            <div class="stat-box">
-                <div class="stat-val">{{ data.stats.score }}</div>
-                <div class="stat-label">Score</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-val">{{ data.stats.percent }}</div>
-                <div class="stat-label">Percentage</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-val">{{ data.stats.total }}</div>
-                <div class="stat-label">Total Pts</div>
-            </div>
-        </div>
-
     {% else %}
         <p style="color:red; text-align:center;">Error loading Script data.</p>
     {% endif %}
 
     {% if demo %}
-        <ul>
-          {% for demo in demos %}
-            <li>{{ demo }}</li>
-          {% endfor %}
-        </ul>
-
+        <form id="demo-done">
+            <div class="zone-card">
+                <div class="zone-header">   
+                    <h2>Demostracions Realitzades</h2>
+                </div>
+                    <ul class="tasks">
+                      {% for pdemo in demo.done_demos %}
+                                <li class="task-card task-done">
+                                    <span class="task-name">{{ pdemo }}</span>
+                                </li>
+                      {% endfor %}
+                    </ul>
+            </div>
+        </form>
+        <form id="demo-pending">            
+            <div class="zone-card">
+                <div class="zone-header">   
+                    <h2>Demostracions Pendents</h2>
+                </div>
+                <ul class="tasks">
+                  {% for ddemo in demo.pending_demos %}
+                            <li class="task-card task-pending">
+                                <span class="task-name">{{ ddemo }}</span>
+                            </li>
+                  {% endfor %}
+                </ul>
+            </div>
+        </form>
     {% else %}
         <p style="color:red; text-align:center;">Error loading Demostration data.</p>
     {% endif %}
