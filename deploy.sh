@@ -41,13 +41,6 @@ for arg in "$@"; do
     esac
 done
 
-echo "--- Starting Deployment Script (Press Ctrl+C to Stop & Cleanup) ---"
-
-if ! command -v python3 &> /dev/null; then
-    echo "Installing Python3..."
-    sudo apt-get update && sudo apt-get install -y python3 python3-pip python3-venv
-fi
-
 # --- 3. Virtual Environment & Dependencies ---
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."

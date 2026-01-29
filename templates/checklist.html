@@ -120,32 +120,27 @@
             {% endfor %}
         </form>
 
-        <div class="stats-footer">
-            <div class="stat-box">
-                <div class="stat-val">{{ data.stats.score }}</div>
-                <div class="stat-label">Score</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-val">{{ data.stats.percent }}</div>
-                <div class="stat-label">Percentage</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-val">{{ data.stats.total }}</div>
-                <div class="stat-label">Total Pts</div>
-            </div>
-        </div>
-
     {% else %}
         <p style="color:red; text-align:center;">Error loading Script data.</p>
     {% endif %}
 
     {% if demo %}
+        <h1>Demostracions Realitzades</h1>
         <ul>
-          {% for demo in demos %}
-            <li>{{ demo }}</li>
+          {% for pdemo in demo.done_demos %}
+                    <li class="task-card task-done">
+                        <span class="task-name">{{ pdemo }}</span>
+                    </li>
           {% endfor %}
         </ul>
-
+	<h1>Demostracions Pendents</h1>
+        <ul>
+          {% for ddemo in demo.pending_demos %}
+                    <li class="task-card task-pending">
+                        <span class="task-name">{{ ddemo }}</span>
+                    </li>
+          {% endfor %}
+        </ul>
     {% else %}
         <p style="color:red; text-align:center;">Error loading Demostration data.</p>
     {% endif %}
