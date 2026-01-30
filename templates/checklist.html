@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <meta charset="UTF-8">
     <title>Checklist Group {{ number }}</title>
     <style>
@@ -95,13 +96,13 @@
         .bar__fill {
             height: 100%;
             width: calc(var(--p) * 100%);
-            background: linear-gradient(
-              90deg,
-              #ff0000 0%,
-              #f1c40f 60%,
-              #2ecc71 100%
-            );
+	    background: #26c126;
+            color: white;
+	    font-weight: bold;
+	    font-size: 1em;
             transition: width 200ms ease;
+	    text-align: center;
+	    vertical-align: middle;
         }
     </style>
 </head>
@@ -113,6 +114,8 @@
     function setHealth(percent, element) {
         const clamped = Math.max(0, Math.min(1, percent));
         element.style.setProperty("--p", clamped);
+	text = "   " + Math.round(100*percent) + "%"
+	element.querySelector(".bar__fill").innerText = text
     }
 </script>
 <div class="container">
@@ -133,7 +136,7 @@
 
         <form id="form-tasks">
             {% for zone in data.zones %}
-            <div class="zone-card">
+            <div class="zone-card automatic">
                 <div class="zone-header">
                     <h2>{{ zone.title }}</h2>
                     <div class="health-bar">
@@ -156,6 +159,17 @@
     {% endif %}
 
     {% if demo %}
+	<form id="form-tasks">
+            <div class="zone-card" id="automatic-demo">
+                <div class="zone-header">
+                    <h2>Demostracions Totals</h2>
+                    <div class="health-bar">
+                        <div class="bar__fill"></div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
         <form id="demo-done">
             <div class="zone-card">
                 <div class="zone-header">   
@@ -193,15 +207,19 @@
 </div>
 <script>
     function setHealthBar(){
-        zcards=document.querySelectorAll(".zone-card")
+        zcards=document.querySelectorAll(".zone-card.automatic")
         for (let tz of zcards) {
             header = tz.querySelector(".health-bar")
             nt = tz.querySelectorAll("li.task-card").length
             ndt = tz.querySelectorAll("li.task-card.task-done").length
-            console.log(header.innerText)
-            console.log(ndt/nt)
+            if(ndt === 0) {console.log("No Tasks Detected - abort set"); continue }
             setHealth(ndt/nt, header)
         }
+        hp = document.querySelector(".zone-card#automatic-demo .health-bar")
+        dd = document.querySelectorAll("#demo-done li").length
+        dp = document.querySelectorAll("#demo-pending li").length
+        if((dp+dd) === 0) {console.log("No Demos"); return }
+        setHealth(dd/(dp+dd), hp)
     }
     setHealthBar()
 </script>

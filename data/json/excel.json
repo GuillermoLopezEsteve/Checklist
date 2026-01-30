@@ -14,23 +14,23 @@
     ],
     [
       "Buscar i recuperar un correu concret d’un usuari a partir de criteris donats",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Migrar manualment una funcionalitat del servidor de development a producció",
-      "TRUE"
+      "FALSE"
     ],
     [
       "Detectar i solucionar un problema de configuració entre development i producció",
-      "TRUE"
+      "FALSE"
     ],
     [
       "Restaurar dades d’un usuari concret a partir d’un backup parcial",
-      "TRUE"
+      "FALSE"
     ],
     [
       "Configurar un client de correu extern perquè funcioni correctament amb el servidor",
-      "TRUE"
+      "FALSE"
     ],
     [
       "Posar en marxa el servidor web en producció després d’una caiguda intencionada",
@@ -46,6 +46,10 @@
     ],
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
+      "FALSE"
+    ],
+    [
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -97,6 +101,10 @@
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
       "FALSE"
+    ],
+    [
+      "Tarea Nova",
+      "FALSE"
     ]
   ],
   "Grup 03": [
@@ -146,6 +154,10 @@
     ],
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
+      "FALSE"
+    ],
+    [
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -197,6 +209,10 @@
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
       "FALSE"
+    ],
+    [
+      "Tarea Nova",
+      "FALSE"
     ]
   ],
   "Grup 05": [
@@ -246,6 +262,10 @@
     ],
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
+      "FALSE"
+    ],
+    [
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -297,6 +317,10 @@
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
       "FALSE"
+    ],
+    [
+      "Tarea Nova",
+      "FALSE"
     ]
   ],
   "Grup 07": [
@@ -346,6 +370,10 @@
     ],
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
+      "FALSE"
+    ],
+    [
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -397,6 +425,10 @@
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
       "FALSE"
+    ],
+    [
+      "Tarea Nova",
+      "FALSE"
     ]
   ],
   "Grup 09": [
@@ -446,6 +478,10 @@
     ],
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
+      "FALSE"
+    ],
+    [
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -497,6 +533,10 @@
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
       "FALSE"
+    ],
+    [
+      "Tarea Nova",
+      "FALSE"
     ]
   ],
   "Grup 11": [
@@ -546,6 +586,10 @@
     ],
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
+      "FALSE"
+    ],
+    [
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -597,6 +641,10 @@
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
       "FALSE"
+    ],
+    [
+      "Tarea Nova",
+      "FALSE"
     ]
   ],
   "Grup 13": [
@@ -646,6 +694,10 @@
     ],
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
+      "FALSE"
+    ],
+    [
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -697,6 +749,10 @@
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
       "FALSE"
+    ],
+    [
+      "Tarea Nova",
+      "FALSE"
     ]
   ],
   "Grup 15": [
@@ -747,6 +803,10 @@
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
       "FALSE"
+    ],
+    [
+      "Tarea Nova",
+      "FALSE"
     ]
   ],
   "Grup 16": [
@@ -796,6 +856,10 @@
     ],
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
+      "FALSE"
+    ],
+    [
+      "Tarea Nova",
       "FALSE"
     ]
   ]

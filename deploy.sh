@@ -1,4 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+if [ -z "${BASH_VERSION:-}" ]; then
+  printf '\033[31mERROR:\033[0m This script must be run with bash\n' >&2
+  printf 'Run it as: bash %s\n' "$0" >&2
+  exit 1
+fi
+
+bash requirements
 
 # --- Configuration ---
 DEFAULT_BRANCH="main"
@@ -8,15 +16,12 @@ PROJECT_DIR=$(pwd)
 
 # --- Cleanup Function (Triggered by Ctrl+C) ---
 cleanup() {
-    echo -e "\n\n!!! CRITICAL: Ctrl+C Detected !!!"
-    echo "--- Cleaning up environment ---"
+    echo ""
+    printf '\033[33mCtrl + C Detected Cleaning Enviroment user\033[0m\n'
 
-    # 1. Remove the Cron Job
     echo "Removing Cron Job..."
-    # We list the crontab, remove any lines containing our script path, and save it back
-    (crontab -l 2>/dev/null | grep -v "scripts/server_check") | crontab -
+    (crontab -l 2>/dev/null | grep -v "scripts/class") | crontab -
 
-    # 2. Kill the Flask App
     echo "Stopping Flask Application..."
     pkill -f "flask run" || true
     pkill -f "python index.py" || true
@@ -28,36 +33,20 @@ cleanup() {
 # Register the trap: When SIGINT (Ctrl+C) is received, run 'cleanup'
 trap cleanup SIGINT
 
-# --- Argument Parsing ---
-for arg in "$@"; do
-    case $arg in
-        -t)
-            TEST_MODE=true
-            shift
-            ;;
-        *)
-            BRANCH=$arg
-            ;;
-    esac
-done
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+bash ${BASE_DIR}/scripts/launch_cron.sh
+
 
 # --- 3. Virtual Environment & Dependencies ---
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."
     python3 -m venv venv
 fi
-source venv/bin/activate
 
 if [ -f "requirements.txt" ]; then
     echo "Installing dependencies..."
     pip install -r requirements.txt
 fi
-
-# Clean old jobs first to prevent duplicates, then add the new one
-#(crontab -l 2>/dev/null | grep -v "scripts/server_check") | crontab -
-#(crontab -l 2>/dev/null; echo "$CRON_CMD") | crontab -
-#echo "Cron job active: $CRON_CMD"
-
 
 # --- 5. Launch Flask App ---
 echo "--- Launching Flask Application ---"
@@ -69,20 +58,5 @@ python scripts/class/excel.py
 # Run in background (&), but we track the PID
 FLASK_PID=$!
 
-export FLASK_APP=index.py
-export FLASK_ENV=production
-export FLASK_RUN_HOST=0.0.0.0
-export FLASK_RUN_PORT=5000
+nohup python app.py > log_app 2>&1
 
-nohup python -m flask run > flask_app.log 2>&1 &
-FLASK_PID=$!
-
-echo "Flask is running (PID: $FLASK_PID)."
-echo "---------------------------------------------------"
-echo "Script is now monitoring logs."
-echo "PRESS CTRL+C TO STOP FLASK AND DELETE THE CRON JOB."
-echo "---------------------------------------------------"
-
-# --- 6. Keep Script Alive ---
-# We tail the logs so the script stays running, waiting for your Ctrl+C
-tail -f flask_app.log
