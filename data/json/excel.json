@@ -310,7 +310,7 @@
     ],
     [
       "Afegir un usuari nou al servidor de correu i comprovar l’enviament i recepció real",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Buscar i recuperar un correu concret d’un usuari a partir de criteris donats",
@@ -526,7 +526,7 @@
     ],
     [
       "Restaurar dades d’un usuari concret a partir d’un backup parcial",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Configurar un client de correu extern perquè funcioni correctament amb el servidor",
