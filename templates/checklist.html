@@ -96,14 +96,16 @@
         .bar__fill {
             height: 100%;
             width: calc(var(--p) * 100%);
-	    background: #26c126;
             color: white;
-	    font-weight: bold;
-	    font-size: 1em;
+	        font-weight: bold;
+	        font-size: 1em;
             transition: width 200ms ease;
-	    text-align: center;
-	    vertical-align: middle;
+	        text-align: center;
+	        vertical-align: middle;
         }
+        .red-bar{ background: #bf1818;}
+        .orange-bar{ background: #c86925;}
+        .green-bar{ background: #26c126;}
     </style>
 </head>
 <body>
@@ -111,31 +113,26 @@
     function hideDone() {
         document.getElementById('form-tasks').classList.toggle("hide-done");
     }
-    function setHealth(percent, element) {
-        const clamped = Math.max(0, Math.min(1, percent));
-        element.style.setProperty("--p", clamped);
-	text = "   " + Math.round(100*percent) + "%"
-	element.querySelector(".bar__fill").innerText = text
-    }
 </script>
 <div class="container">
 
 
     <h1>Group {{ number }} Inspection</h1>
 
-    {% if data %}
-
         <div class="header">
             <a href="/" class="back-link">← Back to Dashboard</a>
-            <div class="last-check">Last Check: {{ data.last_check }}</div>
             <div>
                 <button class="task-hide-button" onclick="hideDone()">Hide OK</button>
             </div>
         </div>
 
+    {% if next_update %}
+        <div>Próxima actualització dintre de <time>{{next_update}}</time></div>
+    {% endif %}
+    {% if allTasks %}
 
         <form id="form-tasks">
-            {% for zone in data.zones %}
+            {% for zone in allTasks.zones %}
             <div class="zone-card automatic">
                 <div class="zone-header">
                     <h2>{{ zone.title }}</h2>
@@ -206,6 +203,17 @@
 
 </div>
 <script>
+    function setHealth(percent, element) {
+        const clamped = Math.max(0, Math.min(1, percent));
+        element.style.setProperty("--p", clamped);
+        text = "   " + Math.round(100*percent) + "%"
+        bar = element.querySelector(".bar__fill");
+        bar.innerText = text
+        if(percent < 0.3){ bar.classList.add("red-bar");}
+        if(percent > 0.3 && percent < 0.7){ bar.classList.add("orange-bar");}
+        if(percent >= 0.7){ bar.classList.add("green-bar");}
+    }
+
     function setHealthBar(){
         zcards=document.querySelectorAll(".zone-card.automatic")
         for (let tz of zcards) {
