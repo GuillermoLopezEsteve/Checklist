@@ -1,0 +1,129 @@
+{
+    "zones":  [
+            {
+                "title": "Devolpment 1",
+                "tasks": [
+                    {
+                        "tarea": "Check Front Desk Lights",
+                        "status": "OK"
+                    },
+                    {
+                        "tarea": "Refill Visitor Log",
+                        "status": "Pending"
+                    },
+                    {
+                        "tarea": "Sanitize Countertops",
+                        "status": "OK"
+                    },
+                    {
+                        "tarea": "Refill Visitor Log",
+                        "status": "Pending"
+                    },
+                    {
+                        "tarea": "Sanitize Countertops",
+                        "status": "OK"
+                    },
+                    {
+                        "tarea": "Refill Visitor Log",
+                        "status": "Pending"
+                    },
+                    {
+                        "tarea": "Sanitize Countertops",
+                        "status": "OK"
+                    },
+                    {
+                        "tarea": "Refill Visitor Log",
+                        "status": "Pending"
+                    },
+                    {
+                        "tarea": "Sanitize Countertops",
+                        "status": "OK"
+                    },
+                    {
+                        "tarea": "Refill Visitor Log",
+                        "status": "Pending"
+                    },
+                    {
+                        "tarea": "Sanitize Countertops",
+                        "status": "OK"
+                    },
+                    {
+                        "tarea": "Refill Visitor Log",
+                        "status": "Pending"
+                    },
+                    {
+                        "tarea": "Sanitize Countertops",
+                        "status": "OK"
+                    }
+                ]
+            },
+            {
+                "title": "Development 2",
+                "tasks": [
+                    {
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "OK"
+                    },
+                    {
+                        "tarea": "Check Emergency Stop",
+                        "status": "Pending"
+                    },
+                    {
+                        "tarea": "Clear Ventilation Grills",
+                        "status": "OK"
+                    }
+                ]
+            },
+            {
+                "title": "Development 3",
+                "tasks": [
+                    {
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "OK"
+                    },
+                    {
+                        "tarea": "Check Emergency Stop",
+                        "status": "Pending"
+                    },
+                    {
+                        "tarea": "Clear Ventilation Grills",
+                        "status": "OK"
+                    }
+                ]
+            },
+            {
+                "title": "Production",
+                "tasks": [
+                    {
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "OK"
+                    },
+                    {
+                        "tarea": "Check Emergency Stop",
+                        "status": "Pending"
+                    },
+                    {
+                        "tarea": "Clear Ventilation Grills",
+                        "status": "OK"
+                    }
+                ]
+            },
+            {
+                "title": "Production 2",
+                "tasks": [
+                    {
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "OK"
+                    },
+                    {
+                        "tarea": "Check Emergency Stop",
+                        "status": "Pending"
+                    },
+                    {
+                        "tarea": "Clear Ventilation Grills",
+                        "status": "OK"
+                    }
+                ]
+            }
+        ]
+}

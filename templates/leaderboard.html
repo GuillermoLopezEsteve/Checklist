@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+    <meta charset="UTF-8">
+    <title>Ranking</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; margin: 0; padding: 40px; }
+        .header { display: flex; justify-content: space-between; align-tasks: center; margin-bottom: 20px; }
+        .back-link { text-decoration: none; color: #007bff; font-weight: bold; }
+        .last-check { font-size: 0.9rem; color: #666; }
+
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <a href="/" class="back-link">← Back to Dashboard</a>
+</div>
+
+<div>
+<table class="ra-ranking">
+  <thead>
+    <tr>
+        {% for header in leaderboardHeaders %}
+        <th>{{ header }}</th>
+        {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for group in leaderboardData %}
+    <tr>
+        {% for cell in group %}
+          <td>{{ cell }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+
+
+<style>
+  .ra-ranking {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .ra-ranking thead {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: #ffffff;
+  }
+
+  .ra-ranking th,
+  .ra-ranking td {
+    padding: 12px 16px;
+    text-align: center;
+  }
+
+  .ra-ranking th:first-child,
+  .ra-ranking td:first-child {
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .ra-ranking tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.2s ease;
+  }
+
+  .ra-ranking tbody tr:hover {
+    background-color: #f1f5f9;
+  }
+
+  .ra-ranking tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .ra-ranking tbody td {
+    color: #1f2937;
+  }
+
+  /* Highlight ranking visually */
+  .ra-ranking tbody tr:nth-child(1) td { /*gold*/
+    font-weight: 700;
+    background-color: gold;
+  }
+
+  .ra-ranking tbody tr:nth-child(2) td { /*silver*/
+    background-color: silver;
+  }
+
+  .ra-ranking tbody tr:nth-child(3) td { /*bronze*/
+    background-color: coral;
+  }
+</style>
+
+
+</body>
+</html>
