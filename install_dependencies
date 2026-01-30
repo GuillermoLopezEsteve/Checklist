@@ -1,0 +1,4 @@
+sudo timedatectl set-timezone "Europe/Madrid"
+sudo apt update
+sudo apt install -y tree net-tools python3 python3-pip python-is-python3
+pip3 install pandas flask datetime
