@@ -40,11 +40,12 @@
 
         .card h2 { margin: 0; font-size: 1.5rem; }
         .card p { margin-top: 5px; opacity: 0.8; font-size: 0.9rem; }
+	.card.big {grid-column: span 2}
     </style>
 </head>
 <body>
 
-    <h1>Group Dashboard</h1>
+    <h1>Projecte SMX2  -  1713</h1>
 
     <div class="grid-container">
         {% for group in groups %}
@@ -53,9 +54,11 @@
             <p>View Checklist</p>
         </a>
         {% endfor %}
+
+        <a href="https://docs.google.com/spreadsheets/d/1cma0J7eTugMeRtG8VCHbYiHb5RlJ6TLK_SPYUoxfDFA/edit?usp=sharing" class="card big">
+            <h2>Demostració de Tasques</h2>
+        </a>
+        <a href="/leaderboard" class="card big"><h2>Ranking<h2></a>
     </div>
-
-    <div class="grid-container"><a href="https://docs.google.com/spreadsheets/d/1cma0J7eTugMeRtG8VCHbYiHb5RlJ6TLK_SPYUoxfDFA/edit?usp=sharing">Demostració de tasques</a></div>
-
 </body>
 </html>

@@ -58,5 +58,5 @@ python scripts/class/excel.py
 # Run in background (&), but we track the PID
 FLASK_PID=$!
 
-nohup python app.py > log_app 2>&1
-
+#nohup python app.py > log_app 2>&1
+python app.py
