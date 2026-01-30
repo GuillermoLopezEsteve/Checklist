@@ -1,6 +1,6 @@
 from flask import Flask, request, Response, render_template, jsonify, send_from_directory
 from datetime import datetime, timedelta
-import scripts.data as data
+import scripts.myData as myData
 import scripts.badges as badges
 import json
 import os
@@ -15,13 +15,12 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     groups = [f"{i:02d}" for i in range(1, N_GROUPS + 1) ]
-    medallas = badges.allGroupBadges(N_GROUPS)
-    return render_template('home.html', groups=groups, medallas=medallas)
+    return render_template('home.html', groups=groups)
 
 @app.route('/group<number>')
 def group_checklist(number):
-    allTasks = data.get_tasks_data(number)
-    demo = data.get_demo_data(number)
+    allTasks = myData.get_tasks_data(number)
+    demo = myData.get_demo_data(number)
     time = datetime.now() + timedelta(minutes=5)
     return render_template('checklist.html', number=number, allTasks=allTasks, demo=demo, next_update=time)
 
@@ -31,9 +30,14 @@ def favicon():
                                'favicon.ico', mimetype='webp')
 @app.route('/leaderboard')
 def leaderboard():
-    leaderboardHeaders = data.getLeaderboardTableHeaders()
-    leaderboardData = data.tranformForLeaderboard(data.getAllGroupDataSorted(N_GROUPS))
+    leaderboardHeaders = myData.getLeaderboardTableHeaders()
+    leaderboardData = myData.tranformForLeaderboard(data.getAllGroupDataSorted(N_GROUPS))
     return render_template('leaderboard.html', leaderboardHeaders=leaderboardHeaders, leaderboardData=leaderboardData)
+
+@app.route('/badges')
+def medallas():
+    medallas = badges.allGroupBadges(N_GROUPS)
+    return render_template('badges.html', medallas=medallas)
 
 
 if __name__ == '__main__':
