@@ -1,321 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
   <title>Badge Case</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    :root{
-      --bg1:#0b1220;
-      --bg2:#0f1b33;
-      --card:#0f172a;
-      --card2:#111c34;
-      --ink:#e5e7eb;
-      --muted:#9ca3af;
-      --accent:#60a5fa;
-      --gold:#fbbf24;
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --ring: 0 0 0 1px rgba(255,255,255,.08), 0 0 0 6px rgba(96,165,250,.08);
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(180deg, #f8fafc, #e0f2fe);
+      color: #1f2937;
     }
 
-    * { box-sizing: border-box; }
-    body{
-      margin:0;
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:var(--ink);
-      background:
-        radial-gradient(1200px 800px at 15% 10%, rgba(96,165,250,.25), transparent 60%),
-        radial-gradient(900px 700px at 90% 35%, rgba(251,191,36,.18), transparent 55%),
-        linear-gradient(135deg, var(--bg1), var(--bg2));
-      padding: 28px;
+    .case {
+      width: min(900px, 95%);
     }
 
-    .case-wrap{
-      width: min(980px, 100%);
-    }
-
-    /* Header "trainer card" */
-    .trainer-card{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
+    /* Trainer header */
+    .trainer {
+      display: flex;
+      align-items: center;
       gap: 16px;
-      padding: 18px 18px;
-      border-radius: 18px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(255,255,255,.08);
-      backdrop-filter: blur(8px);
-      margin-bottom: 16px;
+      padding: 16px 20px;
+      border-radius: 16px;
+      background: white;
+      border: 2px solid #e5e7eb;
+      margin-bottom: 18px;
     }
 
-    .trainer-left{
-      display:flex;
-      align-items:center;
-      gap: 14px;
-      min-width: 0;
-    }
-
-    .pokeball{
-      width: 42px;
-      height: 42px;
+    .pokeball {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      position: relative;
       background:
-        radial-gradient(circle at 50% 50%, #ffffff 0 18%, #111827 18% 23%, #ffffff 23% 30%, transparent 30%),
-        linear-gradient(#ef4444 0 48%, #111827 48% 52%, #f9fafb 52% 100%);
-      box-shadow: 0 10px 20px rgba(0,0,0,.35);
-      flex: 0 0 auto;
+        radial-gradient(circle at center, white 0 20%, black 20% 26%, white 26% 32%, transparent 32%),
+        linear-gradient(#ef4444 0 48%, black 48% 52%, white 52%);
+      border: 2px solid black;
     }
 
-    .trainer-meta{
-      min-width: 0;
+    .trainer h1 {
+      font-size: 20px;
+      margin: 0;
     }
 
-    .trainer-meta .label{
+    .trainer span {
       font-size: 12px;
-      letter-spacing: .14em;
+      color: #6b7280;
+      letter-spacing: .1em;
       text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .trainer-meta .name{
-      font-size: 22px;
-      font-weight: 800;
-      line-height: 1.1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .trainer-right{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .chip{
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(17,24,39,.35);
-      display:flex;
-      align-items:center;
-      gap: 8px;
-    }
-
-    .dot{
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--gold);
-      box-shadow: 0 0 0 3px rgba(251,191,36,.15);
     }
 
     /* Badge case */
-    .badge-case{
-      position: relative;
-      border-radius: 26px;
-      background:
-        radial-gradient(800px 400px at 50% -10%, rgba(255,255,255,.10), transparent 60%),
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: var(--shadow);
-      overflow: hidden;
+    .badge-case {
+      padding: 20px;
+      background: #fdfefe;
+      border-radius: 20px;
+      border: 3px solid #93c5fd;
     }
 
-    /* Top "hinge" highlight */
-    .badge-case::before{
-      content:"";
-      position:absolute;
-      inset: 0 0 auto 0;
-      height: 64px;
-      background: linear-gradient(180deg, rgba(255,255,255,.10), transparent);
-      pointer-events:none;
-    }
-
-    .case-inner{
-      padding: 18px;
-    }
-
-    .case-title{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap: 12px;
+    .badge-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 14px;
-      padding: 6px 6px 0 6px;
     }
 
-    .case-title h2{
-      margin:0;
+    .badge-title h2 {
       font-size: 16px;
+      margin: 0;
+      text-transform: uppercase;
       letter-spacing: .08em;
-      text-transform: uppercase;
-      color: rgba(229,231,235,.92);
+      color: #1e40af;
     }
 
-    .case-title .hint{
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    /* Slots grid like a badge holder */
-    .slots{
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+    /* Slots */
+    .slots {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 14px;
-      padding: 10px;
-      border-radius: 18px;
-      background:
-        linear-gradient(180deg, rgba(15,23,42,.75), rgba(15,23,42,.45));
-      border: 1px solid rgba(255,255,255,.08);
-      box-shadow: var(--ring);
     }
 
-    @media (max-width: 860px){
-      .slots{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    }
-    @media (max-width: 640px){
-      .slots{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .trainer-right{ display:none; }
+    @media (max-width: 700px) {
+      .slots {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
 
-    .slot{
+    @media (max-width: 480px) {
+      .slots {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .slot {
       aspect-ratio: 1 / 1;
-      border-radius: 16px;
-      position: relative;
-      display:grid;
-      place-items:center;
+      border-radius: 14px;
+      background: #8e15894d;
+      border: 2px dashed #93c5fd;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       padding: 10px;
-      background:
-        radial-gradient(100px 100px at 30% 20%, rgba(96,165,250,.14), transparent 65%),
-        radial-gradient(120px 120px at 70% 80%, rgba(251,191,36,.10), transparent 60%),
-        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 10px 24px rgba(0,0,0,.30);
-      overflow:hidden;
+      transition: transform 0.15s ease;
     }
 
-    /* subtle “groove” lines */
-    .slot::before{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background: repeating-linear-gradient(
-        45deg,
-        rgba(255,255,255,.04) 0 8px,
-        rgba(255,255,255,0) 8px 18px
-      );
-      opacity:.35;
-      transform: rotate(8deg);
-      pointer-events:none;
+    .slot:hover {
+      transform: translateY(-3px);
     }
 
-    .badge{
-      width: 84%;
-      height: 84%;
-      object-fit: contain;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
-      transform: translateZ(0);
+    .slot img {
+      max-width: 80%;
+      max-height: 80%;
     }
 
-    .slot-label{
-      position:absolute;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      font-size: 12px;
-      color: rgba(229,231,235,.88);
-      letter-spacing: .06em;
+    .slot-label {
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .05em;
       text-transform: uppercase;
-      text-align:center;
-      padding: 6px 8px;
-      border-radius: 999px;
-      background: rgba(2,6,23,.45);
-      border: 1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(6px);
+      color: #2563eb;
     }
+    .slot.gold {
+      background:
+        radial-gradient(120px 120px at 30% 20%, rgba(255,255,255,.6), transparent 55%),
+        radial-gradient(140px 140px at 70% 80%, rgba(255,215,0,.45), transparent 60%),
+        linear-gradient(
+          135deg,
+          #fff1a8 0%,
+          #ffd24d 18%,
+          #fbbf24 38%,
+          #eab308 55%,
+          #facc15 72%,
+          #fff1a8 100%
+        );
+      border: 2px solid #f59e0b;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.7),
+        inset 0 -2px 6px rgba(0,0,0,.15),
+        0 6px 14px rgba(245,158,11,.35);
+    }
+
   </style>
 </head>
 
 <body>
-  <div class="case-wrap">
+  <div class="case">
 
-    <!-- Trainer header (uses ONLY name) -->
-    <div class="trainer-card">
-      <div class="trainer-left">
-        <div class="pokeball" aria-hidden="true"></div>
-        <div class="trainer-meta">
-          <div class="label">Badge Case</div>
-          <div class="name">{{ name }}</div>
-        </div>
-      </div>
-
-      <div class="trainer-right">
-        <div class="chip"><span class="dot"></span> Gym Services</div>
-        <div class="chip">7 / 7</div>
+    <!-- Trainer -->
+    <div class="trainer">
+      <div class="pokeball"></div>
+      <div>
+        <span>Badge Case</span>
+        <h1>{{ name }}</h1>
       </div>
     </div>
 
-    <!-- Badge case -->
-    <section class="badge-case">
-      <div class="case-inner">
-        <div class="case-title">
-          <h2>Collected Badges</h2>
-          <div class="hint">All badges shown (filter later with medallas)</div>
+    <!-- Badge Holder -->
+    <div class="badge-case">
+      <div class="badge-title">
+        <h2>Gym Badges</h2>
+      </div>
+
+      <div class="slots">
+        <div class="slot gold">
+          <img src="{{ url_for('static', filename='badge_dns.png') }}">
+          <div class="slot-label">DNS</div>
         </div>
 
-        <div class="slots">
-          <div class="slot">
-            <img class="badge" src="{{ url_for('static', filename='badge_dns.png') }}" alt="DNS Badge">
-            <div class="slot-label">DNS</div>
-          </div>
+        <div class="slot">
+          <img src="{{ url_for('static', filename='badge_mail.png') }}">
+          <div class="slot-label">Mail</div>
+        </div>
 
-          <div class="slot">
-            <img class="badge" src="{{ url_for('static', filename='badge_mail.png') }}" alt="Mail Badge">
-            <div class="slot-label">Mail</div>
-          </div>
+        <div class="slot">
+          <img src="{{ url_for('static', filename='badge_wordpress.png') }}">
+          <div class="slot-label">WordPress</div>
+        </div>
 
-          <div class="slot">
-            <img class="badge" src="{{ url_for('static', filename='badge_wordpress.png') }}" alt="WordPress Badge">
-            <div class="slot-label">WordPress</div>
-          </div>
+        <div class="slot">
+          <img src="{{ url_for('static', filename='badge_web.png') }}">
+          <div class="slot-label">Web</div>
+        </div>
 
-          <div class="slot">
-            <img class="badge" src="{{ url_for('static', filename='badge_web.png') }}" alt="Web Badge">
-            <div class="slot-label">Web</div>
-          </div>
+        <div class="slot">
+          <img src="{{ url_for('static', filename='badge_python.png') }}">
+          <div class="slot-label">Python</div>
+        </div>
 
-          <div class="slot">
-            <img class="badge" src="{{ url_for('static', filename='badge_python.png') }}" alt="Python Badge">
-            <div class="slot-label">Python</div>
-          </div>
+        <div class="slot">
+          <img src="{{ url_for('static', filename='badge_scripting.png') }}">
+          <div class="slot-label">Scripting</div>
+        </div>
 
-          <div class="slot">
-            <img class="badge" src="{{ url_for('static', filename='badge_scripting.png') }}" alt="Scripting Badge">
-            <div class="slot-label">Scripting</div>
-          </div>
+        <div class="slot">
+          <img src="{{ url_for('static', filename='badge_backups.png') }}">
+          <div class="slot-label">Backups</div>
+        </div>
 
-          <div class="slot">
-            <img class="badge" src="{{ url_for('static', filename='badge_backups.png') }}" alt="Backups Badge">
-            <div class="slot-label">Backups</div>
-          </div>
-
-          <!-- optional empty slot for aesthetics -->
-          <div class="slot" style="opacity:.55">
-            <div class="slot-label">Next</div>
-          </div>
+        <div class="slot">
+          <div class="slot-label">Next Badge</div>
         </div>
       </div>
-    </section>
+    </div>
 
   </div>
 </body>
