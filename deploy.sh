@@ -43,9 +43,9 @@ if [ ! -d "venv" ]; then
     python3 -m venv venv
 fi
 
-if [ -f "requirements.txt" ]; then
+if [ -f "requirements.sh" ]; then
     echo "Installing dependencies..."
-    pip install -r requirements.txt
+    bash requirements.sh
 fi
 
 # --- 5. Launch Flask App ---

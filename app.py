@@ -20,18 +20,21 @@ def home():
 @app.route('/group<number>')
 def group_checklist(number):
     allTasks = myData.get_tasks_data(number)
+    for zone in allTasks.get("zones"):
+        zone["id"] = zone.get("title").replace(" ", "")
+    print(allTasks)
     demo = myData.get_demo_data(number)
     time = datetime.now() + timedelta(minutes=5)
     return render_template('checklist.html', number=number, allTasks=allTasks, demo=demo, next_update=time)
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'media'),
-                               'favicon.ico', mimetype='webp')
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon_tiny.png', mimetype='png')
 @app.route('/leaderboard')
 def leaderboard():
     leaderboardHeaders = myData.getLeaderboardTableHeaders()
-    leaderboardData = myData.tranformForLeaderboard(data.getAllGroupDataSorted(N_GROUPS))
+    leaderboardData = myData.tranformForLeaderboard(myData.getAllGroupDataSorted(N_GROUPS))
     return render_template('leaderboard.html', leaderboardHeaders=leaderboardHeaders, leaderboardData=leaderboardData)
 
 @app.route('/badges')
