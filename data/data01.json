@@ -32,7 +32,7 @@
                 "tasks": [
                     {
                         "tarea": "Inspect Hydraulic Pressure",
-                        "status": "PENDING"
+                        "status": "OK"
                     },{
                         "tarea": "Check Front Desk Lights",
                         "status": "OK"
@@ -71,7 +71,7 @@
                 "tasks": [
                     {
                         "tarea": "Inspect Hydraulic Pressure",
-                        "status": "PENDING"
+                        "status": "OK"
                     },{
                         "tarea": "Check Front Desk Lights",
                         "status": "OK"

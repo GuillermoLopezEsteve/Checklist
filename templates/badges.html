@@ -13,16 +13,16 @@
 <body>
   <div class="case">
     <div class="header">
+        <h1>Galardons del projecte - Grup {{ number }}</h1>
         <a href="/" class="back-link">← Panell central</a>
         <a href="/group{{ number }}" class="back-link">← Tasques</a>
     </div>
 
     <!-- Trainer -->
     <div class="trainer">
-      <div class="pokeball"></div>
+      <div class="icon"><img src="{{ url_for('static', filename='icon_case.png') }}"></div>
       <div>
-        <span>GALARDONS</span>
-        <h1>{{ number }}</h1>
+        <h1 class="members">GALARDONS GRUP {{ number }}: {% for integrante in integrantes %} <span class="member">{{integrante}}</span> {% endfor %}</h1>
       </div>
     </div>
 

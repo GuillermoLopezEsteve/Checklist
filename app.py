@@ -38,14 +38,10 @@ def leaderboard():
 def medallas(number):
     medallas = badges.getBadgesGroup(number)
     demosDone = badges.hasAllDemos(number)
-    return render_template('badges.html', number=number, medallas=medallas, demosDone=demosDone)
+    integrantes = ["Juan Casas","Sonia Delgado"]
+    return render_template('badges.html', number=number, medallas=medallas, integrantes=integrantes, demosDone=demosDone)
 
 
 if __name__ == '__main__':
 
-    app.run(
-        host='0.0.0.0',
-        port=8443,
-        ssl_context=('CA/certs/web.crt', 'CA/certs/web.pem'),
-        debug=False
-    )
+    app.run()

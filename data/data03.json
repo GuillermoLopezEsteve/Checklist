@@ -6,7 +6,7 @@
                 "tasks": [
                     {
                         "tarea": "Check Front Desk Lights",
-                        "status": "OK"
+                        "status": "PENDING"
                     },{
                         "tarea": "Check Front Desk Lights",
                         "status": "OK"
@@ -19,7 +19,7 @@
                 "tasks": [
                     {
                         "tarea": "Check Front Desk Lights",
-                        "status": "OK"
+                        "status": "PENDING"
                     },{
                         "tarea": "Check Front Desk Lights",
                         "status": "OK"
@@ -45,7 +45,7 @@
                 "tasks": [
                     {
                         "tarea": "Inspect Hydraulic Pressure",
-                        "status": "OK"
+                        "status": "PENDING"
                     },{
                         "tarea": "Check Front Desk Lights",
                         "status": "OK"
@@ -58,7 +58,7 @@
                 "tasks": [
                     {
                         "tarea": "Inspect Hydraulic Pressure",
-                        "status": "OK"
+                        "status": "PENDING"
                     },{
                         "tarea": "Check Front Desk Lights",
                         "status": "OK"
@@ -84,7 +84,7 @@
                 "tasks": [
                     {
                         "tarea": "Inspect Hydraulic Pressure",
-                        "status": "OK"
+                        "status": "Pending"
                     },{
                         "tarea": "Check Front Desk Lights",
                         "status": "OK"
@@ -97,7 +97,7 @@
                 "tasks": [
                     {
                         "tarea": "Inspect Hydraulic Pressure",
-                        "status": "OK"
+                        "status": "Pending"
                     },{
                         "tarea": "Check Front Desk Lights",
                         "status": "OK"
