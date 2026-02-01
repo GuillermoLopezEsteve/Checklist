@@ -1,0 +1,5 @@
+body { font-family: 'Segoe UI', sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
+.container { max-width: 800px; margin: 0 auto; }
+
+.header { display: flex; justify-content: space-between; align-tasks: center; margin-bottom: 20px; }
+.back-link { text-decoration: none; color: #007bff; font-weight: bold; }

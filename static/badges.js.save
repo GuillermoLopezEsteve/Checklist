@@ -1,0 +1,19 @@
+const badgeClasses = [
+  "gold",
+  "emerald",
+  "ruby",
+  "sapphire",
+  "pearl",
+  "amethyst",
+  "aquamarine",
+  "silver",
+  "agate",
+  "amber"
+];
+
+function randomAssignGem(slots, badgeClasses){
+    for (let b of )
+}
+
+acquiredBadges = document.querySelectorAll(".slot:not(.shadow)")
+randomAssignGem(acquiredBadges, badgeClasses)

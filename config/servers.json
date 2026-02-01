@@ -1,0 +1,364 @@
+{
+  "general":{
+      "relative_path_prod_key": ".secret/prod.key",
+      "relative_path_dev_key": ".secret/dev.key",
+      "file_in_prod": "/var/automatictesting/results.json",
+      "file_in_dev": "/var/automatictesting/results.json",
+      "systemd_tester_prod": "automatic_tester_prod",
+      "systemd_tester_dev": "automatic_tester_dev"
+  },
+  "groups": [
+    {
+      "id": "group-01",
+      "groupname": "Clase-Sistemas-A",
+      "members": [
+        "alumno_juan",
+        "alumno_maria",
+        "alumno_pedro"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-01",
+          "desc": "Servidor de Desarrollo para pruebas de SSH",
+          "hostname": "dev-server-01",
+          "ip": "192.168.1.50",
+          "public-key": "ssh-rsa AAAAB3Nza...alumno@local",
+          "type": "DEV",
+          "so": "Ubuntu 22.04 LTS"
+        },
+        {
+          "id": "srv-prod-01",
+          "desc": "Servidor de Producción con Hardening",
+          "hostname": "prod-server-01",
+          "ip": "192.168.1.100",
+          "public-key": "ssh-ed25519 AAAAC3Nza...admin@local",
+          "type": "PROD",
+          "so": "Debian 12"
+        }
+      ]
+    },
+    {
+      "id": "group-02",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-03",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-03",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-04",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-05",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-06",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-07",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-08",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-09",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-10",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-11",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-12",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-12",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-13",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-14",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-15",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    },
+    {
+      "id": "group-16",
+      "groupname": "Clase-Sistemas-B",
+      "members": [
+        "alumno_lucia",
+        "alumno_carlos"
+      ],
+      "servers": [
+        {
+          "id": "srv-dev-02",
+          "desc": "Sandbox para túneles reversos",
+          "hostname": "sandbox-ssh",
+          "ip": "10.0.0.15",
+          "public-key": "ssh-rsa AAAAB3Nza...root@deploy",
+          "type": "DEV",
+          "so": "Alpine Linux"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+html {
+  scroll-behavior: smooth;
+}
+
+#menu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #333333;
+  z-index: 1000;
+}
+
+#menu ul {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  list-style-type: none; /* Removes bullet points */
+  margin: 0;
+  padding: 0;
+  height: 100%; 
+  flex-wrap: wrap;
+}
+
+#menu li { 
+    width: 10%;
+    min-width: 100px;
+    height: 45px;
+    display: flex;
+    align-content: center;
+    align-items: center;
+}
+
+#menu a {
+  text-decoration: none;
+  color: #ffffff;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+body { font-family: 'Segoe UI', sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
+.container { max-width: 800px; margin: 0 auto; }
+
+.header { display: flex; justify-content: space-between; align-tasks: center; margin-bottom: 20px; }
+.back-link { text-decoration: none; color: #007bff; font-weight: bold; }
+.last-check { font-size: 0.9rem; color: #666; }
+
+/* Zones (Cards) */
+.zone-card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 25px; overflow: hidden; }
+.zone-header { background-color: #eee; padding: 15px 20px; border-bottom: 1px solid #ddd; }
+.zone-header h2 { margin: 0; font-size: 1.2rem; }
+
+
+
+/* Default Task styling */
+.task-details { flex-grow: 1; }
+.task-name { font-size: 1.05rem; display: block; }
+
+ul.tasks {
+    list-style: none;
+    padding-left: 0;
+}
+
+/* 2. Base style for the task card */
+.task-card {
+    position: relative;
+    padding: 10px 10px 10px 35px; /* Add left padding to make room for the bullet */
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 3. Create the Custom Bullet (The pseudo-element) */
+.task-card::before {
+    content: '';
+    position: absolute;
+    left: 10px;  /* Position it inside the padding we created */
+    top: 50%;
+    transform: translateY(-50%); /* Center it vertically */
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3C/svg%3E");
+}
+
+.task-done::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Ccircle cx='12' cy='12' r='10' fill='%2328a745'/%3E%3Cpath d='M8 12l3 3 7-7' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.task-done {
+    background-color: #f0fff4;
+    border-color: #c3e6cb;
+}
+
+/* Footer Stats */
+.stats-footer { background: #333; color: white; padding: 15px; border-radius: 8px; display: flex; justify-content: space-around; margin-top: 20px; }
+.stat-box { text-align: center; }
+.stat-val { font-size: 1.5rem; font-weight: bold; }
+.stat-label { font-size: 0.8rem; opacity: 0.7; }
+
+/* Done tasks */
+
+#form-tasks.hide-done .task-done{ display: none; }
+
+.task-done .task-name{ text-decoration: line-through; color: #aaa; }
+
+.health-bar {
+    width: 100%;
+    height: 20px;
+    background: #1e1e1e;
+    border: 2px solid #444;
+    border-radius: 999px;
+    overflow: hidden;
+    --p: 0;
+}
+
+.bar__fill {
+    height: 100%;
+    width: calc(var(--p) * 100%);
+    color: white;
+    font-weight: bold;
+    font-size: 1em;
+    transition: width 200ms ease;
+    text-align: center;
+    vertical-align: middle;
+}
+.red-bar{ background: #bf1818;}
+.orange-bar{ background: linear-gradient(90deg, #bf1818, #26c126 50%); }
+.green-bar{ background: #26c126;}
+
+
+.btn {
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px; /* Pill shape */
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Soft shadow */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  text-decoration: none;
+}
+.btn-task-hide {
+  background-color: #4CAF50; /* Green */
+}
+
+.btn-medallas {
+  background-color: #1e6b94;
+}
+
+.btn:hover {
+  transform: translateY(-2px); /* Moves up slightly on hover */
+  box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+
+.btn:active {
+  transform: translateY(0); /* Pushes down when clicked */
+}
