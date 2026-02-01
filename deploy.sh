@@ -54,6 +54,16 @@ if [ -f "${BASE_DIR}/requirements.sh" ]; then
 else
     success "No requirements provided"
 fi
+LOG_DIR="$BASE_DIR/logs"
+
+pending "Creating logs directory if it doesnt exist"
+
+if [ -d "$LOG_DIR" ]; then
+    success "Logs directory exists"
+else
+    mkdir -p "$LOG_DIR" \
+        && success "Logs directory created successfully" || fail "Unable to create directory"
+fi
 
 if [ ! -d "venv" ]; then
   pending "Creating virtual environment..."
@@ -91,18 +101,8 @@ fi
 
 pending "Launching Gunicorn..."
 
-LOG_DIR="$BASE_DIR/logs"
 PID_FILE="$LOG_DIR/gunicorn.pid"
 LOG_FILE="$LOG_DIR/app.log"
-
-pending "Creating logs directory if it doesnt exist"
-
-if [ -d "$LOG_DIR" ]; then
-    success "Logs directory exists"
-else
-    mkdir -p "$LOG_DIR" \
-        && success "Logs directory created successfully" || fail "Unable to create directory"
-fi
 
 nohup gunicorn app:app \
   --bind 127.0.0.1:8443 \
