@@ -1,126 +1,105 @@
 {
     "zones":  [
             {
-                "title": "Devolpment 1",
+                "title": "Accés Remot a ls servidors",
+                "id": "REMOTE-ACCESS",
                 "tasks": [
                     {
                         "tarea": "Check Front Desk Lights",
                         "status": "OK"
-                    },
-                    {
-                        "tarea": "Refill Visitor Log",
-                        "status": "Pending"
-                    },
-                    {
-                        "tarea": "Sanitize Countertops",
-                        "status": "OK"
-                    },
-                    {
-                        "tarea": "Refill Visitor Log",
-                        "status": "Pending"
-                    },
-                    {
-                        "tarea": "Sanitize Countertops",
-                        "status": "OK"
-                    },
-                    {
-                        "tarea": "Refill Visitor Log",
-                        "status": "Pending"
-                    },
-                    {
-                        "tarea": "Sanitize Countertops",
-                        "status": "OK"
-                    },
-                    {
-                        "tarea": "Refill Visitor Log",
-                        "status": "Pending"
-                    },
-                    {
-                        "tarea": "Sanitize Countertops",
-                        "status": "OK"
-                    },
-                    {
-                        "tarea": "Refill Visitor Log",
-                        "status": "Pending"
-                    },
-                    {
-                        "tarea": "Sanitize Countertops",
-                        "status": "OK"
-                    },
-                    {
-                        "tarea": "Refill Visitor Log",
-                        "status": "Pending"
-                    },
-                    {
-                        "tarea": "Sanitize Countertops",
+                    },{
+                        "tarea": "Check Front Desk Lights",
                         "status": "OK"
                     }
                 ]
             },
             {
-                "title": "Development 2",
+                "title": "DNS",
+                "id": "DNS",
                 "tasks": [
                     {
-                        "tarea": "Inspect Hydraulic Pressure",
+                        "tarea": "Check Front Desk Lights",
                         "status": "OK"
-                    },
-                    {
-                        "tarea": "Check Emergency Stop",
-                        "status": "Pending"
-                    },
-                    {
-                        "tarea": "Clear Ventilation Grills",
+                    },{
+                        "tarea": "Check Front Desk Lights",
                         "status": "OK"
                     }
                 ]
             },
             {
-                "title": "Development 3",
+                "title": "Infraestructura WEB",
+                "id": "WEB",
                 "tasks": [
                     {
                         "tarea": "Inspect Hydraulic Pressure",
-                        "status": "OK"
-                    },
-                    {
-                        "tarea": "Check Emergency Stop",
-                        "status": "Pending"
-                    },
-                    {
-                        "tarea": "Clear Ventilation Grills",
+                        "status": "PENDING"
+                    },{
+                        "tarea": "Check Front Desk Lights",
                         "status": "OK"
                     }
                 ]
             },
             {
-                "title": "Production",
+                "title": "Servidor de correu",
+                "id": "MAIL",
                 "tasks": [
                     {
                         "tarea": "Inspect Hydraulic Pressure",
                         "status": "OK"
-                    },
-                    {
-                        "tarea": "Check Emergency Stop",
-                        "status": "Pending"
-                    },
-                    {
-                        "tarea": "Clear Ventilation Grills",
+                    },{
+                        "tarea": "Check Front Desk Lights",
                         "status": "OK"
                     }
                 ]
             },
             {
-                "title": "Production 2",
+                "title": "Wordpress",
+                "id": "WORDPRESS",
                 "tasks": [
                     {
                         "tarea": "Inspect Hydraulic Pressure",
                         "status": "OK"
-                    },
-                    {
-                        "tarea": "Check Emergency Stop",
+                    },{
+                        "tarea": "Check Front Desk Lights",
                         "status": "OK"
-                    },
+                    }
+                ]
+            },
+            {
+                "title": "Cópies de seguretat",
+                "id": "BACKUP",
+                "tasks": [
                     {
-                        "tarea": "Clear Ventilation Grills",
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "PENDING"
+                    },{
+                        "tarea": "Check Front Desk Lights",
+                        "status": "OK"
+                    }
+                ]
+            },
+            {
+                "title": "Eines de Monorització",
+                "id": "Scripting",
+                "tasks": [
+                    {
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "OK"
+                    },{
+                        "tarea": "Check Front Desk Lights",
+                        "status": "OK"
+                    }
+                ]
+            },
+            {
+                "title": "Servidors de transfaréncia de Fitxers",
+                "id": "FTP",
+                "tasks": [
+                    {
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "OK"
+                    },{
+                        "tarea": "Check Front Desk Lights",
                         "status": "OK"
                     }
                 ]

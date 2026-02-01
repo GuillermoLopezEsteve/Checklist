@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='checklist.css') }}">
     <meta charset="UTF-8">
     <title>Checklist Grup {{ number }}</title>
@@ -14,9 +15,15 @@
 
         <div class="header">
             <a href="/" class="back-link">← Back to Dashboard</a>
+    {% if tieneMedallas %}
             <div>
-                <button class="task-hide-button" onclick="hideDone()">Amaga FETES</button>
+                <button class="btn btn-medallas" onclick="location.href='/group{{number}}/badges'">Galardons</a>
             </div>
+   {% endif %}
+            <div>
+                <button class="btn btn-task-hide" onclick="hideDone()">Amaga FETES</button>
+            </div>
+
         </div>
     <nav id="menu">
        <ul>

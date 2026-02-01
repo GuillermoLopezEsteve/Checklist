@@ -6,7 +6,7 @@ if [ -z "${BASH_VERSION:-}" ]; then
   exit 1
 fi
 
-bash requirements
+bash requirements "$@"
 
 # --- Configuration ---
 DEFAULT_BRANCH="main"
@@ -54,9 +54,9 @@ echo "--- Launching Flask Application ---"
 pkill -f "flask run" || true
 pkill -f "python index.py" || true
 
-python scripts/class/excel.py
+python3 scripts/class/excel.py
 # Run in background (&), but we track the PID
 FLASK_PID=$!
 
 #nohup python app.py > log_app 2>&1
-python app.py
+python3 app.py

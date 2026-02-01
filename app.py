@@ -22,29 +22,26 @@ def group_checklist(number):
     allTasks = myData.get_tasks_data(number)
     for zone in allTasks.get("zones"):
         zone["id"] = zone.get("title").replace(" ", "")
-    print(allTasks)
     demo = myData.get_demo_data(number)
     time = datetime.now() + timedelta(minutes=5)
-    return render_template('checklist.html', number=number, allTasks=allTasks, demo=demo, next_update=time)
+    tieneMedallas = badges.hasBadges(number)
+    return render_template('checklist.html', tieneMedallas=tieneMedallas, number=number, allTasks=allTasks, demo=demo, next_update=time)
 
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'favicon_tiny.png', mimetype='png')
+
 @app.route('/leaderboard')
 def leaderboard():
     leaderboardHeaders = myData.getLeaderboardTableHeaders()
     leaderboardData = myData.tranformForLeaderboard(myData.getAllGroupDataSorted(N_GROUPS))
     return render_template('leaderboard.html', leaderboardHeaders=leaderboardHeaders, leaderboardData=leaderboardData)
 
-@app.route('/badges')
-def medallas():
-    medallas = badges.allGroupBadges(N_GROUPS)
-    return render_template('badges.html', medallas=medallas)
+@app.route('/group<number>/badges')
+def medallas(number):
+    medallas = badges.getBadgesGroup(number)
+    demosDone = badges.hasAllDemos(number)
+    return render_template('badges.html', number=number, medallas=medallas, demosDone=demosDone)
 
 
 if __name__ == '__main__':
-    #app.add_url_rule("/favicon.ico",endpoint="favicon",redirect_to=url_for("static", filename="favicon.ico"),)
 
     app.run(
         host='0.0.0.0',

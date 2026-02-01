@@ -2,74 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Medalles</title>
+  <title>Galardons Grup {{number}}</title>
 
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='badges.css') }}">
-  
+  <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='badges.css') }}">  
    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
   <div class="case">
+    <div class="header">
+        <a href="/" class="back-link">← Panell central</a>
+        <a href="/group{{ number }}" class="back-link">← Tasques</a>
+    </div>
 
     <!-- Trainer -->
     <div class="trainer">
       <div class="pokeball"></div>
       <div>
-        <span>Badge Case</span>
-        <h1>{{ name }}</h1>
+        <span>GALARDONS</span>
+        <h1>{{ number }}</h1>
       </div>
     </div>
 
     <!-- Badge Holder -->
     <div class="badge-case">
       <div class="badge-title">
-        <h2>Gym Badges</h2>
+        <h2>GALARDONS DEL PROJECTE</h2>
       </div>
 
-      <div class="slots">
-        <div class="slot gold">
-          <img src="{{ url_for('static', filename='badges/badge_dns.png') }}">
-          <div class="slot-label">DNS</div>
+        <div class="slots">
+        {% for med in medallas %}
+            <div class="slot {% if med.shadow %}shadow {% endif %} " id="{{med.id}}">
+                <img src="{{ med.source }}" alt="Galardo per {{med.title}}">
+                <div class="slot-label">{{ med.title }}</div>
+            </div>
+        {% endfor %}
         </div>
-
-        <div class="slot">
-          <img src="{{ url_for('static', filename='badges/badge_mail.png') }}">
-          <div class="slot-label">Mail</div>
-        </div>
-
-        <div class="slot">
-          <img src="{{ url_for('static', filename='badges/badge_wordpress.png') }}">
-          <div class="slot-label">WordPress</div>
-        </div>
-
-        <div class="slot">
-          <img src="{{ url_for('static', filename='badges/badge_web.png') }}">
-          <div class="slot-label">Web</div>
-        </div>
-
-        <div class="slot">
-          <img src="{{ url_for('static', filename='badges/badge_python.png') }}">
-          <div class="slot-label">Python</div>
-        </div>
-
-        <div class="slot">
-          <img src="{{ url_for('static', filename='badges/badge_scripting.png') }}">
-          <div class="slot-label">Scripting</div>
-        </div>
-
-        <div class="slot">
-          <img src="{{ url_for('static', filename='badges/badge_backups.png') }}">
-          <div class="slot-label">Backups</div>
-        </div>
-
-        <div class="slot">
-          <div class="slot-label">Next Badge</div>
-        </div>
-      </div>
+    
     </div>
 
   </div>
 </body>
+<footer>
+{% if demosDone %}
+    <script src="{{ url_for('static', filename='badges.js') }}"></script>
+{% endif %}
+</footer>
 </html>
