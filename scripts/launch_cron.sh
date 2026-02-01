@@ -5,25 +5,14 @@ YELLOW="\033[0;33m"
 RED="\033[0;31m"
 NC="\033[0m" # No Color
 
-fail() {
-  echo -e "${RED}[ERROR  ] $NC$1"
-  exit 1
-}
+fail() {  echo -e "${RED}[ERROR  ] $NC$1"; exit 1 }
 
-success() {
-    echo -e "${GREEN}[SUCCESS] $NC$1"
-}
+success() { echo -e "${GREEN}[SUCCESS] $NC$1" }
 
-pending() {
-  echo -e "${YELLOW}[TRYING ] $NC$1"
-}
-
-if [ -z "${BASH_VERSION:-}" ]; then
-    fail "Must be runned as bash"
-fi
+pending() { echo -e "${YELLOW}[TRYING ] $NC$1" }
 
 CURRENT_USER=$(whoami)
-JOB_KEYWORD="prod/launcher.py"
+JOB_KEYWORD="python\|launcher.py"
 
 pending "Searching for old cron jobs containing: ${JOB_KEYWORD}"
 
@@ -47,7 +36,6 @@ FILES=(
     "$SCRIPTPATH/../config/servers.json"
     "$SCRIPTPATH/../config/tasks.json"
     "$SCRIPTPATH/../config/demos.json"
-    "$SCRIPTPATH/../config/groups.json"
 )
 
 pending "Checking for required configuration JSON files..."
@@ -60,7 +48,7 @@ done
 
 success "All configuration files found."
 pending "Adding new cron job for launcher.py..."
-LAUNCHER_CMD="*/5 * * * * python3 $SCRIPTPATH/prod/launcher.py ${FILES[0]} ${FILES[1]} ${FILES[2]} ${FILES[3]}"
+LAUNCHER_CMD="*/5 * * * * python3 $SCRIPTPATH/launcher.py ${FILES[0]} ${FILES[1]} ${FILES[2]}"
 CURRENT_CRON=$(crontab -l 2>/dev/null)
 
 if echo "$CURRENT_CRON" | grep -Fq "$LAUNCHER_CMD"; then
