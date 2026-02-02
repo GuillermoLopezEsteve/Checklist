@@ -7,8 +7,7 @@ warn()    { echo -e "${YELLOW}[WARN   ] ${NC}$1"; }
 pending() { echo -e "${CYAN}[PENDING] ${NC}$1"; }
 [[ -n "${BASH_VERSION:-}" ]] || fail "Must be runned as bash"
 
-SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-LOCAL_CONF="$SCRIPTPATH/config/proxy.conf"
+LOCAL_CONF="/etc/checklist/config/proxy.conf"
 NGINX_LINK="/etc/nginx/sites-enabled/reverse-proxy"
 
 pending "Checking if Nginx is installed..."
@@ -24,20 +23,19 @@ success "Local config found."
 
 pending "Applying Nginx configuration..."
 
-sudo cp "$LOCAL_CONF" /etc/nginx/sites-available/reverse-proxy || fail "Failed to copy config to sites-available."
-sudo ln -sf /etc/nginx/sites-available/reverse-proxy "$NGINX_LINK" || fail "Failed to create symbolic link."
+cp "$LOCAL_CONF" /etc/nginx/sites-available/reverse-proxy || fail "Failed to copy config to sites-available."
+ln -sf /etc/nginx/sites-available/reverse-proxy "$NGINX_LINK" || fail "Failed to create symbolic link."
 
 if [ -L /etc/nginx/sites-enabled/default ]; then
     pending "Disabling default Nginx site..."
-    sudo rm /etc/nginx/sites-enabled/default \
-         && success "Default site disabled." || fail "Could not remove default link."
+    rm /etc/nginx/sites-enabled/default && success "Default site disabled." || fail "Could not remove default link."
 fi
 
 pending "Testing Nginx configuration syntax..."
-if sudo nginx -t >/dev/null 2>&1; then
+if nginx -t >/dev/null 2>&1; then
     success "Nginx configuration syntax is valid."
     pending "Restarting Nginx..."
-    if sudo systemctl restart nginx; then
+    if systemctl restart nginx; then
         success "Nginx restarted successfully."
     else
         fail "Nginx syntax was okay, but the service failed to restart."

@@ -10,7 +10,7 @@ pending() { echo -e "${CYAN}[PENDING] ${NC}$1"; }
 
 NGINX_CONF="/etc/nginx/sites-enabled/reverse-proxy"
 INTERNAL_PORT=8443
-CURRENT_USER=$(whoami)
+CURRENT_USER="checklist"
 
 pending "Deleting old nginx conf..."
 
