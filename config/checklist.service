@@ -1,0 +1,14 @@
+[Unit]
+Description=Checklist Web Service
+After=network.target
+
+[Service]
+User=%USERNAME%
+ExecStart=%DEPLOY%
+WorkingDirectory=/etc/checklist
+Restart=no
+ExecStop=%CLEAN%
+ExecReload=%CLEAN% && %DEPLOY%
+
+[Install]
+WantedBy=multi-user.target

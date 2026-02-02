@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+GREEN="\033[0;32m";YELLOW="\033[0;33m";RED="\033[0;31m";CYAN="\033[0;36m";NC="\033[0m"
+fail()    { echo -e "${RED}[ERROR  ] ${NC}$1"; exit 1; }
+success() { echo -e "${GREEN}[SUCCESS] ${NC}$1"; }
+warn()    { echo -e "${YELLOW}[WARN   ] ${NC}$1"; }
+pending() { echo -e "${CYAN}[PENDING] ${NC}$1"; }
+[[ -n "${BASH_VERSION:-}" ]] || fail "Must be runned as bash"
+
+
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TARGET_USER=""
+DEPLOY_ARGS=()
+TEMPLATE="${BASE_DIR}/config/checklist.service"
+DEPLOY="${BASE_DIR}/deploy.sh"
+CLEAN="${BASE_DIR}/clean.sh"
+
+pending "Checking needed files"
+[[ -f "$DEPLOY" ]] && success "File exists: $DEPLOY" || fail "File not found: $DEPLOY"
+[[ -f "$CLEAN" ]] && success "File exists: $CLEAN" || fail "File not found: $CLEAN"
+[[ -f "$TEMPLATE" ]] && success "File exists: $TEMPLATE" || fail "File not found: $TEMPLATE"
+
+warn "This service will run as root"
+$TARGET_USER="root"
+
+pending "Service will be runned as $TARGET_USER"
+
+id "$TARGET_USER" &>/dev/null && success "User '$TARGET_USER' exists" || fail "User '$TARGET_USER' does not exist"
+
+pending "Checking that $TARGET_USER has access to all the files, might take seconds...."
+while IFS= read -r -d '' p; do
+  sudo -u "$TARGET_USER" test -r "$p" || sudo -u "$TARGET_USER" test -x "$p" \
+    || fail "User '$TARGET_USER' cannot access: $p"
+done < <(find "$BASE_DIR" -print0)
+
+success "User '$TARGET_USER' has access to all files in $BASE_DIR"
+
+if [ -f "${BASE_DIR}/requirements.sh" ]; then
+    pending "Making requirements executables" \
+        && success "Requirements is now executable" || fail "Failed to make requirements executable"
+    chmod +x ${BASE_DIR}/requirements.sh
+    pending "Installing dependencies..."
+    bash "${BASE_DIR}/requirements.sh" "$@" \
+        && success "Dependencies installed successfully" || fail "Dependency installation failed"
+else
+    fail "No requirements provided"
+fi
+
+
+
+pending "Making tmp copy and replacing placeholders for script variables"
+grep -q '%USERNAME%' "$TEMPLATE" || fail "%USERNAME% missing in template"
+grep -q '%DEPLOY%'   "$TEMPLATE" || fail "%DEPLOY% missing in template"
+grep -q '%CLEAN%'    "$TEMPLATE" || fail "%CLEAN% missing in template"
+
+tmp="$(mktemp)" || fail "mktemp failed"
+
+sed \
+  -e "s|%USERNAME%|$TARGET_USER|g" \
+  -e "s|%DEPLOY%|$DEPLOY|g" \
+  -e "s|%CLEAN%|$CLEAN|g" \
+  "$TEMPLATE" > "$tmp" || fail "Template render failed"
+
+success "Created tmp copy"
+
+SERVICE_NAME="checklist"
+SERVICE="/etc/systemd/system/${SERVICE_NAME}.service"
+
+pending "Reinstalling ${SERVICE_NAME} systemd service"
+
+SUDO=""; [[ $EUID -ne 0 ]] && SUDO="sudo"
+
+# stop/disable only if it exists
+pending "Checking for old ${SERVICE_NAME}.service"
+$SUDO systemctl list-unit-files | grep -q "^${SERVICE_NAME}\.service" \
+  && $SUDO systemctl stop "$SERVICE_NAME" && $SUDO systemctl disable "$SERVICE_NAME" \
+  && rm -f "$SERVICE" && systemctl daemon-reload \
+  && warn "Old service detected and removed" \
+  || success "No old service removed"
+
+
+pending "Making scripts executable"
+chmod +x "$DEPLOY" "$CLEAN" && success "Scripts made executable" || fail "chmod failed"
+
+pending "Installing systemd service"
+$SUDO install -m 0644 "$tmp" "$SERVICE" && success "Service installed" || fail "install failed"
+$SUDO systemctl daemon-reload && success "Daemon reloaded" || fail "daemon-reload failed"
+$SUDO systemctl enable checklist && success "Service enabled" || fail "enable failed"
+$SUDO systemctl restart checklist && success "Service started" || fail "start failed"
