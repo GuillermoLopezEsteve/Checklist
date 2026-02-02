@@ -1,59 +1,28 @@
 #!/usr/bin/env bash
 
-GREEN="\033[0;32m"
-YELLOW="\033[0;33m"
-RED="\033[0;31m"
-NC="\033[0m" # No Color
+GREEN="\033[0;32m";YELLOW="\033[0;33m";RED="\033[0;31m";CYAN="\033[0;36m";NC="\033[0m"
+fail()    { echo -e "${RED}[ERROR  ] ${NC}$1"; exit 1; }
+success() { echo -e "${GREEN}[SUCCESS] ${NC}$1"; }
+warn()    { echo -e "${YELLOW}[WARN   ] ${NC}$1"; }
+pending() { echo -e "${CYAN}[PENDING] ${NC}$1"; }
+[[ -n "${BASH_VERSION:-}" ]] || fail "Must be runned as bash"
 
-fail() {
-  echo -e "${RED}[ERROR  ] $NC$1"
-  exit 1
-}
-
-success() {
-    echo -e "${GREEN}[SUCCESS] $NC$1"
-}
-
-pending() {
-  echo -e "${YELLOW}[TRYING ] $NC$1"
-}
-
-
-if [ -z "${BASH_VERSION:-}" ]; then
-    fail "Must be runned as bash"
-fi
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # --- Cleanup Function (Triggered by Ctrl+C) ---
 cleanup() {
     echo ""
     printf '\033[33mCtrl + C Detected Cleaning Enviroment user\033[0m\n'
 
-
+    pending "Executing clean enviroment script"
+    bash ${BASE_DIR}/clean.sh \
+        && success "Enviroment clean" \
+        || fail "Could NOT Complete Enviroment clean, check if something might be running"
     echo "Cleanup complete. Exiting."
     exit 0
 }
 trap cleanup SIGINT
 
-
-pending "Setting timezone to Europe/Madrid, needed for correct certificate..."
-sudo timedatectl set-timezone "Europe/Madrid" && success "Timezone updated" || fail "Failed to set timezone"
-
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-pending "Making deploy and clean executables..."
-chmod +x "${BASE_DIR}/deploy.sh" && chmod +x "${BASE_DIR}/clean.sh"  && chmod +x "${BASE_DIR}/proxy.sh" \
-  && success "Deploy and clean and proxy scripts are now executable" || fail "Failed to make deploy or clean or proxy scripts executable"
-
-if [ -f "${BASE_DIR}/requirements.sh" ]; then
-    pending "Making requirements executables" \
-        && success "Requirements is now executable" || fail "Failed to make requirements executable"
-    chmod +x ${BASE_DIR}/requirements.sh
-    pending "Installing dependencies..."
-    bash "${BASE_DIR}/requirements.sh" "$@" \
-        && success "Dependencies installed successfully" || fail "Dependency installation failed"
-else
-    success "No requirements provided"
-fi
 LOG_DIR="$BASE_DIR/logs"
 
 pending "Creating logs directory if it doesnt exist"
@@ -70,6 +39,22 @@ if [ ! -d "venv" ]; then
   python3 -m venv venv \
     && success "Virtual environment created" || fail "Failed to create virtual environment"
 fi
+
+
+FILES=(
+    "${BASE_DIR}/.secret/access_key_dev"
+    "${BASE_DIR}/.secret/access_key_dev.pub"
+    "${BASE_DIR}/.secret/access_key_prod"
+    "${BASE_DIR}/.secret/access_key_prod.pub"
+)
+
+pending "Checking .secret/ keys for required cron jobs init"
+
+for FILE in "${FILES[@]}"; do
+    if [ ! -f "$FILE" ]; then
+        fail "Required file missing: $FILE"
+    fi
+done
 
 pending "Launching cron jobs..."
 bash "${BASE_DIR}/scripts/launch_cron.sh" \
@@ -121,3 +106,4 @@ fi
 
 success "Gunicorn PID in $PID_FILE"
 success "Gunicorn LOGS in $LOG_FILE"
+

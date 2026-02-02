@@ -1,15 +1,11 @@
 #!/usr/bin/env bash
 
-GREEN="\033[0;32m"
-YELLOW="\033[0;33m"
-RED="\033[0;31m"
-NC="\033[0m" # No Color
-
-fail() {  echo -e "${RED}[ERROR  ] $NC$1"; exit 1 }
-
-success() { echo -e "${GREEN}[SUCCESS] $NC$1" }
-
-pending() { echo -e "${YELLOW}[TRYING ] $NC$1" }
+GREEN="\033[0;32m";YELLOW="\033[0;33m";RED="\033[0;31m";CYAN="\033[0;36m";NC="\033[0m"
+fail()    { echo -e "${RED}[ERROR  ] ${NC}$1"; exit 1; }
+success() { echo -e "${GREEN}[SUCCESS] ${NC}$1"; }
+warn()    { echo -e "${YELLOW}[WARN   ] ${NC}$1"; }
+pending() { echo -e "${CYAN}[PENDING] ${NC}$1"; }
+[[ -n "${BASH_VERSION:-}" ]] || fail "Must be runned as bash"
 
 CURRENT_USER=$(whoami)
 JOB_KEYWORD="python\|launcher.py"
@@ -61,3 +57,4 @@ else
         fail "Failed to update crontab."
     fi
 fi
+
