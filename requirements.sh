@@ -18,18 +18,20 @@ PIP_PACKAGES=(
   pandas flask pyOpenSSL gunicorn
 )
 
-SERVICE_USER="checklist"
-SERVICE_GROUP="checklist"
+SERVICE_NAME="checklist"
+SERVICE="/etc/systemd/system/${SERVICE_NAME}.service"
+RUNTIME_DIR="/etc/${SERVICE_NAME}"
+SERVICE_USER="$SERVICE_NAME"
+SERVICE_GROUP="$SERVICE_NAME"
 
-PREV_OWNER="$(stat -c '%U' "$BASE_DIR")"
+warn "$RUNTIME_DIR"
 export DEBIAN_FRONTEND=noninteractive
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 pending "Updating package lists..."
 apt-get update -qq && success "Lists updated" || fail "Apt update failed"
 
 pending "Installing system dependencies..."
-if sudo apt-get install -y -qq "${APT_PACKAGES[@]}" > /dev/null 2>&1; then
+if apt-get install -y -qq "${APT_PACKAGES[@]}" > /dev/null 2>&1; then
     success "System packages installed: ${APT_PACKAGES[*]}"
 else
     fail "Failed to install system packages."
@@ -38,32 +40,23 @@ fi
 
 pending "Installing Python libraries for $SERVICE_USER"
 
-pending "Preparing permissions for $SERVICE_USER in $BASE_DIR"
+pending "Preparing permissions for $SERVICE_USER in $RUNTIME_DIR"
 
 getent group "$SERVICE_GROUP" >/dev/null || groupadd --system "$SERVICE_GROUP" || fail "groupadd failed"
 id -u "$SERVICE_USER" >/dev/null 2>&1 || useradd --system --no-create-home --shell /usr/sbin/nologin -g "$SERVICE_GROUP" "$SERVICE_USER" || fail "useradd failed"
 
-chown -R root:"$SERVICE_GROUP" "$BASE_DIR" || fail "chown base_dir failed"
-find "$BASE_DIR" -type d -exec chmod 2775 {} + || fail "chmod dirs failed"
-find "$BASE_DIR" -type f -exec chmod 664 {} + || fail "chmod files failed"
 
+[[ -n "$RUNTIME_DIR" && -d "$RUNTIME_DIR" ]] || fail "RUNTIME_DIR not set or missing: '$RUNTIME_DIR'"
+
+chown -R root:"$SERVICE_GROUP" "$RUNTIME_DIR" || fail "chown $RUNTIME_DIR failed"
+find "$RUNTIME_DIR" -type d -exec chmod 2775 {} + || fail "chmod dirs failed"
+find "$RUNTIME_DIR" -type f -exec chmod 664 {} + || fail "chmod files failed"
 success "Permissions OK (root:$SERVICE_GROUP, group-writable)"
 
-read -rp "Add previous owner '$PREV_OWNER' to group '$SERVICE_GROUP'? [Y/n]: " ans
-if [[ ! "$ans" =~ ^[Nn]$ ]]; then
-  pending "Adding $PREV_OWNER to $SERVICE_GROUP"
-  id -nG "$PREV_OWNER" | grep -qw "$SERVICE_GROUP" \
-    || usermod -aG "$SERVICE_GROUP" "$PREV_OWNER" \
-    && success "$PREV_OWNER added to $SERVICE_GROUP" || fail "Failed to add $PREV_OWNER to $SERVICE_GROUP"
-else
-  warn "Skipping group membership change"
-fi
-
-
-VENV_DIR="$BASE_DIR/venv"
+VENV_DIR="$RUNTIME_DIR/venv"
 pending "Deleting venv"
-[[ -n "$VENV_DIR" && "$VENV_DIR" == "$BASE_DIR"/venv ]] || fail "Refusing to delete unsafe path: $VENV_DIR"
-[[ -d "$VENV_DIR" ]] rm -rf "$VENV_DIR" && success "Venv removed" || fail "Failed to remove venv"
+[[ -n "$VENV_DIR" && "$VENV_DIR" == "$RUNTIME_DIR"/venv ]] || fail "Refusing to delete unsafe path: $VENV_DIR"
+[[ -d "$VENV_DIR" ]] && (rm -rf "$VENV_DIR" && success "Venv removed" || fail "Failed to remove venv") || warn "No venv to remove"
 
 [[ -d "$VENV_DIR" ]] \
   || ( pending "Creating venv" \
