@@ -11,7 +11,7 @@ pending() { echo -e "${CYAN}[PENDING] ${NC}$1"; }
 
 # --- Configuration / Package Lists ---
 APT_PACKAGES=(
-  tree net-tools python3 python3-pip python3-venv curl xca x11-common lsof
+  tree net-tools python3 python3-pip python3-venv curl xca x11-common lsof nginx
 )
 
 PIP_PACKAGES=(
@@ -64,6 +64,6 @@ pending "Deleting venv"
        && success "Venv created" || fail "venv failed" )
 
 pending "Installing Python libraries into venv"
-sudo -u "$SERVICE_USER" "$VENV_DIR/bin/python" -m pip install -U --quiet pip setuptools wheel \
-  && sudo -u "$SERVICE_USER" "$VENV_DIR/bin/python" -m pip install -U --quiet "${PIP_PACKAGES[@]}" \
+sudo -u "$SERVICE_USER" "$VENV_DIR/bin/python" -m pip install --no-cache-dir -U --quiet pip setuptools wheel \
+  && sudo -u "$SERVICE_USER" "$VENV_DIR/bin/python" -m pip install  --no-cache-dir -U --quiet "${PIP_PACKAGES[@]}" \
   && success "Python libraries installed in venv" || fail "pip install failed"

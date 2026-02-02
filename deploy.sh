@@ -10,10 +10,10 @@ pending() { echo -e "${CYAN}[PENDING] ${NC}$1"; }
 BASE_DIR="/etc/checklist/"
 
 FILES=(
-    "${BASE_DIR}/.secret/access_key_dev"
-    "${BASE_DIR}/.secret/access_key_dev.pub"
-    "${BASE_DIR}/.secret/access_key_prod"
-    "${BASE_DIR}/.secret/access_key_prod.pub"
+    "${BASE_DIR}/.secret/ACCESS_KEY_DEV"
+    "${BASE_DIR}/.secret/ACCESS_KEY_DEV.pub"
+    "${BASE_DIR}/.secret/ACCESS_KEY_PROD"
+    "${BASE_DIR}/.secret/ACCESS_KEY_PROD.pub"
 )
 
 pending "Checking .secret/ keys for required cron jobs init"
