@@ -61,8 +61,16 @@ fi
 
 
 VENV_DIR="$BASE_DIR/venv"
+pending "Deleting venv"
+[[ -n "$VENV_DIR" && "$VENV_DIR" == "$BASE_DIR"/venv ]] || fail "Refusing to delete unsafe path: $VENV_DIR"
+[[ -d "$VENV_DIR" ]] rm -rf "$VENV_DIR" && success "Venv removed" || fail "Failed to remove venv"
 
 [[ -d "$VENV_DIR" ]] \
   || ( pending "Creating venv" \
        && sudo -u "$SERVICE_USER" python3 -m venv "$VENV_DIR" \
        && success "Venv created" || fail "venv failed" )
+
+pending "Installing Python libraries into venv"
+sudo -u "$SERVICE_USER" "$VENV_DIR/bin/python" -m pip install -U --quiet pip setuptools wheel \
+  && sudo -u "$SERVICE_USER" "$VENV_DIR/bin/python" -m pip install -U --quiet "${PIP_PACKAGES[@]}" \
+  && success "Python libraries installed in venv" || fail "pip install failed"
