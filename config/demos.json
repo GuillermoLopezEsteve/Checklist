@@ -1,4 +1,4 @@
 {
     "file_url" : "https://docs.google.com/spreadsheets/d/1cma0J7eTugMeRtG8VCHbYiHb5RlJ6TLK_SPYUoxfDFA/edit#gid=0",
-    "data_endpoint": "data/json/excel.json"
+    "data_endpoint": "/etc/checklist/data/json/excel.json"
 }

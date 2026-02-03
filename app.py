@@ -2,8 +2,7 @@ from flask import Flask, request, Response, render_template, jsonify, send_from_
 from datetime import datetime, timedelta
 import scripts.myData as myData
 import scripts.badges as badges
-import json
-import os
+import json, sys, os
 
 
 N_GROUPS = 12
@@ -43,5 +42,6 @@ def medallas(number):
 
 
 if __name__ == '__main__':
-
+    N_GROUPS = 12
     app.run()
+

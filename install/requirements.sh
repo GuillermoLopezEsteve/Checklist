@@ -24,7 +24,6 @@ RUNTIME_DIR="/etc/${SERVICE_NAME}"
 SERVICE_USER="$SERVICE_NAME"
 SERVICE_GROUP="$SERVICE_NAME"
 
-warn "$RUNTIME_DIR"
 export DEBIAN_FRONTEND=noninteractive
 
 pending "Updating package lists..."

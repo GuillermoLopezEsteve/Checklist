@@ -15,12 +15,14 @@ CURRENT_USER="checklist"
 pending "Deleting old nginx conf..."
 
 if [ -e "$NGINX_CONF" ]; then
-  sudo rm -f "$NGINX_CONF" \
+  rm -f "$NGINX_CONF" \
     && success "Deleted old nginx conf: $NGINX_CONF" \
-    || fail "Failed to delete nginx conf: $NGINX_CONF"
+    || warn "Failed to delete nginx conf: $NGINX_CONF"
 else
   success "No old nginx conf found at: $NGINX_CONF"
 fi
+
+service nginx reload && success "Nginx reload" || warn "Problem on nginx reload"
 
 
 pending "Cleaning up processes for ${CURRENT_USER} on port ${INTERNAL_PORT}..."
@@ -40,4 +42,28 @@ if [ -n "$TARGET_PIDS" ]; then
     done
 else
     success "Port ${INTERNAL_PORT} is already clear."
+fi
+
+
+SERVICE_USER="checklist"
+JOB_MATCH="launcher.py"
+
+pending "Removing cron jobs for ${SERVICE_USER} containing: ${JOB_MATCH}"
+
+CURRENT_CRON="$(crontab -u "$SERVICE_USER" -l 2>/dev/null || true)"
+MATCHING="$(printf '%s\n' "$CURRENT_CRON" | grep -F "$JOB_MATCH" || true)"
+
+if [ -z "$MATCHING" ]; then
+    success "No cron jobs to remove for ${SERVICE_USER}."
+else
+    COUNT="$(printf '%s\n' "$MATCHING" | wc -l | tr -d ' ')"
+    pending "Found ${COUNT} job(s). Deleting..."
+
+    UPDATED_CRON="$(printf '%s\n' "$CURRENT_CRON" | grep -Fv "$JOB_MATCH" || true)"
+
+    if printf '%s\n' "$UPDATED_CRON" | crontab -u "$SERVICE_USER" -; then
+        success "Removed ${COUNT} cron job(s) for ${SERVICE_USER}."
+    else
+        warn "Failed to update crontab for ${SERVICE_USER}."
+    fi
 fi

@@ -30,28 +30,31 @@ pending "Copying $ORIG_DIR to $RUNTIME_DIR"
 cp -r $ORIG_DIR ${RUNTIME_DIR} && success "Copying to runtime directory ${RUNTIME_DIR}" || fail "Copying to runtime directory ${RUNTIME_DIR}"
 
 TEMPLATE="${RUNTIME_DIR}/config/checklist.service"
-DEPLOY="${RUNTIME_DIR}/deploy.sh"
-CLEAN="${RUNTIME_DIR}/clean.sh"
-REQUIREMENTS="${RUNTIME_DIR}/requirements.sh"
+DEPLOY="${RUNTIME_DIR}/install/deploy.sh"
+CLEAN="${RUNTIME_DIR}/install/clean.sh"
+REQUIREMENTS="${RUNTIME_DIR}/install/requirements.sh"
 LOG_DIR="${RUNTIME_DIR}/logs"
-PROXY="${RUNTIME_DIR}/proxy.sh"
+PROXY="${RUNTIME_DIR}/install/proxy.sh"
+CRON="${RUNTIME_DIR}/install/proxy.sh"
+TIMEZONE="${RUNTIME_DIR}/install/timezone.sh"
 
 pending "Checking needed files"
+
 [[ -f "$DEPLOY" ]]       && success "File exists: $DEPLOY" || fail "File not found: $DEPLOY"
 [[ -f "$CLEAN" ]]        && success "File exists: $CLEAN" || fail "File not found: $CLEAN"
 [[ -f "$TEMPLATE" ]]     && success "File exists: $TEMPLATE" || fail "File not found: $TEMPLATE"
 [[ -f "$REQUIREMENTS" ]] && success "File exists: $REQUIREMENTS" || fail "File not found: $REQUIREMENTS"
-[[ -f "$PROXY" ]] && success "File exists: $PROXY" || fail "File not found: $PROXY"
+[[ -f "$PROXY" ]]        && success "File exists: $PROXY" || fail "File not found: $PROXY"
+[[ -f "$CRON" ]]         && success "File exists: $CRON" || fail "File not found: $CRON"
+[[ -f "$TIMEZONE" ]]     && success "File exists: $TIMEZONE" || fail "File not found: $TIMEZONE"
 
-read -rp "Change system timezone? [y/N]: " ans
-if [[ "$ans" =~ ^[Yy]$ ]]; then
-  read -rp "Enter timezone (e.g. Europe/Madrid): " TZ
-  timedatectl list-timezones | grep -qx "$TZ" || fail "Invalid timezone: $TZ"
-  pending "Setting timezone to $TZ"
-  timedatectl set-timezone "$TZ" && success "Timezone set to $TZ" || fail "Failed to set timezone"
+pending "Trying to set up Timezone"
+if [[ "$1" == "-t" && -n "$TIMEZONE" && -f "$TIMEZONE" ]]; then
+    bash "$TIMEZONE" || fail "Failure in TimeZone"
 else
-  warn "Timezone unchanged"
+    warn "TimeZone not  set up call with -t"
 fi
+success "TIMEZONE setup to: $(date +'%Z')"
 
 
 LOG_DIR="$BASE_DIR/logs"
@@ -76,11 +79,8 @@ warn "User $SERVICE_USER needs acces to files"
 
 id "$SERVICE_USER" &>/dev/null && success "User '$SERVICE_USER' exists" || fail "User '$SERVICE_USER' does not exist"
 
-pending "Checking that $SERVICE_USER has access to all the files, might take seconds...."
-while IFS= read -r -d '' p; do
-  sudo -u "$SERVICE_USER" test -r "$p" || sudo -u "$SERVICE_USER" test -x "$p" \
-    || fail "User '$SERVICE_USER' cannot access: $p"
-done < <(find "$RUNTIME_DIR}" -print0)
+sudo -u checklist -- test -r "$RUNTIME_DIR" && sudo -u checklist -- test -w "$RUNTIME_DIR" \
+    && success "$SERVICE_USER has access to $RUNTIME_DIR" || fail "$SERVICE_USER does not have access to $RUNTIME_DIR"
 
 pending "Launching Proxy..."
 pending "Executing proxy script"
@@ -120,3 +120,20 @@ install -m 0644 "$tmp" "$SERVICE" && success "Service installed" || fail "instal
 systemctl daemon-reload && success "Daemon reloaded" || fail "daemon-reload failed"
 systemctl enable checklist && success "Service enabled" || fail "enable failed"
 systemctl restart checklist && success "Service started" || fail "start failed"
+
+FILES=(
+    "${RUNTIME_DIR}/.secret/ACCESS_KEY_DEV"
+    "${RUNTIME_DIR}/.secret/ACCESS_KEY_DEV.pub"
+    "${RUNTIME_DIR}/.secret/ACCESS_KEY_PROD"
+    "${RUNTIME_DIR}/.secret/ACCESS_KEY_PROD.pub"
+)
+
+pending "Checking .secret/ keys for required cron jobs init"
+
+for FILE in "${FILES[@]}"; do
+    if [ ! -f "$FILE" ]; then
+        fail "Required file missing: $FILE"
+    fi
+done
+
+warn "Cron jobs launcher will be executed in deploy, checkout status"

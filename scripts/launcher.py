@@ -1,23 +1,30 @@
+#!/etc/checklist/venv/bin/python
+
 import sys, json, os
-import myExcel from lib.myExcel
-import myTasks from lib.myTasks
+import src.myExcel as myExcel
+import src.myTasks as myTasks
 
 
-config = {"servers": None, "tasks": None, "demos": None, "dataFolder": None}
-
+def getDemoData(demos_path: str):
+    with open(demos_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data.get("file_url"), data.get("data_endpoint")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 5:
-        print("Usage: python3 launcher.py <servers.json> <tasks.json> <demos.json> <dataFolder>")
+    # Optional: make relative paths consistent under cron
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    os.chdir(BASE_DIR)
+
+    if len(sys.argv) != 4:
+        print("Usage: python3 launcher.py <servers.json> <tasks.json> <demos.json>")
         sys.exit(1)
 
     config = {
         "servers": sys.argv[1],
         "tasks": sys.argv[2],
         "demos": sys.argv[3],
-        "dataFolder": sys.argv[4]
     }
 
-    myExcel.loadDemosFromExcel(config.get("demos"), config.get("dataFolder"))
-    myTasks.loadTasksFromRemote(config.get("tasks"), config.get("servers"), config.get("dataFolder"))
+    sheet_url, demos_data_path = getDemoData(config["demos"])
+    myExcel.loadDemosFromExcel(sheet_url, demos_data_path)
