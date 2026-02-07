@@ -7,10 +7,9 @@ warn()    { echo -e "${YELLOW}[WARN   ] ${NC}$1"; }
 pending() { echo -e "${CYAN}[PENDING] ${NC}$1"; }
 [[ -n "${BASH_VERSION:-}" ]] || fail "Must be runned as bash"
 
-
+ENVIRONMENT="%ENVIRONMENT_PATH%"
+source $ENVIRONMENT || fail "Failure in enviroment"
 NGINX_CONF="/etc/nginx/sites-enabled/reverse-proxy"
-INTERNAL_PORT=8443
-CURRENT_USER="checklist"
 
 pending "Deleting old nginx conf..."
 
@@ -25,7 +24,7 @@ fi
 service nginx reload && success "Nginx reload" || warn "Problem on nginx reload"
 
 
-pending "Cleaning up processes for ${CURRENT_USER} on port ${INTERNAL_PORT}..."
+pending "Cleaning up processes for $SERVICE_USER on port ${INTERNAL_PORT}"
 
 TARGET_PIDS=$(sudo fuser ${INTERNAL_PORT}/tcp 2>/dev/null)
 
@@ -45,7 +44,6 @@ else
 fi
 
 
-SERVICE_USER="checklist"
 JOB_MATCH="launcher.py"
 
 pending "Removing cron jobs for ${SERVICE_USER} containing: ${JOB_MATCH}"

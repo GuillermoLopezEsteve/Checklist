@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 GREEN="\033[0;32m";YELLOW="\033[0;33m";RED="\033[0;31m";CYAN="\033[0;36m";NC="\033[0m"
 fail()    { echo -e "${RED}[ERROR  ] ${NC}$1"; exit 1; }
@@ -7,7 +8,9 @@ warn()    { echo -e "${YELLOW}[WARN   ] ${NC}$1"; }
 pending() { echo -e "${CYAN}[PENDING] ${NC}$1"; }
 [[ -n "${BASH_VERSION:-}" ]] || fail "Must be runned as bash"
 
-SERVICE_USER="checklist"
+ENVIRONMENT="%ENVIRONMENT_PATH%"
+source $ENVIRONMENT || fail "Failure in enviroment"
+
 JOB_REGEX='(python3?|/usr/bin/python3).*launcher\.py|launcher\.py'
 
 pending "Searching for old cron jobs for user ${SERVICE_USER} matching regex: ${JOB_REGEX}"
@@ -31,15 +34,14 @@ else
 fi
 
 
-SCRIPTPATH="/etc/checklist"
-
 FILES=(
-    "$SCRIPTPATH/config/servers.json"
-    "$SCRIPTPATH/config/tasks.json"
-    "$SCRIPTPATH/config/demos.json"
-    "$SCRIPTPATH/scripts/launcher.py"
-    "$SCRIPTPATH/scripts/src/myExcel.py"
-    "$SCRIPTPATH/scripts/src/myTasks.py"
+    "$RUNTIME_DIR/scripts/launcher.py"
+    "$RUNTIME_DIR/config/servers.json"
+    "$RUNTIME_DIR/config/tasks.json"
+    "$RUNTIME_DIR/config/demos.json"
+    "$RUNTIME_DIR/scripts/launcher.py"
+    "$RUNTIME_DIR/scripts/src/myExcel.py"
+    "$RUNTIME_DIR/scripts/src/myTasks.py"
 )
 
 pending "Checking for required configuration JSON files..."
@@ -53,13 +55,18 @@ success "All configuration files found."
 
 pending "Adding new cron job for launcher.py..."
 
-LAUNCHER="$SCRIPTPATH/scripts/launcher.py"
-DATA_CONFIG="$SCRIPTPATH/config"
-chmod +x "$LAUNCHER"
+LAUNCHER="$RUNTIME_DIR/scripts/launcher.py"
+DATA_CONFIG="$RUNTIME_DIR/config"
+chmod +x "$LAUNCHER" || fail "Failure to make $LAUNCHER executable"
 
-LAUNCHER_CMD="* * * * * /etc/checklist/venv/bin/python /etc/checklist/scripts/launcher.py ${DATA_CONFIG}/servers.json ${DATA_CONFIG}/tasks.json ${DATA_CONFIG}/demos.json >> ${SCRIPTPATH}/logs/launcher.log 2>&1"
+SERV_CONFIG="${DATA_CONFIG}/servers.json"
+TASK_CONFIG="${DATA_CONFIG}/tasks.json"
+DEMO_CONFIG="${DATA_CONFIG}/demos.json"
+CRON_LOG="${RUNTIME_DIR}/logs/launcher.log"
 
-CURRENT_CRON=$(crontab -u "$SERVICE_USER" -l 2>/dev/null)
+LAUNCHER_CMD="* * * * * ${RUNTIME_DIR}/venv/bin/python ${LAUNCHER} ${SERV_CONFIG} ${TASK_CONFIG} ${DEMO_CONFIG} >> ${CRON_LOG} 2>&1"
+
+CURRENT_CRON="$(crontab -u "$SERVICE_USER" -l 2>/dev/null || true)"
 
 if echo "$CURRENT_CRON" | grep -Fq "$LAUNCHER_CMD"; then
     success "Cron job already exists for $SERVICE_USER. No changes made."
@@ -70,3 +77,5 @@ else
         fail "Failed to update crontab for $SERVICE_USER."
     fi
 fi
+
+success "LAUNCHING CRON JOB CORRECT"

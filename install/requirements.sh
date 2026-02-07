@@ -9,6 +9,13 @@ pending() { echo -e "${CYAN}[PENDING] ${NC}$1"; }
 [[ -n "${BASH_VERSION:-}" ]] || fail "Must be runned as bash"
 [[ $EUID -eq 0 ]] || fail "This script must be run as sudo"
 
+ENVIROMENT=$1
+if [[ -z "$ENVIROMENT" ]]; then
+  fail "No config file passed"
+fi
+source $ENVIROMENT || fail "Failure in enviroment"
+
+
 # --- Configuration / Package Lists ---
 APT_PACKAGES=(
   tree net-tools python3 python3-pip python3-venv curl xca x11-common lsof nginx
@@ -17,12 +24,6 @@ APT_PACKAGES=(
 PIP_PACKAGES=(
   pandas flask pyOpenSSL gunicorn
 )
-
-SERVICE_NAME="checklist"
-SERVICE="/etc/systemd/system/${SERVICE_NAME}.service"
-RUNTIME_DIR="/etc/${SERVICE_NAME}"
-SERVICE_USER="$SERVICE_NAME"
-SERVICE_GROUP="$SERVICE_NAME"
 
 export DEBIAN_FRONTEND=noninteractive
 

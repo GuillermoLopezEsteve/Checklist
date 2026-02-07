@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 GREEN="\033[0;32m";YELLOW="\033[0;33m";RED="\033[0;31m";CYAN="\033[0;36m";NC="\033[0m"
 fail()    { echo -e "${RED}[ERROR  ] ${NC}$1"; exit 1; }
@@ -8,10 +9,15 @@ pending() { echo -e "${CYAN}[PENDING] ${NC}$1"; }
 [[ -n "${BASH_VERSION:-}" ]] || fail "Must be runned as bash"
 [[ $EUID -eq 0 ]] || fail "This script must be run as sudo"
 
+
+ENVIRONMENT=$1
+if [[ -z "$ENVIRONMENT" ]]; then
+  fail "No config file passed"
+fi
+source $ENVIRONMENT || fail "Failure in enviroment"
+
 NGINX_LINK="/etc/nginx/sites-enabled/reverse-proxy"
 
-SERVICE_NAME="checklist"
-RUNTIME_DIR="/etc/${SERVICE_NAME}"
 LOCAL_CONF="${RUNTIME_DIR}/config/proxy.conf"
 SECRET_DIR="${RUNTIME_DIR}/.secret"
 

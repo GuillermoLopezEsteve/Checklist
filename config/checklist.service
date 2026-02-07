@@ -4,11 +4,11 @@ After=network.target
 
 [Service]
 User=%USERNAME%
-ExecStart=%DEPLOY%
-WorkingDirectory=/etc/checklist
+ExecStart=%DEPLOY% %ENVIRONMENT_PATH%
+WorkingDirectory=%RUNTIME_DIR%
 Restart=no
-ExecStop=%CLEAN%
-ExecReload=%CLEAN% && %DEPLOY%
+ExecStop=%CLEAN% %ENVIRONMENT_PATH%
+ExecReload=%CLEAN% %ENVIRONMENT_PATH% && %DEPLOY% %ENVIRONMENT_PATH%
 
 [Install]
 WantedBy=multi-user.target
