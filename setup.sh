@@ -179,8 +179,8 @@ chmod +x $DEPLOY $CLEAN && success "Scripts made executable" || fail "chmod fail
 pending "Installing systemd service"
 install -m 0644 $TEMPLATE $SERVICE && success "Service installed" || fail "install failed"
 systemctl daemon-reload && success "Daemon reloaded" || fail "daemon-reload failed"
-systemctl enable checklist && success "Service enabled" || fail "enable failed"
-systemctl restart checklist && success "Service started" || fail "start failed"
+systemctl enable $SERVICE_NAME && success "Service enabled" || fail "enable failed"
+systemctl restart $SERVICE_NAME && success "Service started" || fail "start failed"
 
 warn "Cron jobs launcher will be executed in deploy, checkout status in $LOG_DIR or service $SERVICE_NAME status"
 

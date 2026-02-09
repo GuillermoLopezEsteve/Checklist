@@ -10,6 +10,35 @@ N_GROUPS = 12
 
 app = Flask(__name__)
 
+@app.route("/requests", methods=["POST"])
+def receive_request():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    group_id = data.get("Group_ID")
+    tasks = data.get("data")
+
+    if group_id is None:
+        return jsonify({"error": "Group_ID is required"}), 400
+
+    try:
+        group_id = int(group_id)
+    except (ValueError, TypeError):
+        return jsonify({"error": "Group_ID must be a number"}), 400
+    if tasks is None:
+        return jsonify({"error": "task is required"}), 400
+
+    data_path = f"data/dataf{group_id:02d}.json"
+
+    try:
+        with open(data_path, "w", encoding="utf-8") as f:
+            json.dump(tasks, f, indent=2)
+    except OSError as e:
+        return jsonify({"error": "Failed to write task", "details": str(e)}), 500
+    print("[SUCCESS] Recieved data from Group" + group_id)
+    return jsonify({ "status": "success", "Group_ID": group_id }), 200
 
 @app.route('/')
 def home():
