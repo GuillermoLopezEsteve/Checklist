@@ -1,5 +1,7 @@
-from flask import Flask, request, Response, render_template, jsonify, send_from_directory
+from flask import Flask, request, Response, render_template, send_from_directory
 from datetime import datetime, timedelta
+from flask import Blueprint, send_file, current_app, jsonify
+from pathlib import Path
 import scripts.myData as myData
 import scripts.badges as badges
 import json, sys, os
@@ -9,6 +11,8 @@ N_GROUPS = 12
 
 
 app = Flask(__name__)
+tasks_bp = Blueprint("tasks", __name__, url_prefix="/api")
+
 
 @app.route("/requests", methods=["POST"])
 def receive_request():
@@ -39,6 +43,15 @@ def receive_request():
         return jsonify({"error": "Failed to write task", "details": str(e)}), 500
     print("[SUCCESS] Recieved data from Group" + group_id)
     return jsonify({ "status": "success", "Group_ID": group_id }), 200
+
+
+
+
+@tasks_bp.get("/tasks-data")
+def tasksRequest(number):
+    json_path = Path(current_app.root_path).parent / "config" / "tasks.json"
+    return send_file(json_path, mimetype="application/json")
+
 
 @app.route('/')
 def home():
