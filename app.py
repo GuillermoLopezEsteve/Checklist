@@ -12,7 +12,7 @@ N_GROUPS = 12
 
 app = Flask(__name__)
 tasks_bp = Blueprint("tasks", __name__, url_prefix="/api")
-
+app.register_blueprint(tasks_bp)
 
 @app.route("/requests", methods=["POST"])
 def receive_request():
@@ -34,8 +34,7 @@ def receive_request():
     if tasks is None:
         return jsonify({"error": "task is required"}), 400
 
-    data_path = f"data/dataf{group_id:02d}.json"
-
+    data_path = Path(current_app.root_path) / "data" / f"dataf{group_id:02d}.json"
     try:
         with open(data_path, "w", encoding="utf-8") as f:
             json.dump(tasks, f, indent=2)
@@ -47,11 +46,13 @@ def receive_request():
 
 
 
-@tasks_bp.get("/tasks-data")
+@tasks_bp.get("/tasks-data", strict_slashes=False)
 def tasksRequest():
+    print(f"[INFO] /api/tasks-data requested at {datetime.now()}")
     json_path = Path(current_app.root_path).parent / "config" / "tasks.json"
+    if not json_path.exists():
+        return jsonify({"error": "tasks.json not found"}), 404
     return send_file(json_path, mimetype="application/json")
-
 
 @app.route('/')
 def home():
