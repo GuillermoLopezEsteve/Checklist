@@ -48,7 +48,7 @@ def receive_request():
 
 
 @tasks_bp.get("/tasks-data")
-def tasksRequest(number):
+def tasksRequest():
     json_path = Path(current_app.root_path).parent / "config" / "tasks.json"
     return send_file(json_path, mimetype="application/json")
 
