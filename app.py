@@ -12,7 +12,6 @@ N_GROUPS = 12
 
 app = Flask(__name__)
 tasks_bp = Blueprint("tasks", __name__, url_prefix="/api")
-app.register_blueprint(tasks_bp)
 
 @app.route("/requests", methods=["POST"])
 def receive_request():
@@ -83,6 +82,7 @@ def medallas(number):
     integrantes = ["Juan Casas","Sonia Delgado"]
     return render_template('badges.html', number=number, medallas=medallas, integrantes=integrantes, demosDone=demosDone)
 
+app.register_blueprint(tasks_bp)
 
 if __name__ == '__main__':
     N_GROUPS = 12

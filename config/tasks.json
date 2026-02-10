@@ -1,0 +1,312 @@
+{
+    "zones":  [
+            {
+                "title": "Accés Remot als servidors",
+                "id": "REMOTE-ACCESS",
+                "tasks": [
+                    {
+                        "tarea": "Servidor SSH instal·lat",
+                        "status": "Pending",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Servidor SSH active",
+                        "status": "Pending",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Servidor SSH in Port 2222",
+                        "status": "Pending",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Usuari guille existeix",
+                        "status": "Pending",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Usuari guille forma part del grup admins",
+                        "status": "Pending",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Usuari guille disposa d'accés ssh",
+                        "status": "Pending",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Usuari guille té com a mínim una clau pública autoritzada",
+                        "status": "Pending",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Usuari guille té una clau privada restringida a només la xarxa VPN",
+                        "status": "Pending",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "El grup admins només pot entrar per clau",
+                        "status": "Pending",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Usuari Root deshabilitat per SSH",
+                        "status": "Pending",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Usuari guille dispos de un host amb un tunnel al servidor de dev",
+                        "status": "Pending",
+                        "tootip": "El túnnel s'ha d'anomenar dev-tunnel",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Connexió al VPN",
+                        "status": "Pending",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    }
+                ]
+            },
+            {
+                "title": "DNS",
+                "id": "DNS",
+                "tasks": [
+                    {
+                        "tarea": "Servidor DNS instal·lat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "service bind9 status"
+                    },{
+                        "tarea": "Servidor DNS actiu",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "service bind9 status"
+                    },{
+                        "tarea": "Zona del grup creada",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup %GRUP%.local"
+                    },{
+                        "tarea": "Reenviador adients actius",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup smx2-projecte.es && nslookup smx2.local"
+                    },{
+                        "tarea": "Host server creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup server.%GRUP%.local"
+                    },{
+                        "tarea": "Host dev creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup dev.%GRUP%.local"
+                    },{
+                        "tarea": "Host prod creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup prod.%GRUP%.local"
+                    },{
+                        "tarea": "CNAME mail creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup mail.%GRUP%.local"
+                    },{
+                        "tarea": "CNAME ftp creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup ftp.%GRUP%.local"
+                    },{
+                        "tarea": "CNAME www creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup www.%GRUP%.local"
+                    },{
+                        "tarea": "CNAME wordpress creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup wordpress.%GRUP%.local"
+                    },{
+                        "tarea": "CNAME tickets creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup tickets.%GRUP%.local"
+                    },{
+                        "tarea": "CNAME scripting creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup scripting.%GRUP%.local"
+                    },{
+                        "tarea": "Host backups creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup backups.%GRUP%.local"
+                    },{
+                        "tarea": "CNAME bck creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup bck.%GRUP%.local"
+                    },{
+                        "tarea": "Registre NS creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup -type=ns %GRUP%.local"
+                    },{
+                        "tarea": "Registre MX creat",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "nslookup -type=mx %GRUP%.local"
+                    },{
+                        "tarea": "Registre txt amb la informació SPF",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "nslookup -type=mx %GRUP%.local | grep spf",
+                        "command": "ls"
+                    }
+                ]
+            },
+            {
+                "title": "Infraestructura WEB",
+                "id": "WEB",
+                "tasks": [
+                    {
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Check Front Desk Lights",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    }
+                ]
+            },
+            {
+                "title": "Servidor de correu",
+                "id": "MAIL",
+                "tasks": [
+                    {
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Check Front Desk Lights",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    }
+                ]
+            },
+            {
+                "title": "Wordpress",
+                "id": "WORDPRESS",
+                "tasks": [
+                    {
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Check Front Desk Lights",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    }
+                ]
+            },
+            {
+                "title": "Cópies de seguretat",
+                "id": "BACKUP",
+                "tasks": [
+                    {
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Check Front Desk Lights",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    }
+                ]
+            },
+            {
+                "title": "Eines de Monorització",
+                "id": "Scripting",
+                "tasks": [
+                    {
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Check Front Desk Lights",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    }
+                ]
+            },
+            {
+                "title": "Servidors de transfaréncia de Fitxers",
+                "id": "FTP",
+                "tasks": [
+                    {
+                        "tarea": "Inspect Hydraulic Pressure",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    },{
+                        "tarea": "Check Front Desk Lights",
+                        "status": "OK",
+                        "tootip": "tooltip",
+                        "extrafield": "None",
+                        "command": "ls"
+                    }
+                ]
+            }
+        ]
+}
