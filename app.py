@@ -44,14 +44,18 @@ def receive_request():
 
 
 
-
 @tasks_bp.get("/tasks-data", strict_slashes=False)
 def tasksRequest():
-    print(f"[INFO] /api/tasks-data requested at {datetime.now()}")
-    json_path = Path(current_app.root_path).parent / "config" / "tasks.json"
+    json_path = Path(current_app.root_path) / "config" / "tasks.json"
+
     if not json_path.exists():
-        return jsonify({"error": "tasks.json not found"}), 404
+        return jsonify({
+            "error": "tasks.json not found",
+            "searched_path": str(json_path)
+        }), 404
+
     return send_file(json_path, mimetype="application/json")
+
 
 @app.route('/')
 def home():
