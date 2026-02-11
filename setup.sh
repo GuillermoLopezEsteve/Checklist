@@ -49,6 +49,15 @@ cp -r $ORIG_DIR ${RUNTIME_DIR} && success "Copying to runtime directory ${RUNTIM
 pending "Copying config to $RUNTIME_DIR"
 cp "$ENVIRONMENT" "${RUNTIME_DIR}/config.env" || fail "Failed to copy config to runtime dir"
 
+DATA_TEMPLATE="${RUNTIME_DIR}/config/tasks.json"
+pending "Copying group data files from data template"
+for ((i=1; i<=N_GROUPS; i++)); do
+    printf -v idx "%02d" "$i"
+    cp $DATA_TEMPLATE "${RUNTIME_DIR}/data${idx}.json" \
+    || fail "Couldnt copy data/data${idx}.json"
+done
+
+success "Copying data to personal data group"
 TEMPLATE="${RUNTIME_DIR}/config/checklist.service"
 DEPLOY="${RUNTIME_DIR}/install/deploy.sh"
 CLEAN="${RUNTIME_DIR}/install/clean.sh"
