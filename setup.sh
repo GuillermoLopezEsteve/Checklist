@@ -29,7 +29,7 @@ source "$ENVIRONMENT" || fail "Failure loading environment: $ENVIRONMENT"
 
 pending "Checking correct config.env"
 
-for v in RUNTIME_DIR SERVICE_NAME SERVICE_USER SERVICE_GROUP PROXY_SETUP TIME_SETUP SERVICE; do
+for v in RUNTIME_DIR SERVICE_NAME SERVICE_USER SERVICE_GROUP PROXY_SETUP TIME_SETUP SERVICE N_GROUPS; do
   [[ -n "${!v:-}" ]] && success "$v found: ${!v}" || fail "$v is required"
 done
 
@@ -49,15 +49,6 @@ cp -r $ORIG_DIR ${RUNTIME_DIR} && success "Copying to runtime directory ${RUNTIM
 pending "Copying config to $RUNTIME_DIR"
 cp "$ENVIRONMENT" "${RUNTIME_DIR}/config.env" || fail "Failed to copy config to runtime dir"
 
-DATA_TEMPLATE="${RUNTIME_DIR}/config/tasks.json"
-pending "Copying group data files from data template"
-for ((i=1; i<=N_GROUPS; i++)); do
-    printf -v idx "%02d" "$i"
-    cp $DATA_TEMPLATE "${RUNTIME_DIR}/data${idx}.json" \
-    || fail "Couldnt copy data/data${idx}.json"
-done
-
-success "Copying data to personal data group"
 TEMPLATE="${RUNTIME_DIR}/config/checklist.service"
 DEPLOY="${RUNTIME_DIR}/install/deploy.sh"
 CLEAN="${RUNTIME_DIR}/install/clean.sh"
@@ -68,22 +59,25 @@ CRON="${RUNTIME_DIR}/install/launch_cron.sh"
 TIMEZONE="${RUNTIME_DIR}/install/timezone.sh"
 ENVIRONMENT="${RUNTIME_DIR}/config.env"
 DATA_TEMPLATE="${RUNTIME_DIR}/config/tasks.json"
-[[ -f "$DEPLOY" ]]       && success "File exists: $DEPLOY" || fail "File n>
-[[ -f "$CLEAN" ]]        && success "File exists: $CLEAN" || fail "File no>
-[[ -f "$TEMPLATE" ]]     && success "File exists: $TEMPLATE" || fail "File>
-[[ -f "$REQUIREMENTS" ]] && success "File exists: $REQUIREMENTS" || fail ">
-[[ -f "$PROXY" ]]        && success "File exists: $PROXY" || fail "File no>
-[[ -f "$CRON" ]]         && success "File exists: $CRON" || fail "File not>
-[[ -f "$TIMEZONE" ]]     && success "File exists: $TIMEZONE" || fail "File>
-[[ -f "$DATA_TEMPLATE" ]]     && success "File exists: $DATA_TEMPLATE" || >
+
+
+[[ -f "$DEPLOY" ]]       && success "File exists: $DEPLOY" || fail "File not found: $DEPLOY"
+[[ -f "$CLEAN" ]]        && success "File exists: $CLEAN" || fail "File not found: $CLEAN"
+[[ -f "$TEMPLATE" ]]     && success "File exists: $TEMPLATE" || fail "File not found: $TEMPLATE"
+[[ -f "$REQUIREMENTS" ]] && success "File exists: $REQUIREMENTS" || fail "File not found: $REQUIREMENTS"
+[[ -f "$PROXY" ]]        && success "File exists: $PROXY" || fail "File not found: $PROXY"
+[[ -f "$CRON" ]]         && success "File exists: $CRON" || fail "File not found: $CRON"
+[[ -f "$TIMEZONE" ]]     && success "File exists: $TIMEZONE" || fail "File not found: $TIMEZONE"
+[[ -f "$DATA_TEMPLATE" ]]     && success "File exists: $DATA_TEMPLATE" || fail "File not found: $DATA_TEMPLATE"
 
 pending "Copying group data files from data template: $DATA_TEMPLATE"
 for ((i=1; i<=N_GROUPS; i++)); do
     printf -v idx "%02d" "$i"
-    file=${RUNTIME_DIR}/data/data${idx}.json
+    file="${RUNTIME_DIR}/data/data${idx}.json"
     cp $DATA_TEMPLATE $file \
-       && success "Copying $file" || fail "Couldnt copy $DATA_TEMPLATE to >
+       && success "Copying $file" || fail "Couldnt copy $DATA_TEMPLATE to $file"
 done
+
 
 pending "Trying to set up Timezone"
 if [[ ! $TIME_SETUP ]]; then
