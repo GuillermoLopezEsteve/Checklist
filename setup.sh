@@ -67,15 +67,23 @@ PROXY="${RUNTIME_DIR}/install/proxy.sh"
 CRON="${RUNTIME_DIR}/install/launch_cron.sh"
 TIMEZONE="${RUNTIME_DIR}/install/timezone.sh"
 ENVIRONMENT="${RUNTIME_DIR}/config.env"
-pending "Checking needed files"
+DATA_TEMPLATE="${RUNTIME_DIR}/config/tasks.json"
+[[ -f "$DEPLOY" ]]       && success "File exists: $DEPLOY" || fail "File n>
+[[ -f "$CLEAN" ]]        && success "File exists: $CLEAN" || fail "File no>
+[[ -f "$TEMPLATE" ]]     && success "File exists: $TEMPLATE" || fail "File>
+[[ -f "$REQUIREMENTS" ]] && success "File exists: $REQUIREMENTS" || fail ">
+[[ -f "$PROXY" ]]        && success "File exists: $PROXY" || fail "File no>
+[[ -f "$CRON" ]]         && success "File exists: $CRON" || fail "File not>
+[[ -f "$TIMEZONE" ]]     && success "File exists: $TIMEZONE" || fail "File>
+[[ -f "$DATA_TEMPLATE" ]]     && success "File exists: $DATA_TEMPLATE" || >
 
-[[ -f "$DEPLOY" ]]       && success "File exists: $DEPLOY" || fail "File not found: $DEPLOY"
-[[ -f "$CLEAN" ]]        && success "File exists: $CLEAN" || fail "File not found: $CLEAN"
-[[ -f "$TEMPLATE" ]]     && success "File exists: $TEMPLATE" || fail "File not found: $TEMPLATE"
-[[ -f "$REQUIREMENTS" ]] && success "File exists: $REQUIREMENTS" || fail "File not found: $REQUIREMENTS"
-[[ -f "$PROXY" ]]        && success "File exists: $PROXY" || fail "File not found: $PROXY"
-[[ -f "$CRON" ]]         && success "File exists: $CRON" || fail "File not found: $CRON"
-[[ -f "$TIMEZONE" ]]     && success "File exists: $TIMEZONE" || fail "File not found: $TIMEZONE"
+pending "Copying group data files from data template: $DATA_TEMPLATE"
+for ((i=1; i<=N_GROUPS; i++)); do
+    printf -v idx "%02d" "$i"
+    file=${RUNTIME_DIR}/data/data${idx}.json
+    cp $DATA_TEMPLATE $file \
+       && success "Copying $file" || fail "Couldnt copy $DATA_TEMPLATE to >
+done
 
 pending "Trying to set up Timezone"
 if [[ ! $TIME_SETUP ]]; then
