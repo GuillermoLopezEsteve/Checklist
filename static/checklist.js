@@ -40,7 +40,7 @@ function setHealthBar(){
         header = tz.querySelector(".health-bar")
         nt = tz.querySelectorAll("li.task-card").length
         ndt = tz.querySelectorAll("li.task-card.task-done").length
-        if(ndt === 0) {console.log("No Tasks Detected - abort set"); continue }
+        if(nt === 0) {console.log("No Tasks Detected - abort set"); continue }
         setHealth(ndt/nt, header)
     }
     hp = document.querySelector(".zone-card#automatic-demo .health-bar")

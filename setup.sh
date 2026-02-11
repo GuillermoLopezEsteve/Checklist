@@ -195,8 +195,8 @@ systemctl restart $SERVICE_NAME && success "Service started" || fail "start fail
 
 warn "Cron jobs launcher will be executed in deploy, checkout status in $LOG_DIR or service $SERVICE_NAME status"
 
-pending "Sleeping 10 seconds then checking service status"
-sleep 10
+pending "Sleeping 5 seconds then checking service status"
+sleep 5
 systemctl is-active --quiet checklist \
   && success "Service running" \
   || { fail "Service failure"; systemctl status checklist --no-pager; }

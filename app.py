@@ -1,4 +1,4 @@
-from flask import Flask, request, Response, render_template, send_from_directory
+from flask import Flask, request, Response, redirect, render_template, send_from_directory
 from datetime import datetime, timedelta
 from flask import Blueprint, send_file, current_app, jsonify
 from pathlib import Path
@@ -62,6 +62,18 @@ def home():
     groups = [f"{i:02d}" for i in range(1, N_GROUPS + 1) ]
     return render_template('home.html', groups=groups)
 
+@app.route("/test")
+def test():
+    return render_template("test.html")
+
+
+@app.route("/echo", methods=["POST"])
+def echo():
+    # simple test endpoint
+    from flask import request
+    return request.json, 200
+
+
 @app.route('/group<number>')
 def group_checklist(number):
     allTasks = myData.get_tasks_data(number)
@@ -87,6 +99,79 @@ def medallas(number):
     return render_template('badges.html', number=number, medallas=medallas, integrantes=integrantes, demosDone=demosDone)
 
 app.register_blueprint(tasks_bp)
+
+USERNAME = "admin"
+PASSWORD = "admin123"
+
+def check_auth(username, password):
+    return username == USERNAME and password == PASSWORD
+
+def authenticate():
+    return Response(
+        "Authentication required",
+        401,
+        {"WWW-Authenticate": 'Basic realm="Login Required"'}
+    )
+
+def requires_auth(f):
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    decorated.__name__ = f.__name__
+    return decorated
+
+@app.route("/admin")
+@requires_auth
+def goToDemos():
+    return redirect("https://docs.google.com/spreadsheets/d/1cma0J7eTugMeRtG8VCHbYiHb5RlJ6TLK_SPYUoxfDFA/edit?usp=sharing")
+
+
+
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return render_template(
+        "base_error.html",
+        title="404 - Page Not Found",
+        code="404",
+        message="Page Not Found",
+        description="The page you're looking for doesn't exist."
+    ), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template(
+        "base_error.html",
+        title="500 - Server Error",
+        code="500",
+        message="Something went wrong",
+        description="We're experiencing technical difficulties. Please try again later."
+    ), 500
+
+
+@app.errorhandler(400)
+@app.errorhandler(401)
+@app.errorhandler(403)
+def client_error(error):
+    return render_template(
+        "base_error.html",
+        title=f"{error.code} - Error",
+        code=error.code,
+        message="Access Error",
+        description=error.description
+    ), error.code
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     N_GROUPS = 12

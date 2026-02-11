@@ -72,20 +72,8 @@
             </div>
         </form>
 
-        <form>
-            <div class="zone-card in-menu"  id="demo-pending">
-                <div class="zone-header">
-                    <h2 class="card-title">Demostracions Pendents</h2>
-                </div>
-                <ul class="tasks">
-                  {% for ddemo in demo.pending_demos %}
-                            <li class="task-card task-pending">
-                                <span class="task-name">{{ ddemo }}</span>
-                            </li>
-                  {% endfor %}
-                </ul>
-            </div>
-        </form>
+
+
 
         <form>
             <div class="zone-card in-menu" id="demo-done">
@@ -99,6 +87,20 @@
                                 </li>
                       {% endfor %}
                     </ul>
+            </div>
+        </form>
+        <form>
+            <div class="zone-card in-menu"  id="demo-pending">
+                <div class="zone-header">   
+                    <h2 class="card-title">Demostracions Pendents</h2>
+                </div>
+                <ul class="tasks">
+                  {% for ddemo in demo.pending_demos %}
+                            <li class="task-card task-pending">
+                                <span class="task-name">{{ ddemo }}</span>
+                            </li>
+                  {% endfor %}
+                </ul>
             </div>
         </form>
     {% else %}
