@@ -36,8 +36,6 @@ fi
 
 FILES=(
     "$RUNTIME_DIR/scripts/launcher.py"
-    "$RUNTIME_DIR/config/servers.json"
-    "$RUNTIME_DIR/config/tasks.json"
     "$RUNTIME_DIR/config/demos.json"
     "$RUNTIME_DIR/scripts/launcher.py"
     "$RUNTIME_DIR/scripts/src/myExcel.py"
@@ -59,12 +57,10 @@ LAUNCHER="$RUNTIME_DIR/scripts/launcher.py"
 DATA_CONFIG="$RUNTIME_DIR/config"
 chmod +x "$LAUNCHER" || fail "Failure to make $LAUNCHER executable"
 
-SERV_CONFIG="${DATA_CONFIG}/servers.json"
-TASK_CONFIG="${DATA_CONFIG}/tasks.json"
 DEMO_CONFIG="${DATA_CONFIG}/demos.json"
 CRON_LOG="${RUNTIME_DIR}/logs/launcher.log"
 
-LAUNCHER_CMD="* * * * * ${RUNTIME_DIR}/venv/bin/python ${LAUNCHER} ${SERV_CONFIG} ${TASK_CONFIG} ${DEMO_CONFIG} >> ${CRON_LOG} 2>&1"
+LAUNCHER_CMD="* * * * * ${RUNTIME_DIR}/venv/bin/python ${LAUNCHER} ${DEMO_CONFIG} >> ${CRON_LOG} 2>&1"
 
 CURRENT_CRON="$(crontab -u "$SERVICE_USER" -l 2>/dev/null || true)"
 
