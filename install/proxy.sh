@@ -54,6 +54,11 @@ else
   success "SSL certificates found"
 fi
 
+warn "Implicit trust of certificates"
+cp "${SECRET_DIR}/web.crt" /usr/local/share/ca-certificates/web.crt \
+    && success "Added SSL crt to trusted crt" || fail "Could not Add SSL crt to trustes certificates"
+
+update-ca-certificates && success "Updated Trusted Certificates" || fail "Could not update-ca-certificates"
 
 
 FOUND_KEYS=true

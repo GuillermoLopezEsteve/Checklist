@@ -48,7 +48,17 @@
                 <ul class="tasks">
                 {% for task in zone.tasks %}
                     <li class="task-card {% if task.status == 'OK' %}task-done{% elif task.status == 'Pending' %}task-pending{% endif %}">
-                        <span class="task-name">{{ task.tarea }}</span>
+                        <div class="task-body">
+                            <span class="task-name">{{ task.tarea }}</span>
+                            {% if task.tooltip %}
+                            <span class="info-icon" onclick="toggleTooltip(this)">i</span>
+                            {% endif %}
+                        </div>
+                        {% if task.tooltip %}
+                        <div class="tooltip-box">
+                            {{ task.tooltip }}
+                        </div>
+                            {% endif %}
                     </li>
                 {% endfor %}
                 </ul>

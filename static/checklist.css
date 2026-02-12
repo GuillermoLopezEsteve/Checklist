@@ -71,7 +71,8 @@ ul.tasks {
     border-radius: 4px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    flex-direction: column;
 }
 
 /* 3. Create the Custom Bullet (The pseudo-element) */
@@ -162,4 +163,36 @@ ul.tasks {
 
 .btn:active {
   transform: translateY(0); /* Pushes down when clicked */
+}
+
+
+.info-icon {
+  margin-left: 8px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 50%;
+  background: #2b6cb0;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  align-self: flex-end;
+}
+
+.tooltip-box {
+  display: none;
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: #eef4ff;
+  border-left: 3px solid #2b6cb0;
+  border-radius: 4px;
+  font-size: 14px;
+  align-self: flex-start;
+}
+
+.task-body{
+   display:flex;
+   align-self: flex-start;
 }

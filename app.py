@@ -13,34 +13,30 @@ N_GROUPS = 12
 app = Flask(__name__)
 tasks_bp = Blueprint("tasks", __name__, url_prefix="/api")
 
-@app.route("/requests", methods=["POST"])
-def receive_request():
-    if not request.is_json:
-        return jsonify({"error": "Request must be JSON"}), 400
+DATA_DIR = Path("data")
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    data = request.get_json()
+@app.post("/api/update-tasks")
+def submit():
+    group_id = request.args.get("group_id", "")
+    if not group_id:
+        return jsonify({"error": "Missing group_id query param"}), 400
 
-    group_id = data.get("Group_ID")
-    tasks = data.get("data")
+    if not re.fullmatch(r"\d+", group_id):
+        return jsonify({"error": "group_id must be numeric"}), 400
 
-    if group_id is None:
-        return jsonify({"error": "Group_ID is required"}), 400
+    gid = str(int(group_id)).zfill(2)  # "7" -> "07", "07" -> "07"
+    payload = request.get_json(silent=True)
 
-    try:
-        group_id = int(group_id)
-    except (ValueError, TypeError):
-        return jsonify({"error": "Group_ID must be a number"}), 400
-    if tasks is None:
-        return jsonify({"error": "task is required"}), 400
+    if payload is None:
+        return jsonify({"error": "Request body must be JSON"}), 400
 
-    data_path = Path(current_app.root_path) / "data" / f"dataf{group_id:02d}.json"
-    try:
-        with open(data_path, "w", encoding="utf-8") as f:
-            json.dump(tasks, f, indent=2)
-    except OSError as e:
-        return jsonify({"error": "Failed to write task", "details": str(e)}), 500
-    print("[SUCCESS] Recieved data from Group" + group_id)
-    return jsonify({ "status": "success", "Group_ID": group_id }), 200
+    out_path = DATA_DIR / f"data{gid}.json"
+
+    with out_path.open("w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+
+    return jsonify({"ok": True, "saved_as": str(out_path), "group_id": gid}), 200
 
 
 
@@ -128,9 +124,6 @@ def goToDemos():
     return redirect("https://docs.google.com/spreadsheets/d/1cma0J7eTugMeRtG8VCHbYiHb5RlJ6TLK_SPYUoxfDFA/edit?usp=sharing")
 
 
-
-
-
 @app.errorhandler(404)
 def not_found(error):
     return render_template(
@@ -164,12 +157,6 @@ def client_error(error):
         message="Access Error",
         description=error.description
     ), error.code
-
-
-
-
-
-
 
 
 

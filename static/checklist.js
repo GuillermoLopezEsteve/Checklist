@@ -63,3 +63,12 @@ if (timeDisplay) {
   updateCountdown();
   setInterval(updateCountdown, 1000);
 }
+
+
+function toggleTooltip(icon) {
+    const taskDiv = icon.closest(".task-card");
+    const tooltip = taskDiv.querySelector(".tooltip-box");
+
+    tooltip.style.display =
+        tooltip.style.display === "block" ? "none" : "block";
+}
