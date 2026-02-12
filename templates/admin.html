@@ -5,12 +5,19 @@
     <title>Admin Panel</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
     <div class="container">
-        
+
         <a href="/" class="back-link">← Panell central</a>
         <h1>Admin Panel</h1>
+
+        {% if message %}
+        <div class="response-box {{ message_type }}">
+            {{ message }}
+        </div>
+        {% endif %}
 
         <form action="/updates-demos" method="post">
             <button type="submit">Update Demos</button>
@@ -24,5 +31,6 @@
             <button type="submit">Randomize Task Data</button>
         </form>
     </div>
+    <script src="{{ url_for('static', filename='admin.js') }}"></script>
 </body>
 </html>

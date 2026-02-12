@@ -44,15 +44,15 @@
 }
 
 /* Highlight ranking visually */
-.ra-ranking tbody tr:nth-child(1) td { /*gold*/
+.ra-ranking .pos-podio.gold td{ /*gold*/
   font-weight: 700;
   background-color: gold;
 }
 
-.ra-ranking tbody tr:nth-child(2) td { /*silver*/
+.ra-ranking .pos-podio.silver td{ /*silver*/
   background-color: silver;
 }
 
-.ra-ranking tbody tr:nth-child(3) td { /*bronze*/
+.ra-ranking .pos-podio.bronze td { /*bronze*/
   background-color: coral;
 }

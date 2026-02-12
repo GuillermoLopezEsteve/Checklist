@@ -14,55 +14,43 @@
     ],
     [
       "Buscar i recuperar un correu concret d’un usuari a partir de criteris donats",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Migrar manualment una funcionalitat del servidor de development a producció",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Detectar i solucionar un problema de configuració entre development i producció",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Restaurar dades d’un usuari concret a partir d’un backup parcial",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Configurar un client de correu extern perquè funcioni correctament amb el servidor",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Posar en marxa el servidor web en producció després d’una caiguda intencionada",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Canviar configuracions de seguretat i justificar-ne l’impacte",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Simular una incidència de servei i aplicar el protocol de resolució",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
-      "FALSE"
+      "TRUE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
-      "FALSE"
+      "Tarea Nova",
+      "TRUE"
     ]
   ],
   "Grup 02": [
@@ -115,26 +103,14 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
   "Grup 03": [
     [
       "Demostrar Backup Configuracio DNS",
-      "TRUE"
+      "FALSE"
     ],
     [
       "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
@@ -181,26 +157,14 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
   "Grup 04": [
     [
       "Demostrar Backup Configuracio DNS",
-      "TRUE"
+      "FALSE"
     ],
     [
       "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
@@ -247,26 +211,14 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
   "Grup 05": [
     [
       "Demostrar Backup Configuracio DNS",
-      "TRUE"
+      "FALSE"
     ],
     [
       "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
@@ -313,19 +265,7 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -379,19 +319,7 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -406,7 +334,7 @@
     ],
     [
       "Afegir un usuari nou al servidor de correu i comprovar l’enviament i recepció real",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Buscar i recuperar un correu concret d’un usuari a partir de criteris donats",
@@ -445,19 +373,7 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -511,50 +427,38 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
   "Grup 09": [
     [
       "Demostrar Backup Configuracio DNS",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Afegir un usuari nou al servidor de correu i comprovar l’enviament i recepció real",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Buscar i recuperar un correu concret d’un usuari a partir de criteris donats",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Migrar manualment una funcionalitat del servidor de development a producció",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Detectar i solucionar un problema de configuració entre development i producció",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Restaurar dades d’un usuari concret a partir d’un backup parcial",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Configurar un client de correu extern perquè funcioni correctament amb el servidor",
@@ -577,19 +481,7 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -643,19 +535,7 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -686,7 +566,7 @@
     ],
     [
       "Restaurar dades d’un usuari concret a partir d’un backup parcial",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Configurar un client de correu extern perquè funcioni correctament amb el servidor",
@@ -709,19 +589,7 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -775,26 +643,14 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
   "Grup 13": [
     [
       "Demostrar Backup Configuracio DNS",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
@@ -841,19 +697,7 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -907,19 +751,7 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -973,19 +805,7 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
-      "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
+      "Tarea Nova",
       "FALSE"
     ]
   ],
@@ -1039,152 +859,8 @@
       "FALSE"
     ],
     [
-      "Seguretat v2",
+      "Tarea Nova",
       "FALSE"
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      "FALSE"
-    ],
-    [
-      "Tasca uber",
-      "FALSE"
-    ],
-    [
-      "Tasca pere",
-      "FALSE"
-    ]
-  ],
-  "NaN": [
-    [
-      "Demostrar Backup Configuracio DNS",
-      NaN
-    ],
-    [
-      "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
-      NaN
-    ],
-    [
-      "Afegir un usuari nou al servidor de correu i comprovar l’enviament i recepció real",
-      NaN
-    ],
-    [
-      "Buscar i recuperar un correu concret d’un usuari a partir de criteris donats",
-      NaN
-    ],
-    [
-      "Migrar manualment una funcionalitat del servidor de development a producció",
-      NaN
-    ],
-    [
-      "Detectar i solucionar un problema de configuració entre development i producció",
-      NaN
-    ],
-    [
-      "Restaurar dades d’un usuari concret a partir d’un backup parcial",
-      NaN
-    ],
-    [
-      "Configurar un client de correu extern perquè funcioni correctament amb el servidor",
-      NaN
-    ],
-    [
-      "Posar en marxa el servidor web en producció després d’una caiguda intencionada",
-      NaN
-    ],
-    [
-      "Canviar configuracions de seguretat i justificar-ne l’impacte",
-      NaN
-    ],
-    [
-      "Simular una incidència de servei i aplicar el protocol de resolució",
-      NaN
-    ],
-    [
-      "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
-      NaN
-    ],
-    [
-      "Seguretat v2",
-      NaN
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      NaN
-    ],
-    [
-      "Tasca uber",
-      NaN
-    ],
-    [
-      "Tasca pere",
-      NaN
-    ]
-  ],
-  "-": [
-    [
-      "Demostrar Backup Configuracio DNS",
-      NaN
-    ],
-    [
-      "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
-      NaN
-    ],
-    [
-      "Afegir un usuari nou al servidor de correu i comprovar l’enviament i recepció real",
-      NaN
-    ],
-    [
-      "Buscar i recuperar un correu concret d’un usuari a partir de criteris donats",
-      NaN
-    ],
-    [
-      "Migrar manualment una funcionalitat del servidor de development a producció",
-      NaN
-    ],
-    [
-      "Detectar i solucionar un problema de configuració entre development i producció",
-      NaN
-    ],
-    [
-      "Restaurar dades d’un usuari concret a partir d’un backup parcial",
-      NaN
-    ],
-    [
-      "Configurar un client de correu extern perquè funcioni correctament amb el servidor",
-      NaN
-    ],
-    [
-      "Posar en marxa el servidor web en producció després d’una caiguda intencionada",
-      NaN
-    ],
-    [
-      "Canviar configuracions de seguretat i justificar-ne l’impacte",
-      NaN
-    ],
-    [
-      "Simular una incidència de servei i aplicar el protocol de resolució",
-      NaN
-    ],
-    [
-      "Gestionar permisos d’accés reals entre diferents usuaris del sistema",
-      NaN
-    ],
-    [
-      "Seguretat v2",
-      NaN
-    ],
-    [
-      "Tasca super guai, per Alex ulta super horrible",
-      NaN
-    ],
-    [
-      "Tasca uber",
-      NaN
-    ],
-    [
-      "Tasca pere",
-      NaN
     ]
   ]
 }

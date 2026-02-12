@@ -18,14 +18,14 @@
             <p>Mirar tasques</p>
         </a>
         {% endfor %}
-     
-        <a class="card big demoTasques" href="/demos-sheet">
+        
+        <a href="{{ url_for('go_to_demo_sheet') }}" target="_blank" class="card big demoTasques" rel="noopener noreferrer">
             <h2>Demostració<br>Tasques</h2>
         </a>
-       <a href="/leaderboard" class="card big ranking"><h2>Ranking</h2></a>
+       <a href="{{ url_for('leaderboard') }}" class="card big ranking"><h2>Ranking</h2></a>
        
         {% if session.get('logged_in') %}
-            <a href="{{ url_for('admin') }}" class="card big demoTasques"><h2>Go to Demos (Admin)</h2></a>
+            <a href="{{ url_for('admin') }}" class="card big demoTasques"><h2>Admin Panel</h2></a>
             <a href="{{ url_for('logout') }}" class="card big ranking"><h2>Logout</h2></a>
         {% endif %}
     </div>

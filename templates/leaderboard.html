@@ -8,7 +8,7 @@
     <title>Ranking</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; margin: 0; padding: 40px; }
-        .header { display: flex; justify-content: space-between; align-tasks: center; margin-bottom: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .back-link { text-decoration: none; color: #007bff; font-weight: bold; }
         .last-check { font-size: 0.9rem; color: #666; }
 
@@ -40,6 +40,6 @@
   </tbody>
 </table>
 </div>
-
+<script src="{{ url_for('static', filename='leaderboard.js') }}"></script>
 </body>
 </html>

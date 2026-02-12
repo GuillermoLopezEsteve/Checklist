@@ -1,17 +1,9 @@
 #!/etc/checklist/venv/bin/python
-
 import src.myExcel as myExcel
 import sys
-import json
-
-def getDemoData(demos_path: str):
-    with open(demos_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data.get("file_url"), data.get("data_endpoint")
-
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 2:
         print(
             "Usage: python3 launcher.py <demos.json>")
         sys.exit(1)
@@ -20,5 +12,4 @@ if __name__ == "__main__":
         "demos": sys.argv[1],
     }
 
-    sheet_url, demos_data_path = getDemoData(config["demos"])
-    myExcel.loadDemosFromExcel(sheet_url, demos_data_path)
+    myExcel.update_demo_data(config["demos"])
