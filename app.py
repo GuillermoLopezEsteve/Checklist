@@ -4,7 +4,7 @@ from flask import Blueprint, send_file, current_app, jsonify
 from pathlib import Path
 import scripts.myData as myData
 import scripts.badges as badges
-import json, sys, os
+import json, sys, os, re
 
 
 N_GROUPS = 12
@@ -13,32 +13,35 @@ N_GROUPS = 12
 app = Flask(__name__)
 tasks_bp = Blueprint("tasks", __name__, url_prefix="/api")
 
-DATA_DIR = Path("data")
+BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-@app.post("/api/update-tasks")
-def submit():
-    group_id = request.args.get("group_id", "")
-    if not group_id:
-        return jsonify({"error": "Missing group_id query param"}), 400
+@app.route("/api/update-tasks", methods=["GET", "POST"], strict_slashes=False)
+def updateTasks():
+    if request.method == "GET":
+        return jsonify({"ok": True, "hint": "Use POST with JSON body", "method": "GET"}), 200
 
-    if not re.fullmatch(r"\d+", group_id):
-        return jsonify({"error": "group_id must be numeric"}), 400
+    try:
+        group_id = request.args.get("group_id", "")
+        if not group_id:
+            return jsonify({"error": "Missing group_id query param"}), 400
+        if not re.fullmatch(r"\d+", group_id):
+            return jsonify({"error": "group_id must be numeric"}), 400
 
-    gid = str(int(group_id)).zfill(2)  # "7" -> "07", "07" -> "07"
-    payload = request.get_json(silent=True)
+        gid = str(int(group_id)).zfill(2)
+        payload = request.get_json(force=True, silent=True)
+        if payload is None:
+            return jsonify({"error": "Request body must be JSON"}), 400
 
-    if payload is None:
-        return jsonify({"error": "Request body must be JSON"}), 400
+        out_path = DATA_DIR / f"data{gid}.json"
+        out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    out_path = DATA_DIR / f"data{gid}.json"
+        return jsonify({"ok": True, "saved_as": str(out_path), "group_id": gid}), 200
 
-    with out_path.open("w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
-
-    return jsonify({"ok": True, "saved_as": str(out_path), "group_id": gid}), 200
-
-
+    except Exception as e:
+        # Temporary: helps you see the real crash reason instead of nginx generic 500 page
+        return jsonify({"ok": False, "error": str(e)}), 500
 
 @tasks_bp.get("/tasks-data", strict_slashes=False)
 def tasksRequest():
