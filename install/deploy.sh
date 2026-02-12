@@ -22,7 +22,6 @@ FILES=(
     "${RUNTIME_DIR}/.secret/ACCESS_KEY_PROD"
     "${RUNTIME_DIR}/.secret/ACCESS_KEY_PROD.pub"
     "${RUNTIME_DIR}/config/demos.json"
-    "${RUNTIME_DIR}/config/servers.json"
     "${RUNTIME_DIR}/config/tasks.json"
 )
 

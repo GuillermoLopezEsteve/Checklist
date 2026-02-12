@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}">
+</head>
+<body>
+    <div class="container">
+        
+        <a href="/" class="back-link">← Panell central</a>
+        <h1>Admin Panel</h1>
+
+        <form action="/updates-demos" method="post">
+            <button type="submit">Update Demos</button>
+        </form>
+
+        <form action="/restart-tasks-data" method="post">
+            <button type="submit">Restart Tasks Data</button>
+        </form>
+
+        <form action="/randomize-task-data" method="post">
+            <button type="submit">Randomize Task Data</button>
+        </form>
+    </div>
+</body>
+</html>

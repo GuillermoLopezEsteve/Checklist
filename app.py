@@ -1,26 +1,36 @@
-from flask import Flask, request, Response, redirect, render_template, send_from_directory
+from flask import Flask, request, redirect, render_template, session, url_for
 from datetime import datetime, timedelta
 from flask import Blueprint, send_file, current_app, jsonify
 from pathlib import Path
 import scripts.myData as myData
 import scripts.badges as badges
-import json, sys, os, re
+import json
+import os
+import re
+import shutil
 
 
-N_GROUPS = 12
-
+N_GROUPS = 12  # Default, passed via main
 
 app = Flask(__name__)
+app.secret_key = "supersecretkey"  # change in production
 tasks_bp = Blueprint("tasks", __name__, url_prefix="/api")
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
+DATA_TEMPLATE = "config/tasks.json"
+DEMO_SRC = "config/demos.json"
+
 
 @app.route("/api/update-tasks", methods=["GET", "POST"], strict_slashes=False)
 def updateTasks():
     if request.method == "GET":
-        return jsonify({"ok": True, "hint": "Use POST with JSON body", "method": "GET"}), 200
+        return jsonify({
+            "ok": True,
+            "hint": "Use POST with JSON body",
+            "method": "GET"}
+        ), 200
 
     try:
         group_id = request.args.get("group_id", "")
@@ -35,13 +45,16 @@ def updateTasks():
             return jsonify({"error": "Request body must be JSON"}), 400
 
         out_path = DATA_DIR / f"data{gid}.json"
-        out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        out_path.write_text(
+            json.dumps(
+                payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
-        return jsonify({"ok": True, "saved_as": str(out_path), "group_id": gid}), 200
+        return jsonify(
+            {"ok": True, "saved_as": str(out_path), "group_id": gid}), 200
 
     except Exception as e:
-        # Temporary: helps you see the real crash reason instead of nginx generic 500 page
         return jsonify({"ok": False, "error": str(e)}), 500
+
 
 @tasks_bp.get("/tasks-data", strict_slashes=False)
 def tasksRequest():
@@ -58,12 +71,8 @@ def tasksRequest():
 
 @app.route('/')
 def home():
-    groups = [f"{i:02d}" for i in range(1, N_GROUPS + 1) ]
+    groups = [f"{i:02d}" for i in range(1, N_GROUPS + 1)]
     return render_template('home.html', groups=groups)
-
-@app.route("/test")
-def test():
-    return render_template("test.html")
 
 
 @app.route("/echo", methods=["POST"])
@@ -75,56 +84,108 @@ def echo():
 
 @app.route('/group<number>')
 def group_checklist(number):
-    allTasks = myData.get_tasks_data(number)
+    allTasks = myData.get_tasks_data(number, DATA_DIR)
     for zone in allTasks.get("zones"):
         zone["id"] = zone.get("title").replace(" ", "")
-    demo = myData.get_demo_data(number)
+    demo = myData.get_demo_data(number, DATA_DIR)
     time = datetime.now() + timedelta(minutes=5)
-    tieneMedallas = badges.hasBadges(number)
-    return render_template('checklist.html', tieneMedallas=tieneMedallas, number=number, allTasks=allTasks, demo=demo, next_update=time)
+    return render_template(
+        'checklist.html',
+        number=number, allTasks=allTasks, demo=demo, next_update=time)
 
 
 @app.route('/leaderboard')
 def leaderboard():
-    leaderboardHeaders = myData.getLeaderboardTableHeaders()
-    leaderboardData = myData.tranformForLeaderboard(myData.getAllGroupDataSorted(N_GROUPS))
-    return render_template('leaderboard.html', leaderboardHeaders=leaderboardHeaders, leaderboardData=leaderboardData)
+    leaderboardHeaders = myData.getLeaderboardTableHeaders(DATA_DIR)
+    leaderboardData = myData.tranformForLeaderboard(
+        myData.getAllGroupDataSorted(N_GROUPS))
+    return render_template(
+        'leaderboard.html',
+        leaderboardHeaders=leaderboardHeaders, leaderboardData=leaderboardData)
+
 
 @app.route('/group<number>/badges')
 def medallas(number):
-    medallas = badges.getBadgesGroup(number)
-    demosDone = badges.hasAllDemos(number)
-    integrantes = ["Juan Casas","Sonia Delgado"]
-    return render_template('badges.html', number=number, medallas=medallas, integrantes=integrantes, demosDone=demosDone)
+    medallas = badges.getBadgesGroup(number, DATA_DIR)
+    demosDone = badges.hasAllDemos(number, DATA_DIR)
+    return render_template(
+        'badges.html', number=number, medallas=medallas, demosDone=demosDone)
+
 
 app.register_blueprint(tasks_bp)
+
 
 USERNAME = "admin"
 PASSWORD = "admin123"
 
+
 def check_auth(username, password):
     return username == USERNAME and password == PASSWORD
 
-def authenticate():
-    return Response(
-        "Authentication required",
-        401,
-        {"WWW-Authenticate": 'Basic realm="Login Required"'}
-    )
 
-def requires_auth(f):
+def login_required(f):
+    from functools import wraps
+
+    @wraps(f)
     def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
+        if not session.get("logged_in"):
+            return redirect(url_for("login"))
         return f(*args, **kwargs)
-    decorated.__name__ = f.__name__
     return decorated
 
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = None
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if check_auth(username, password):
+            session["logged_in"] = True
+            return redirect(url_for("goToDemos"))
+        else:
+            error = "Invalid credentials"
+    return render_template("needs_auth.html", error=error)
+
+
+@app.route("/logout")
+def logout():
+    session.pop("logged_in", None)
+    return redirect(url_for("home"))
+
+
+@login_required
 @app.route("/admin")
-@requires_auth
+def admin():
+    return render_template("admin.html")
+
+
+@app.route("/updates-demos", methods=["POST"])
+def update_demos():
+    myData.updateDemos(DEMO_SRC)
+    return redirect(url_for("admin"))
+
+
+@app.route("/restart-tasks-data", methods=["POST"])
+def restart_tasks_data():
+    for i in range(1, N_GROUPS + 1):
+        filename = f"data{str(i).zfill(2)}.json"
+        target_path = os.path.join(DATA_DIR, filename)
+        shutil.copyfile(DATA_TEMPLATE, target_path)
+    return redirect(url_for("admin"))
+
+
+@app.route("/randomize-task-data", methods=["POST"])
+def randomize_task_data():
+    myData.randomize_task_data(N_GROUPS, DATA_DIR)
+    return redirect(url_for("admin"))
+
+
+@app.route("/demos-sheet")
+@login_required
 def goToDemos():
-    return redirect("https://docs.google.com/spreadsheets/d/1cma0J7eTugMeRtG8VCHbYiHb5RlJ6TLK_SPYUoxfDFA/edit?usp=sharing")
+    return redirect(myData.get_sheet_url(DEMO_SRC))
+# "https://docs.google.com/spreadsheets/d/1cma0J7eTugMeRtG8VCHbYiHb5RlJ6TLK_SPYUoxfDFA")
 
 
 @app.errorhandler(404)
@@ -145,7 +206,7 @@ def internal_error(error):
         title="500 - Server Error",
         code="500",
         message="Something went wrong",
-        description="We're experiencing technical difficulties. Please try again later."
+        description="We're experiencing technical difficulties."
     ), 500
 
 
@@ -162,8 +223,15 @@ def client_error(error):
     ), error.code
 
 
-
 if __name__ == '__main__':
     N_GROUPS = 12
-    app.run()
+    for i in range(1, N_GROUPS + 1):
+        filename = f"data{str(i).zfill(2)}.json"
+        target_path = os.path.join(DATA_DIR, filename)
 
+        if not os.path.exists(target_path):
+            print(f"{target_path} not found. Creating from template...")
+            shutil.copyfile(DATA_TEMPLATE, target_path)
+        else:
+            print(f"{target_path} already exists. Skipping.")
+    app.run()

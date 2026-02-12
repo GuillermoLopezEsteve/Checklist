@@ -19,10 +19,15 @@
         </a>
         {% endfor %}
      
-        <a class="card big demoTasques" href="/admin">
+        <a class="card big demoTasques" href="/demos-sheet">
             <h2>Demostració<br>Tasques</h2>
         </a>
        <a href="/leaderboard" class="card big ranking"><h2>Ranking</h2></a>
+       
+        {% if session.get('logged_in') %}
+            <a href="{{ url_for('admin') }}" class="card big demoTasques"><h2>Go to Demos (Admin)</h2></a>
+            <a href="{{ url_for('logout') }}" class="card big ranking"><h2>Logout</h2></a>
+        {% endif %}
     </div>
 </body>
 </html>
