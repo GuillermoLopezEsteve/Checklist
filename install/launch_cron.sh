@@ -37,9 +37,7 @@ fi
 FILES=(
     "$RUNTIME_DIR/scripts/launcher.py"
     "$RUNTIME_DIR/config/demos.json"
-    "$RUNTIME_DIR/scripts/launcher.py"
     "$RUNTIME_DIR/scripts/src/myExcel.py"
-    "$RUNTIME_DIR/scripts/src/myTasks.py"
 )
 
 pending "Checking for required configuration JSON files..."
