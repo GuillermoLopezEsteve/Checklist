@@ -505,44 +505,124 @@
           "command": "systemctl is-active mysql || systemctl is-active mariadb"
         },
         {
-          "task-id": "web-db-user-guille",
-          "tarea": "Usuari guille existeix a la base de dades",
+          "task-id": "web-db-panel",
+          "tarea": "Database 'adminpanel' existeix",
           "status": "Pending",
-          "tooltip": "Consulta a MySQL si existeix un usuari anomenat 'guille' a la taula mysql.user.",
-          "extrafield": "None",
-          "command": "mysql -e \"SELECT User FROM mysql.user\" | grep -q \"guille\""
-        },
-        {
-          "task-id": "web-db-wp-prefix",
-          "tarea": "Taules amb prefix wp_ existeixen (Wordpress)",
-          "status": "Pending",
-          "tooltip": "Comprova si la base de dades de Wordpress s'ha inicialitzat mirant si hi ha taules que comencin per 'wp_'.",
-          "extrafield": "None",
-          "command": "mysql -e \"SHOW TABLES FROM wordpress_db\" 2>/dev/null | grep -q \"^wp_\" || mysql -e \"SHOW TABLES FROM wordpress\" 2>/dev/null | grep -q \"^wp_\""
-        },
-        {
-          "task-id": "web-db-panel-table",
-          "tarea": "Taula 'adminpanel_users' existeix",
-          "status": "Pending",
-          "tooltip": "A la base de dades 'scripting_db', ha d'existir la taula 'adminpanel_users' per a l'exercici de Python.",
+          "tooltip": "A la base de dades hi ha una Database 'admin_panel', ha d'existir la base de dades 'adminpanel'per els exercicis de Python.",
           "extrafield": "None",
           "command": "mysql -e \"USE scripting_db; SHOW TABLES LIKE 'adminpanel_users';\" 2>/dev/null | grep -q \"adminpanel_users\""
         },
         {
-          "task-id": "web-db-panel-user",
-          "tarea": "Usuari guille existeix a adminpanel_users",
+          "task-id": "web-db-panel-servers",
+          "tarea": "Taula 'adminpanel' existeix una taula 'servers'",
           "status": "Pending",
-          "tooltip": "Dins de la taula del panell, l'alumne ha d'haver inserit l'usuari 'guille'.",
+          "tooltip": "A la base de dades 'admin panel existeix la taula 'servers'",
           "extrafield": "None",
-          "command": "mysql -e \"SELECT username FROM scripting_db.adminpanel_users\" 2>/dev/null | grep -qi \"guille\""
+          "command": "mysql -e \"SHOW TABLES FROM admin_panel\" 2> /dev/null | grep -q \"servers\""
         },
         {
-          "task-id": "web-db-panel-cols",
-          "tarea": "Taula adminpanel_users té 5 columnes mínim",
+          "task-id": "web-db-panel-users",
+          "tarea": "A la base de dadesula 'adminpanel' existeix una taula 'users'",
           "status": "Pending",
-          "tooltip": "Comprova l'estructura de la taula (schema) per assegurar que té suficients camps (id, user, pass, email, rol, etc.).",
+          "tooltip": "A la base de dades 'admin panel existeix la taula 'users'",
           "extrafield": "None",
-          "command": "mysql -N -e \"SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'adminpanel_users' AND table_schema = 'scripting_db'\" | awk '$1 >= 5 {exit 0} {exit 1}'"
+          "command": "mysql -e \"SHOW TABLES FROM admin_panel\" 2> /dev/null | grep -q \"users\""
+        },
+        {
+          "task-id": "web-db-panel-services",
+          "tarea": "A la base de dades 'adminpanel' existeix una taula 'services'",
+          "status": "Pending",
+          "tooltip": "A la base de dades 'admin panel existeix la taula 'services'",
+          "extrafield": "None",
+          "command": "mysql -e \"SHOW TABLES FROM admin_panel\" 2> /dev/null | grep -q \"uservicess\""
+        },
+        {
+          "task-id": "web-db-panel-admin-services",
+          "tarea": "A la base de dades 'adminpanel' existeix una taula 'admins_of_services'",
+          "status": "Pending",
+          "tooltip": "A la base de dades 'admin panel existeix la taula 'services'",
+          "extrafield": "None",
+          "command": "mysql -e \"SHOW TABLES FROM admin_panel\" 2> /dev/null | grep -q \"admins_of_services\""
+        },
+        {
+          "task-id": "web-db-panel-FK-admins",
+          "tarea": "La taula admins_of_services te dos Foreign keys, una a users i l'altre a services",
+          "status": "Pending",
+          "tooltip": "A la base de dades 'admin panel existeix la taula 'services'",
+          "extrafield": "None",
+          "command": "$(sudo mysql -e \"USE admin_panel; SHOW CREATE TABLE services\" | grep -o \"FOREIGN KEY\" | wc -l) -eq 2 ]"
+        },
+        {
+          "task-id": "web-db-panel-FK-services",
+          "tarea": "Taula 'services' te una Foreign key a servers",
+          "status": "Pending",
+          "tooltip": "A la base de dades 'admin panel existeix la taula 'services'",
+          "extrafield": "None",
+          "command": "mysql -e \"SHOW TABLES FROM admin_panel\" 2> /dev/null | grep -q \"users\""
+        },
+        {
+          "task-id": "web-db-panel-users-mail",
+          "tarea": "Taula 'users' te un camp anomenat email",
+          "status": "Pending",
+          "tooltip": "USE admin_panel;SHOW COLUMNS FROM users;",
+          "extrafield": "None",
+          "command": "sudo mysql -e \"USE admin_panel;SHOW COLUMNS FROM users;\" | grep -qi mail"
+        },
+        {
+          "task-id": "web-db-panel-servers-ip",
+          "tarea": "Taula 'servers' te un camp anoemant ip",
+          "status": "Pending",
+          "tooltip": "USE admin_panel;SHOW COLUMNS FROM servers;",
+          "extrafield": "None",
+          "command": "sudo mysql -e \"USE admin_panel;SHOW COLUMNS FROM servers;\" | grep -qi IP"
+        },
+        {
+          "task-id": "web-db-panel-services-inst",
+          "tarea": "Taula 'servers' te un camp anoemant documentation_url",
+          "status": "Pending",
+          "tooltip": "USE admin_panel;SHOW COLUMNS FROM services;",
+          "extrafield": "None",
+          "command": "sudo mysql -e \"USE admin_panel;SHOW COLUMNS FROM services;\" | grep -qi documentation_url"
+        },
+        {
+          "task-id": "web-db-panel-services-port",
+          "tarea": "Taula 'services' te un camp anoemant port",
+          "status": "Pending",
+          "tooltip": "USE admin_panel;SHOW COLUMNS FROM services;",
+          "extrafield": "None",
+          "command": "sudo mysql -e \"USE admin_panel;SHOW COLUMNS FROM servers;\" | grep -qi port"
+        },
+        {
+          "task-id": "web-db-servers-data",
+          "tarea": "Taula 'server' conte alguna dada",
+          "status": "Pending",
+          "tooltip": "Taula 'server' conte alguna dada",
+          "extrafield": "None",
+          "command": "sudo mysql -e \"USE admin_panel;SELECT * FROM servers;\" | grep -q *"
+        },
+        {
+          "task-id": "web-db-users-data",
+          "tarea": "Taula 'users' conte alguna dada",
+          "status": "Pending",
+          "tooltip": "Taula 'users' conte alguna dada",
+          "extrafield": "None",
+          "command": "sudo mysql -e \"USE admin_panel;SELECT * FROM users;\" | grep -q *"
+        },
+        {
+          "task-id": "web-db-services-data",
+          "tarea": "Taula 'services' conte alguna dada",
+          "status": "Pending",
+          "tooltip": "Taula 'services' conte alguna dada",
+          "extrafield": "None",
+          "command": "sudo mysql -e \"USE admin_panel;SELECT * FROM services;\" | grep -q *"
+        },
+        {
+          "task-id": "web-db-admins-data",
+          "tarea": "Taula 'admins_of_services' conte alguna dada",
+          "status": "Pending",
+          "tooltip": "Taula 'admins_of_services' conte alguna dada",
+          "extrafield": "None",
+          "command": "sudo mysql -e \"USE admin_panel;SELECT * FROM admins_of_services;\" | grep -q *"
         }
       ]
     },
