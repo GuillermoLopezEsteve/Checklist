@@ -1,823 +1,1316 @@
 {
-    "zones":  [
-            {
-              "title": "Accés remot als servidors",
-              "id": "REMOTE-ACCESS",
-              "tasks": [
-                {
-                  "tarea": "Servidor SSH instal·lat",
-                  "status": "Pending",
-                  "tooltip": "Comprova que OpenSSH Server està instal·lat (sshd disponible)",
-                  "extrafield": "None",
-                  "command": "command -v sshd >/dev/null 2>&1 || dpkg -l | grep -Eq '^ii\\s+openssh-server\\s' || rpm -qa | grep -qi openssh-server"
-                },{
-                  "tarea": "Servidor SSH actiu",
-                  "status": "Pending",
-                  "tooltip": "Comprova que el servei ssh/sshd està en execució",
-                  "extrafield": "None",
-                  "command": "systemctl is-active ssh >/dev/null 2>&1 || systemctl is-active sshd"
-                },{
-                  "tarea": "Servidor SSH escoltant al port 2222",
-                  "status": "Pending",
-                  "tooltip": "Comprova que hi ha un socket escoltant al port TCP 2222",
-                  "extrafield": "None",
-                  "command": "ss -ltn | awk '{print $4}' | grep -Eq '(:|\\.)2222$'"
-                },{
-                  "tarea": "Usuari guille existeix",
-                  "status": "Pending",
-                  "tooltip": "Comprova que l'usuari guille existeix al sistema",
-                  "extrafield": "None",
-                  "command": "id guille >/dev/null 2>&1"
-                },{
-                  "tarea": "Usuari guille forma part del grup admins",
-                  "status": "Pending",
-                  "tooltip": "Comprova que guille pertany al grup admins",
-                  "extrafield": "None",
-                  "command": "id -nG guille | tr ' ' '\\n' | grep -qx admins"
-                },{
-                  "tarea": "Usuari guille té accés SSH",
-                  "status": "Pending",
-                  "tooltip": "Comprova que guille no està bloquejat per AllowUsers/DenyUsers o AllowGroups/DenyGroups",
-                  "extrafield": "None",
-                  "command": "sshd -T 2>/dev/null | (grep -q '^denyusers ' && ! sshd -T | grep -q '^denyusers .*\\bguille\\b' || true) && (grep -q '^allowusers ' && sshd -T | grep -q '^allowusers .*\\bguille\\b' || true) && (grep -q '^denygroups ' && ! sshd -T | grep -q '^denygroups .*\\badmins\\b' || true) && (grep -q '^allowgroups ' && sshd -T | grep -q '^allowgroups .*\\badmins\\b' || true)"
-                },{
-                  "tarea": "Usuari guille té almenys una clau pública autoritzada",
-                  "status": "Pending",
-                  "tooltip": "Comprova que existeix ~/.ssh/authorized_keys i té com a mínim una línia de clau",
-                  "extrafield": "None",
-                  "command": "test -f ~guille/.ssh/authorized_keys && grep -Eq '^(ssh-(rsa|ed25519)|ecdsa-sha2-nistp)' ~guille/.ssh/authorized_keys"
-                },{
-                  "tarea": "Permisos correctes a la carpeta SSH de guille",
-                  "status": "Pending",
-                  "tooltip": "Comprova propietari i permisos (700 a .ssh i 600 a authorized_keys)",
-                  "extrafield": "None",
-                  "command": "test \"$(stat -c '%U:%G %a' ~guille/.ssh 2>/dev/null)\" = \"guille:guille 700\" && test \"$(stat -c '%U:%G %a' ~guille/.ssh/authorized_keys 2>/dev/null)\" = \"guille:guille 600\""
-                },{
-                  "tarea": "Accés root deshabilitat per SSH",
-                  "status": "Pending",
-                  "tooltip": "Comprova que PermitRootLogin és 'no' o 'prohibit-password'",
-                  "extrafield": "None",
-                  "command": "sshd -T 2>/dev/null | grep -Eq '^permitrootlogin (no|prohibit-password)$'"
-                },{
-                  "tarea": "El grup admins només pot entrar per clau",
-                  "status": "Pending",
-                  "tooltip": "Comprova que l'autenticació per contrasenya està desactivada (PasswordAuthentication no)",
-                  "extrafield": "None",
-                  "command": "sshd -T 2>/dev/null | grep -Eq '^passwordauthentication no$'"
-                },{
-                  "tarea": "Autenticació per clau pública activa",
-                  "status": "Pending",
-                  "tooltip": "Comprova que PubkeyAuthentication està activat",
-                  "extrafield": "None",
-                  "command": "sshd -T 2>/dev/null | grep -Eq '^pubkeyauthentication yes$'"
-                },{
-                  "tarea": "Port SSH configurat a 2222",
-                  "status": "Pending",
-                  "tooltip": "Comprova la configuració efectiva del port a sshd",
-                  "extrafield": "None",
-                  "command": "sshd -T 2>/dev/null | grep -Eq '^port 2222$'"
-                },{
-                  "tarea": "Connexió local a SSH (2222) respon",
-                  "status": "Pending",
-                  "tooltip": "Comprova que el servidor SSH respon localment (banner/version)",
-                  "extrafield": "None",
-                  "command": "timeout 5 bash -lc 'echo | nc -w 3 127.0.0.1 2222' | head -n 1 | grep -Eq '^SSH-'"
-                },{
-                  "tarea": "Configuració SSH vàlida",
-                  "status": "Pending",
-                  "tooltip": "Comprova que la configuració no té errors (sshd -t)",
-                  "extrafield": "None",
-                  "command": "sshd -t"
-                },{
-                  "tarea": "Accés per contrasenya desactivat també per PAM",
-                  "status": "Pending",
-                  "tooltip": "Comprova que UsePAM està activat (recomanat en molts entorns) o explícit segons política",
-                  "extrafield": "None",
-                  "command": "sshd -T 2>/dev/null | grep -Eq '^usepam (yes|no)$'"
-                },{
-                  "tarea": "Desactivat ChallengeResponseAuthentication",
-                  "status": "Pending",
-                  "tooltip": "Evita autenticació interactiva tipus keyboard-interactive si no es vol",
-                  "extrafield": "None",
-                  "command": "sshd -T 2>/dev/null | grep -Eq '^kbdinteractiveauthentication no$|^challengeresponseauthentication no$' || true"
-                },{
-                  "tarea": "Només protocols segurs (Protocol 2)",
-                  "status": "Pending",
-                  "tooltip": "Assegura que no s'accepta SSHv1 (en sistemes moderns hauria de ser així)",
-                  "extrafield": "None",
-                  "command": "sshd -T 2>/dev/null | grep -Eq '^protocol 2$' || true"
-                },{
-                  "tarea": "Usuari guille té shell vàlida",
-                  "status": "Pending",
-                  "tooltip": "Comprova que la shell de guille no és nologin/false",
-                  "extrafield": "None",
-                  "command": "getent passwd guille | awk -F: '{print $7}' | grep -Evq '(nologin|false)$'"
-                },{
-                  "tarea": "Sense accés SSH per usuaris del sistema (AllowGroups)",
-                  "status": "Pending",
-                  "tooltip": "Recomanat: restringeix l'accés via AllowGroups (p. ex. admins)",
-                  "extrafield": "None",
-                  "command": "sshd -T 2>/dev/null | grep -Eq '^allowgroups .*\\badmins\\b' || true"
-                },{
-                  "tarea": "Firewall permet el port 2222",
-                  "status": "Pending",
-                  "tooltip": "Comprova que el port 2222 no està bloquejat localment (ufw/firewalld/iptables)",
-                  "extrafield": "None",
-                  "command": "(command -v ufw >/dev/null 2>&1 && ufw status | grep -Eq '2222/tcp\\s+ALLOW') || (command -v firewall-cmd >/dev/null 2>&1 && firewall-cmd --list-ports | grep -Eq '\\b2222/tcp\\b') || true"
-                },{
-                  "tarea": "Túnel 'dev-tunnel' definit",
-                  "status": "Pending",
-                  "tooltip": "Comprova que existeix una entrada Host dev-tunnel a la configuració SSH de guille",
-                  "extrafield": "None",
-                  "command": "test -f ~guille/.ssh/config && awk 'tolower($1)==\"host\"{h=$2} h==\"dev-tunnel\"{print}' ~guille/.ssh/config | head -n 1 | grep -qi 'dev-tunnel'"
-                },{
-                  "tarea": "Connexió a la VPN activa",
-                  "status": "Pending",
-                  "tooltip": "Comprova que hi ha una interfície VPN (wg0/tun0) aixecada",
-                  "extrafield": "None",
-                  "command": "ip link show | grep -Eq '\\b(wg0|tun0|tap0)\\b'"
-                }
-              ]
-            },
-            {
-  "title": "DNS",
-  "id": "DNS",
+  "zones": [
+    {
+      "title": "Accés remot als servidors",
+      "id": "REMOTE-ACCESS",
       "tasks": [
         {
-          "tarea": "Servidor DNS instal·lat",
+          "task-id": "ssh-install",
+          "tarea": "Servidor SSH instal·lat",
           "status": "Pending",
-          "tooltip": "Comprova que BIND9 (named) està instal·lat",
+          "tooltip": "Comprova que OpenSSH Server està instal·lat",
           "extrafield": "None",
-          "command": "command -v named >/dev/null 2>&1 || dpkg -l | grep -Eq '^ii\\s+bind9\\s' || rpm -qa | grep -qi '^bind'"
-        },{
-          "tarea": "Servidor DNS actiu",
+          "command": "command -v sshd >/dev/null 2>&1 || dpkg -l | grep -Eq '^ii\\s+openssh-server\\s'"
+        },
+        {
+          "task-id": "ssh-active",
+          "tarea": "Servidor SSH actiu",
           "status": "Pending",
-          "tooltip": "Comprova que el servei bind9/named està en execució",
+          "tooltip": "Comprova que el servei ssh/sshd està en execució",
           "extrafield": "None",
-          "command": "systemctl is-active bind9 >/dev/null 2>&1 || systemctl is-active named"
-        },{
-          "tarea": "Port 53 UDP escoltant",
+          "command": "systemctl is-active ssh >/dev/null 2>&1 || systemctl is-active sshd"
+        },
+        {
+          "task-id": "ssh-port-2222-listen",
+          "tarea": "Servidor SSH escoltant al port 2222",
           "status": "Pending",
-          "tooltip": "Comprova que hi ha servei DNS escoltant al port UDP 53",
+          "tooltip": "Comprova que hi ha un socket escoltant al port TCP 2222",
           "extrafield": "None",
-          "command": "ss -lun | awk '{print $5}' | grep -Eq '(:|\\.)53$'"
-        },{
-          "tarea": "Port 53 TCP escoltant",
+          "command": "ss -ltn | awk '{print $4}' | grep -Eq '(:|\\.)2222$'"
+        },
+        {
+          "task-id": "ssh-user-guille",
+          "tarea": "Usuari guille existeix",
           "status": "Pending",
-          "tooltip": "Comprova que hi ha servei DNS escoltant al port TCP 53",
+          "tooltip": "Comprova que l'usuari guille existeix al sistema",
           "extrafield": "None",
-          "command": "ss -ltn | awk '{print $4}' | grep -Eq '(:|\\.)53$'"
-        },{
-          "tarea": "Configuració de BIND vàlida",
+          "command": "id guille >/dev/null 2>&1"
+        },
+        {
+          "task-id": "ssh-group-admins",
+          "tarea": "Usuari guille forma part del grup admins",
           "status": "Pending",
-          "tooltip": "Valida la configuració global amb named-checkconf",
+          "tooltip": "Comprova que guille pertany al grup admins",
           "extrafield": "None",
-          "command": "named-checkconf"
-        },{
-          "tarea": "Zona del grup creada",
+          "command": "id -nG guille | grep -qw admins"
+        },
+        {
+          "task-id": "ssh-access-guille",
+          "tarea": "Usuari guille té accés SSH",
           "status": "Pending",
-          "tooltip": "Comprova que la zona %GRUP%.local resol (SOA o A/NS)",
+          "tooltip": "Comprova que guille no està bloquejat per AllowUsers/DenyUsers",
           "extrafield": "None",
-          "command": "dig +short SOA %GRUP%.local @127.0.0.1 | grep -q '\\.' || nslookup -type=soa %GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "Registre NS creat",
+          "command": "sshd -T 2>/dev/null | (grep -q '^denyusers ' && ! sshd -T | grep -q '^denyusers .*\\bguille\\b' || true) && (grep -q '^allowusers ' && sshd -T | grep -q '^allowusers .*\\bguille\\b' || true)"
+        },
+        {
+          "task-id": "ssh-key-auth",
+          "tarea": "Usuari guille té almenys una clau pública autoritzada",
           "status": "Pending",
-          "tooltip": "Comprova que la zona publica registres NS",
+          "tooltip": "Comprova que existeix ~/.ssh/authorized_keys i té contingut vàlid",
           "extrafield": "None",
-          "command": "dig +short NS %GRUP%.local @127.0.0.1 | grep -q '\\.' || nslookup -type=ns %GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "Registre MX creat",
+          "command": "test -f /home/guille/.ssh/authorized_keys && grep -Eq '^(ssh-|ecdsa-)' /home/guille/.ssh/authorized_keys"
+        },
+        {
+          "task-id": "ssh-perms-guille",
+          "tarea": "Permisos correctes a la carpeta SSH de guille",
           "status": "Pending",
-          "tooltip": "Comprova que la zona publica un registre MX",
+          "tooltip": "Comprova propietari i permisos (700 a .ssh i 600 a authorized_keys)",
           "extrafield": "None",
-          "command": "dig +short MX %GRUP%.local @127.0.0.1 | grep -Eq '[0-9]+\\s+.+\\.' || nslookup -type=mx %GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "Registre TXT amb SPF creat",
+          "command": "test \"$(stat -c '%U:%G %a' /home/guille/.ssh 2>/dev/null)\" = \"guille:guille 700\" && test \"$(stat -c '%U:%G %a' /home/guille/.ssh/authorized_keys 2>/dev/null)\" = \"guille:guille 600\""
+        },
+        {
+          "task-id": "ssh-root-disabled",
+          "tarea": "Accés root deshabilitat per SSH",
           "status": "Pending",
-          "tooltip": "Comprova que existeix un TXT que contingui 'v=spf1'",
+          "tooltip": "Comprova que PermitRootLogin és 'no' o 'prohibit-password'",
           "extrafield": "None",
-          "command": "dig +short TXT %GRUP%.local @127.0.0.1 | grep -qi 'v=spf1' || nslookup -type=txt %GRUP%.local 127.0.0.1 | grep -qi 'v=spf1'"
-        },{
-          "tarea": "Host server creat",
+          "command": "sshd -T 2>/dev/null | grep -Eq '^permitrootlogin (no|prohibit-password)$'"
+        },
+        {
+          "task-id": "ssh-pass-disabled",
+          "tarea": "Autenticació per contrasenya desactivada",
           "status": "Pending",
-          "tooltip": "Resol server.%GRUP%.local (A/AAAA o CNAME)",
+          "tooltip": "Comprova PasswordAuthentication no",
           "extrafield": "None",
-          "command": "dig +short server.%GRUP%.local @127.0.0.1 | grep -Eq '([0-9]{1,3}\\.){3}[0-9]{1,3}|:' || nslookup server.%GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "Host dev creat",
+          "command": "sshd -T 2>/dev/null | grep -Eq '^passwordauthentication no$'"
+        },
+        {
+          "task-id": "ssh-pubkey-enabled",
+          "tarea": "Autenticació per clau pública activa",
           "status": "Pending",
-          "tooltip": "Resol dev.%GRUP%.local (A/AAAA o CNAME)",
+          "tooltip": "Comprova PubkeyAuthentication yes",
           "extrafield": "None",
-          "command": "dig +short dev.%GRUP%.local @127.0.0.1 | grep -Eq '([0-9]{1,3}\\.){3}[0-9]{1,3}|:' || nslookup dev.%GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "Host prod creat",
+          "command": "sshd -T 2>/dev/null | grep -Eq '^pubkeyauthentication yes$'"
+        },
+        {
+          "task-id": "ssh-config-port",
+          "tarea": "Port SSH configurat a 2222 (Config)",
           "status": "Pending",
-          "tooltip": "Resol prod.%GRUP%.local (A/AAAA o CNAME)",
+          "tooltip": "Comprova la configuració efectiva de sshd",
           "extrafield": "None",
-          "command": "dig +short prod.%GRUP%.local @127.0.0.1 | grep -Eq '([0-9]{1,3}\\.){3}[0-9]{1,3}|:' || nslookup prod.%GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "Host backups creat",
+          "command": "sshd -T 2>/dev/null | grep -Eq '^port 2222$'"
+        },
+        {
+          "task-id": "ssh-banner-check",
+          "tarea": "Connexió local a SSH (2222) respon",
           "status": "Pending",
-          "tooltip": "Resol backups.%GRUP%.local (A/AAAA o CNAME)",
+          "tooltip": "Comprova que el servidor respon localment",
           "extrafield": "None",
-          "command": "dig +short backups.%GRUP%.local @127.0.0.1 | grep -Eq '([0-9]{1,3}\\.){3}[0-9]{1,3}|:' || nslookup backups.%GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "CNAME mail creat",
+          "command": "timeout 5 bash -lc 'echo | nc -w 3 127.0.0.1 2222' | head -n 1 | grep -Eq '^SSH-'"
+        },
+        {
+          "task-id": "ssh-syntax-check",
+          "tarea": "Configuració SSH vàlida",
           "status": "Pending",
-          "tooltip": "Comprova que mail.%GRUP%.local resol (habitualment com a CNAME cap al servidor de correu)",
+          "tooltip": "Executa sshd -t per verificar sintaxi",
           "extrafield": "None",
-          "command": "dig mail.%GRUP%.local @127.0.0.1 +noall +answer | grep -Eq '\\sCNAME\\s|\\sA\\s|\\sAAAA\\s' || nslookup mail.%GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "CNAME ftp creat",
+          "command": "sshd -t"
+        },
+        {
+          "task-id": "ssh-pam",
+          "tarea": "Configuració PAM revisada",
           "status": "Pending",
-          "tooltip": "Comprova que ftp.%GRUP%.local resol",
+          "tooltip": "Verifica UsePAM",
           "extrafield": "None",
-          "command": "dig ftp.%GRUP%.local @127.0.0.1 +noall +answer | grep -Eq '\\sCNAME\\s|\\sA\\s|\\sAAAA\\s' || nslookup ftp.%GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "CNAME www creat",
+          "command": "sshd -T 2>/dev/null | grep -Eq '^usepam (yes|no)$'"
+        },
+        {
+          "task-id": "ssh-no-interactive",
+          "tarea": "Desactivat ChallengeResponseAuthentication",
           "status": "Pending",
-          "tooltip": "Comprova que www.%GRUP%.local resol",
+          "tooltip": "Evita autenticació interactiva",
           "extrafield": "None",
-          "command": "dig www.%GRUP%.local @127.0.0.1 +noall +answer | grep -Eq '\\sCNAME\\s|\\sA\\s|\\sAAAA\\s' || nslookup www.%GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "CNAME wordpress creat",
+          "command": "sshd -T 2>/dev/null | grep -Eq '^kbdinteractiveauthentication no$|^challengeresponseauthentication no$' || true"
+        },
+        {
+          "task-id": "ssh-protocol-2",
+          "tarea": "Només protocols segurs (Protocol 2)",
           "status": "Pending",
-          "tooltip": "Comprova que wordpress.%GRUP%.local resol",
+          "tooltip": "Assegura que no s'accepta SSHv1",
           "extrafield": "None",
-          "command": "dig wordpress.%GRUP%.local @127.0.0.1 +noall +answer | grep -Eq '\\sCNAME\\s|\\sA\\s|\\sAAAA\\s' || nslookup wordpress.%GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "CNAME tickets creat",
+          "command": "sshd -T 2>/dev/null | grep -Eq '^protocol 2$' || true"
+        },
+        {
+          "task-id": "ssh-shell-valid",
+          "tarea": "Usuari guille té shell vàlida",
           "status": "Pending",
-          "tooltip": "Comprova que tickets.%GRUP%.local resol",
+          "tooltip": "Comprova que la shell no és nologin/false",
           "extrafield": "None",
-          "command": "dig tickets.%GRUP%.local @127.0.0.1 +noall +answer | grep -Eq '\\sCNAME\\s|\\sA\\s|\\sAAAA\\s' || nslookup tickets.%GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "CNAME scripting creat",
+          "command": "getent passwd guille | awk -F: '{print $7}' | grep -Evq '(nologin|false)$'"
+        },
+        {
+          "task-id": "ssh-firewall",
+          "tarea": "Firewall permet el port 2222",
           "status": "Pending",
-          "tooltip": "Comprova que scripting.%GRUP%.local resol",
+          "tooltip": "Comprova regles de ufw",
           "extrafield": "None",
-          "command": "dig scripting.%GRUP%.local @127.0.0.1 +noall +answer | grep -Eq '\\sCNAME\\s|\\sA\\s|\\sAAAA\\s' || nslookup scripting.%GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "CNAME bck creat",
+          "command": "ufw status | grep -Eq '2222(/tcp)?\\s+ALLOW'"
+        },
+        {
+          "task-id": "ssh-dev-tunnel",
+          "tarea": "Túnel 'dev-tunnel' definit",
           "status": "Pending",
-          "tooltip": "Comprova que bck.%GRUP%.local resol (habitualment CNAME cap a backups)",
+          "tooltip": "Comprova ~/.ssh/config de guille",
           "extrafield": "None",
-          "command": "dig bck.%GRUP%.local @127.0.0.1 +noall +answer | grep -Eq '\\sCNAME\\s|\\sA\\s|\\sAAAA\\s' || nslookup bck.%GRUP%.local 127.0.0.1"
-        },{
-          "tarea": "Resolució local via resolv.conf",
+          "command": "test -f /home/guille/.ssh/config && grep -qi 'Host dev-tunnel' /home/guille/.ssh/config"
+        },
+        {
+          "task-id": "vpn-active",
+          "tarea": "Connexió a la VPN activa",
           "status": "Pending",
-          "tooltip": "Comprova que el sistema pot resoldre usant el DNS configurat",
+          "tooltip": "Comprova interfície wg0 o tun0",
           "extrafield": "None",
-          "command": "getent hosts server.%GRUP%.local >/dev/null 2>&1"
-        },{
-          "tarea": "Resposta autoritativa per la zona",
-          "status": "Pending",
-          "tooltip": "Comprova que el servidor respon com a autoritatiu (AA) per %GRUP%.local",
-          "extrafield": "None",
-          "command": "dig %GRUP%.local SOA @127.0.0.1 +noall +flags | grep -q ' aa '"
-        },{
-          "tarea": "Transferència de zona bloquejada (AXFR)",
-          "status": "Pending",
-          "tooltip": "Comprova que una AXFR no està permesa (bones pràctiques)",
-          "extrafield": "None",
-          "command": "dig AXFR %GRUP%.local @127.0.0.1 +time=2 +tries=1 | grep -Eq 'Transfer failed|failed|REFUSED|not authorized'"
-        },{
-          "tarea": "Sense recursivitat per clients externs (si s'exigeix)",
-          "status": "Pending",
-          "tooltip": "Comprova que recursion està desactivat o restringit (segons política)",
-          "extrafield": "None",
-          "command": "dig @127.0.0.1 google.com A +time=2 +tries=1 +noall +comments | grep -Eq 'recursion (not available|requested but not available)' || true"
-        },{
-          "tarea": "Reenviadors configurats",
-          "status": "Pending",
-          "tooltip": "Comprova que hi ha forwarders definits a la configuració (named.conf.options o equivalent)",
-          "extrafield": "None",
-          "command": "grep -Riq \"forwarders\\s*{[^}]*;\" /etc/bind /etc/named* 2>/dev/null"
-        },{
-          "tarea": "Reenviador funcional: resol smx2-projecte.es",
-          "status": "Pending",
-          "tooltip": "Comprova que es poden resoldre dominis externs via reenviador",
-          "extrafield": "None",
-          "command": "dig +short smx2-projecte.es A @127.0.0.1 | grep -Eq '([0-9]{1,3}\\.){3}[0-9]{1,3}' || nslookup smx2-projecte.es 127.0.0.1"
-        },{
-          "tarea": "Reenviador funcional: resol smx2.local",
-          "status": "Pending",
-          "tooltip": "Comprova que el DNS pot resoldre smx2.local (segons el vostre entorn)",
-          "extrafield": "None",
-          "command": "dig +short smx2.local @127.0.0.1 | grep -q '.' || nslookup smx2.local 127.0.0.1"
-        },{
-          "tarea": "Fitxer de zona existent (si es pot localitzar)",
-          "status": "Pending",
-          "tooltip": "Comprova que hi ha un fitxer de zona referenciat per %GRUP%.local a named.conf.local",
-          "extrafield": "None",
-          "command": "grep -R \"zone \\\"%GRUP%\\.local\\\"\" -n /etc/bind 2>/dev/null | grep -q ."
-        },{
-          "tarea": "Validació del fitxer de zona (si es pot inferir la ruta)",
-          "status": "Pending",
-          "tooltip": "Intenta executar named-checkzone amb el fitxer indicat a la configuració",
-          "extrafield": "None",
-          "command": "ZFILE=$(grep -R \"zone \\\"%GRUP%\\.local\\\"\" -n /etc/bind 2>/dev/null | head -n1 | awk -F: '{print $1}' | xargs -r sed -n '/zone \"%GRUP%\\.local\"/,/};/p' | grep -E 'file\\s+\"' | head -n1 | sed -E 's/.*file\\s+\"([^\"]+)\".*/\\1/'); if [ -n \"$ZFILE\" ] && [ -f \"$ZFILE\" ]; then named-checkzone %GRUP%.local \"$ZFILE\"; else true; fi"
-        },{
-          "tarea": "TTL i SOA presents",
-          "status": "Pending",
-          "tooltip": "Comprova que la zona té SOA i que respon amb dades completes",
-          "extrafield": "None",
-          "command": "dig %GRUP%.local SOA @127.0.0.1 +noall +answer | grep -Eq '\\sSOA\\s'"
+          "command": "ip link show | grep -Eq '\\b(wg0|tun0|tap0)\\b'"
         }
       ]
     },
-            {
-                "title": "Infraestructura WEB",
-                "id": "WEB",
-                "tasks": [
-                    {
-                        "tarea": "Apache instal·lat",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Apache actiu",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Tres virtual hosts enabled",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Virtual host wordpress enabled",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Virtual host tickets enable",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Virtual host panell-control enabled",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "PHP instal·lat",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Base de dades mysql instal·lada",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Servidor Base de Dades corrents",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "usuari guille existeix a la base de dades",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Taula a la base de dades amb el prefix wp_ existeix",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Taula a la base de dades amb el prefix adminpanel_users existeix",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Usuari guille existeix a la taula adminpanel_users",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Base de dades adminpanel_users té 5 columnes, com a mínim",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    }
-                ]
-            },
-            {
-                "title": "Servidor de correu",
-                "id": "MAIL",
-                "tasks": [
-                    {
-                        "tarea": "Postfix instal·lat",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Dovecot instal·lat",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Postfix actiu",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Dovecot actiu",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "SMTP Port 25 i 587 escoltant",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "IMAPS Port 993 escoltant",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Domini postfix correcte",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Usuari guille, alice i bob exixteicen",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Exixteix Dovecot mail location",
-                        "status": "Pending",
-                        "tooltip": "/var/mail/%user",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Permissos mail location correctes",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Check Front Desk Lights",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Alice pot enviar un mail de forma local a Bob",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Fitxer configuració postfix existeix",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls /etc/postfix/main.cf"
-                    },{
-                        "tarea": "Configuració postfix correcta",
-                        "status": "Pending",
-                        "tooltip": "postfix check",
-                        "extrafield": "None",
-                        "command": "postfix check"
-                    },{
-                        "tarea": "Configuració dovecot exixteix",
-                        "status": "Pending",
-                        "tooltip": "/etc/dovecot/dovecot.conf",
-                        "extrafield": "None",
-                        "command": "ls /etc/dovecot/dovecot.conf"
-                    },{
-                        "tarea": "Configuració dovecot exixteix",
-                        "status": "Pending",
-                        "tooltip": "dovecot -n",
-                        "extrafield": "None",
-                        "command": "dovecot -n"
-                    },{
-                        "tarea": "SMTP Banner matches localhost",
-                        "status": "Pending",
-                        "tooltip": "dovecot -n",
-                        "extrafield": "None",
-                        "command": "dovecot -n"
-                    }
-                ]
-            },
-            {
-                "title": "Wordpress",
-                "id": "WORDPRESS",
-                "tasks": [
-                  {
-                    "tarea": "Servidor web en execució",
-                    "status": "Pending",
-                    "tooltip": "Comprova que Apache o Nginx està actiu",
-                    "extrafield": "None",
-                    "command": "systemctl is-active apache2 || systemctl is-active nginx"
-                  },{
-                    "tarea": "PHP instal·lat",
-                    "status": "Pending",
-                    "tooltip": "Verifica que PHP està instal·lat i respon",
-                    "extrafield": "None",
-                    "command": "php -v"
-                  },{
-                    "tarea": "Servei de base de dades en execució",
-                    "status": "Pending",
-                    "tooltip": "Comprova que MySQL o MariaDB està actiu",
-                    "extrafield": "None",
-                    "command": "systemctl is-active mysql || systemctl is-active mariadb"
-                  },{
-                    "tarea": "Resposta HTTP de la portada",
-                    "status": "Pending",
-                    "tooltip": "La pàgina principal ha de retornar codi 200",
-                    "extrafield": "None",
-                    "command": "curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/ | grep -q '^200$'"
-                  },{
-                    "tarea": "Capçalera HTML present",
-                    "status": "Pending",
-                    "tooltip": "Comprova que la portada retorna HTML vàlid (DOCTYPE o etiqueta html)",
-                    "extrafield": "None",
-                    "command": "curl -s http://wordpress.%GRUP%.smx2.local/ | grep -Eiq '<!doctype html|<html'"
-                  },{
-                    "tarea": "Fitxer wp-config.php existeix",
-                    "status": "Pending",
-                    "tooltip": "Comprova que el WordPress està configurat (wp-config.php present)",
-                    "extrafield": "None",
-                    "command": "test -f /var/www/html/wp-config.php"
-                  },{
-                    "tarea": "Carpeta wp-content present",
-                    "status": "Pending",
-                    "tooltip": "Comprova que existeix la carpeta de contingut de WordPress",
-                    "extrafield": "None",
-                    "command": "test -d /var/www/html/wp-content"
-                  },{
-                    "tarea": "Directori de plugins present",
-                    "status": "Pending",
-                    "tooltip": "Comprova que existeix la carpeta de plugins",
-                    "extrafield": "None",
-                    "command": "test -d /var/www/html/wp-content/plugins"
-                  },{
-                    "tarea": "WooCommerce instal·lat",
-                    "status": "Pending",
-                    "tooltip": "Comprova que el plugin WooCommerce existeix a plugins",
-                    "extrafield": "None",
-                    "command": "test -d /var/www/html/wp-content/plugins/woocommerce"
-                  },{
-                    "tarea": "Pàgina del carret accessible",
-                    "status": "Pending",
-                    "tooltip": "Comprova que /cart/ retorna codi 200",
-                    "extrafield": "None",
-                    "command": "curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/cart/ | grep -q '^200$'"
-                  },{
-                    "tarea": "Pàgina de finalitzar compra accessible",
-                    "status": "Pending",
-                    "tooltip": "Comprova que /checkout/ retorna codi 200",
-                    "extrafield": "None",
-                    "command": "curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/checkout/ | grep -q '^200$'"
-                  },{
-                    "tarea": "Pàgina de botiga accessible",
-                    "status": "Pending",
-                    "tooltip": "Comprova que /shop/ retorna codi 200 (si s’utilitza l’slug per defecte)",
-                    "extrafield": "None",
-                    "command": "curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/shop/ | grep -q '^200$'"
-                  },{
-                    "tarea": "WordPress mostra el generador",
-                    "status": "Pending",
-                    "tooltip": "Comprova que la portada sembla un WordPress (meta generator o rutes wp-)",
-                    "extrafield": "None",
-                    "command": "curl -s http://wordpress.%GRUP%.smx2.local/ | grep -Eiq 'wp-content|wp-includes|wordpress'"
-                  },{
-                    "tarea": "Pàgina de contacte existeix",
-                    "status": "Pending",
-                    "tooltip": "Comprova que /contact/ o /contacte/ retorna codi 200",
-                    "extrafield": "None",
-                    "command": "curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/contact/ | grep -q '^200$' || curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/contacte/ | grep -q '^200$'"
-                  },{
-                    "tarea": "Formulari a la pàgina de contacte",
-                    "status": "Pending",
-                    "tooltip": "Comprova que a la pàgina de contacte hi ha un formulari HTML",
-                    "extrafield": "None",
-                    "command": "curl -s http://wordpress.%GRUP%.smx2.local/contact/ | grep -i \"<form\" || curl -s http://wordpress.%GRUP%.smx2.local/contacte/ | grep -i \"<form\""
-                  },{
-                    "tarea": "Directori d’uploads existeix",
-                    "status": "Pending",
-                    "tooltip": "Comprova que existeix /wp-content/uploads",
-                    "extrafield": "None",
-                    "command": "test -d /var/www/html/wp-content/uploads"
-                  },{
-                    "tarea": "Directori d’uploads és escrivible",
-                    "status": "Pending",
-                    "tooltip": "Comprova que WordPress pot escriure a uploads",
-                    "extrafield": "None",
-                    "command": "test -w /var/www/html/wp-content/uploads"
-                  },{
-                    "tarea": "wp-config.php no és world-writable",
-                    "status": "Pending",
-                    "tooltip": "Evita permisos insegurs: wp-config.php no ha de ser escrivible per tothom",
-                    "extrafield": "None",
-                    "command": "test $(( $(stat -c \"%a\" /var/www/html/wp-config.php) % 10 )) -lt 2"
-                  },{
-                    "tarea": "Plugins no són world-writable",
-                    "status": "Pending",
-                    "tooltip": "Evita permisos 777: la carpeta de plugins no ha de ser escrivible per altres",
-                    "extrafield": "None",
-                    "command": "test $(( $(stat -c \"%a\" /var/www/html/wp-content/plugins) % 10 )) -lt 2"
-                  },{
-                    "tarea": "Pàgina de login accessible",
-                    "status": "Pending",
-                    "tooltip": "Comprova que wp-login.php respon (codi 200 o 302)",
-                    "extrafield": "None",
-                    "command": "curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/wp-login.php | grep -Eq '^(200|302)$'"
-                  }
-                ]
-            },
-            {
-                "title": "Cópies de seguretat",
-                "id": "BACKUP",
-                "tasks": [
-                    {
-                        "tarea": "Inspect Hydraulic Pressure",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Check Front Desk Lights",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    }
-                ]
-            },
-            {
-                "title": "Eines de Monorització",
-                "id": "Scripting",
-                "tasks": [
-                    {
-                        "tarea": "Inspect Hydraulic Pressure",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    },{
-                        "tarea": "Check Front Desk Lights",
-                        "status": "Pending",
-                        "tooltip": "tooltip",
-                        "extrafield": "None",
-                        "command": "ls"
-                    }
-                ]
-            },
-            {
-                "title": "Servidors de transfaréncia de Fitxers",
-                "id": "FTP",
-                "tasks": [
-                      {
-                        "tarea": "Eina client FTP disponible (lftp)",
-                        "status": "Pending",
-                        "tooltip": "Comprova que existeix un client per fer proves (instal·la lftp si falta)",
-                        "extrafield": "None",
-                        "command": "command -v lftp >/dev/null 2>&1 || ( (command -v apt-get >/dev/null 2>&1 && apt-get update -y && apt-get install -y lftp) || (command -v dnf >/dev/null 2>&1 && dnf install -y lftp) || (command -v yum >/dev/null 2>&1 && yum install -y lftp) )"
-                      },{
-                        "tarea": "Servei vsftpd en execució",
-                        "status": "Pending",
-                        "tooltip": "Comprova que el servei vsftpd està actiu",
-                        "extrafield": "None",
-                        "command": "systemctl is-active vsftpd"
-                      },{
-                        "tarea": "Procés vsftpd existent",
-                        "status": "Pending",
-                        "tooltip": "Comprova que hi ha un procés vsftpd en marxa",
-                        "extrafield": "None",
-                        "command": "pgrep -x vsftpd >/dev/null"
-                      },{
-                        "tarea": "Port 21 escoltant",
-                        "status": "Pending",
-                        "tooltip": "Comprova que el servidor escolta al port FTP (21)",
-                        "extrafield": "None",
-                        "command": "ss -ltnp | grep -Eq ':(21)\\s' "
-                      },{
-                        "tarea": "Banner FTP visible",
-                        "status": "Pending",
-                        "tooltip": "Comprova que el servidor respon amb el banner de benvinguda",
-                        "extrafield": "None",
-                        "command": "timeout 5 bash -lc 'exec 3<>/dev/tcp/127.0.0.1/21; head -n 1 <&3' | grep -Eq '^220'"
-                      },{
-                        "tarea": "Fitxer de configuració present",
-                        "status": "Pending",
-                        "tooltip": "Comprova que existeix /etc/vsftpd.conf",
-                        "extrafield": "None",
-                        "command": "test -f /etc/vsftpd.conf"
-                      },{
-                        "tarea": "Configuració sense permisos insegurs",
-                        "status": "Pending",
-                        "tooltip": "Comprova que /etc/vsftpd.conf no és world-writable",
-                        "extrafield": "None",
-                        "command": "test $(( $(stat -c \"%a\" /etc/vsftpd.conf) % 10 )) -lt 2"
-                      },{
-                        "tarea": "Anonymous desactivat",
-                        "status": "Pending",
-                        "tooltip": "Verifica que anonymous_enable=NO (o no està activat)",
-                        "extrafield": "None",
-                        "command": "grep -Eiq '^\\s*anonymous_enable\\s*=\\s*NO\\s*$' /etc/vsftpd.conf"
-                      },{
-                        "tarea": "Intent d’anonymous falla",
-                        "status": "Pending",
-                        "tooltip": "Comprova que no es pot iniciar sessió com anonymous",
-                        "extrafield": "None",
-                        "command": "timeout 6 bash -lc 'printf \"USER anonymous\\r\\nPASS test\\r\\nQUIT\\r\\n\" | nc -w 3 127.0.0.1 21' | grep -Eq '^(530|500|501)'"
-                      },{
-                        "tarea": "Usuaris locals permesos",
-                        "status": "Pending",
-                        "tooltip": "Verifica que local_enable=YES",
-                        "extrafield": "None",
-                        "command": "grep -Eiq '^\\s*local_enable\\s*=\\s*YES\\s*$' /etc/vsftpd.conf"
-                      },{
-                        "tarea": "Escriptura controlada (write_enable)",
-                        "status": "Pending",
-                        "tooltip": "Comprova si write_enable està definit (segons el que demani el projecte)",
-                        "extrafield": "None",
-                        "command": "grep -Eiq '^\\s*write_enable\\s*=\\s*(YES|NO)\\s*$' /etc/vsftpd.conf"
-                      },{
-                        "tarea": "Chroot d’usuaris locals",
-                        "status": "Pending",
-                        "tooltip": "Recomanat: chroot_local_user=YES per evitar sortir del directori",
-                        "extrafield": "None",
-                        "command": "grep -Eiq '^\\s*chroot_local_user\\s*=\\s*YES\\s*$' /etc/vsftpd.conf"
-                      },{
-                        "tarea": "Llista d’usuaris denegats (userlist)",
-                        "status": "Pending",
-                        "tooltip": "Recomanat: userlist_enable=YES",
-                        "extrafield": "None",
-                        "command": "grep -Eiq '^\\s*userlist_enable\\s*=\\s*YES\\s*$' /etc/vsftpd.conf"
-                      },{
-                        "tarea": "Fitxer userlist existeix (si s’usa)",
-                        "status": "Pending",
-                        "tooltip": "Comprova que el fitxer de userlist existeix (habitual: /etc/vsftpd.userlist)",
-                        "extrafield": "None",
-                        "command": "test -f /etc/vsftpd.userlist || test -f /etc/vsftpd/user_list || true"
-                      },{
-                        "tarea": "Directori arrel FTP definit (local_root)",
-                        "status": "Pending",
-                        "tooltip": "Comprova si hi ha local_root definit per a l’arrel dels usuaris",
-                        "extrafield": "None",
-                        "command": "grep -Eiq '^\\s*local_root\\s*=\\s*.+$' /etc/vsftpd.conf || true"
-                      },{
-                        "tarea": "Mode passiu configurat (si s’exigeix)",
-                        "status": "Pending",
-                        "tooltip": "Comprova si hi ha pasv_enable i rang de ports passius (pasv_min_port/pasv_max_port)",
-                        "extrafield": "None",
-                        "command": "grep -Eiq '^\\s*pasv_enable\\s*=\\s*(YES|NO)\\s*$' /etc/vsftpd.conf && (grep -Eiq '^\\s*pasv_min_port\\s*=\\s*[0-9]+\\s*$' /etc/vsftpd.conf && grep -Eiq '^\\s*pasv_max_port\\s*=\\s*[0-9]+\\s*$' /etc/vsftpd.conf || true)"
-                      },{
-                        "tarea": "TLS definit (si s’exigeix FTPS)",
-                        "status": "Pending",
-                        "tooltip": "Comprova si ssl_enable està definit (FTPS)",
-                        "extrafield": "None",
-                        "command": "grep -Eiq '^\\s*ssl_enable\\s*=\\s*(YES|NO)\\s*$' /etc/vsftpd.conf || true"
-                      },{
-                        "tarea": "Connexió FTP local (llistat) amb credencials",
-                        "status": "Pending",
-                        "tooltip": "Prova una connexió i un LIST amb lftp (substitueix %FTPUSER% i %FTPPASS%)",
-                        "extrafield": "None",
-                        "command": "lftp -e \"set net:max-retries 1; set net:timeout 5; open -u %FTPUSER%,%FTPPASS% 127.0.0.1; ls; bye\" >/dev/null"
-                      },{
-                        "tarea": "El directori home de l’usuari existeix",
-                        "status": "Pending",
-                        "tooltip": "Comprova que l’usuari %FTPUSER% existeix i té HOME",
-                        "extrafield": "None",
-                        "command": "getent passwd %FTPUSER% | awk -F: 'NF>=6 && $6!=\"\" {exit 0} {exit 1}'"
-                      },{
-                        "tarea": "El port 21 és accessible des de xarxa (firewall)",
-                        "status": "Pending",
-                        "tooltip": "Comprova connectivitat TCP al port 21 (no garanteix NAT, però detecta bloquejos locals)",
-                        "extrafield": "None",
-                        "command": "timeout 3 bash -lc 'cat < /dev/null > /dev/tcp/127.0.0.1/21'"
-                      }
-                    ]
-
-            }
-        ]
+    {
+      "title": "DNS",
+      "id": "DNS",
+      "tasks": [
+        {
+          "task-id": "dns-install",
+          "tarea": "Servidor DNS instal·lat",
+          "status": "Pending",
+          "tooltip": "Comprova que BIND9 està instal·lat",
+          "extrafield": "None",
+          "command": "command -v named >/dev/null 2>&1"
+        },
+        {
+          "task-id": "dns-active",
+          "tarea": "Servidor DNS actiu",
+          "status": "Pending",
+          "tooltip": "Comprova servei bind9",
+          "extrafield": "None",
+          "command": "systemctl is-active bind9 >/dev/null 2>&1 || systemctl is-active named"
+        },
+        {
+          "task-id": "dns-udp-53",
+          "tarea": "Port 53 UDP escoltant",
+          "status": "Pending",
+          "tooltip": "Comprova socket UDP 53",
+          "extrafield": "None",
+          "command": "ss -lun | awk '{print $5}' | grep -Eq '(:|\\.)53$'"
+        },
+        {
+          "task-id": "dns-tcp-53",
+          "tarea": "Port 53 TCP escoltant",
+          "status": "Pending",
+          "tooltip": "Comprova socket TCP 53",
+          "extrafield": "None",
+          "command": "ss -ltn | awk '{print $4}' | grep -Eq '(:|\\.)53$'"
+        },
+        {
+          "task-id": "dns-conf-check",
+          "tarea": "Configuració de BIND vàlida",
+          "status": "Pending",
+          "tooltip": "named-checkconf",
+          "extrafield": "None",
+          "command": "named-checkconf"
+        },
+        {
+          "task-id": "dns-zone-soa",
+          "tarea": "Zona del grup creada",
+          "status": "Pending",
+          "tooltip": "Resol SOA %GRUP%.local",
+          "extrafield": "None",
+          "command": "dig +short SOA %GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-ns-record",
+          "tarea": "Registre NS creat",
+          "status": "Pending",
+          "tooltip": "Resol NS %GRUP%.local",
+          "extrafield": "None",
+          "command": "dig +short NS %GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-mx-record",
+          "tarea": "Registre MX creat",
+          "status": "Pending",
+          "tooltip": "Resol MX %GRUP%.local",
+          "extrafield": "None",
+          "command": "dig +short MX %GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-spf-record",
+          "tarea": "Registre TXT amb SPF creat",
+          "status": "Pending",
+          "tooltip": "Resol TXT i busca v=spf1",
+          "extrafield": "None",
+          "command": "dig +short TXT %GRUP%.local @127.0.0.1 | grep -qi 'v=spf1'"
+        },
+        {
+          "task-id": "dns-host-server",
+          "tarea": "Host server creat",
+          "status": "Pending",
+          "tooltip": "Resol server.%GRUP%.local",
+          "extrafield": "None",
+          "command": "dig +short server.%GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-host-dev",
+          "tarea": "Host dev creat",
+          "status": "Pending",
+          "tooltip": "Resol dev.%GRUP%.local",
+          "extrafield": "None",
+          "command": "dig +short dev.%GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-host-prod",
+          "tarea": "Host prod creat",
+          "status": "Pending",
+          "tooltip": "Resol prod.%GRUP%.local",
+          "extrafield": "None",
+          "command": "dig +short prod.%GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-host-backups",
+          "tarea": "Host backups creat",
+          "status": "Pending",
+          "tooltip": "Resol backups.%GRUP%.local",
+          "extrafield": "None",
+          "command": "dig +short backups.%GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-cname-mail",
+          "tarea": "CNAME mail creat",
+          "status": "Pending",
+          "tooltip": "Resol mail.%GRUP%.local",
+          "extrafield": "None",
+          "command": "dig mail.%GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-cname-ftp",
+          "tarea": "CNAME ftp creat",
+          "status": "Pending",
+          "tooltip": "Resol ftp.%GRUP%.local",
+          "extrafield": "None",
+          "command": "dig ftp.%GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-cname-www",
+          "tarea": "CNAME www creat",
+          "status": "Pending",
+          "tooltip": "Resol www.%GRUP%.local",
+          "extrafield": "None",
+          "command": "dig www.%GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-cname-wordpress",
+          "tarea": "CNAME wordpress creat",
+          "status": "Pending",
+          "tooltip": "Resol wordpress.%GRUP%.local",
+          "extrafield": "None",
+          "command": "dig wordpress.%GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-cname-tickets",
+          "tarea": "CNAME tickets creat",
+          "status": "Pending",
+          "tooltip": "Resol tickets.%GRUP%.local",
+          "extrafield": "None",
+          "command": "dig tickets.%GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-cname-scripting",
+          "tarea": "CNAME scripting creat",
+          "status": "Pending",
+          "tooltip": "Resol scripting.%GRUP%.local",
+          "extrafield": "None",
+          "command": "dig scripting.%GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-cname-bck",
+          "tarea": "CNAME bck creat",
+          "status": "Pending",
+          "tooltip": "Resol bck.%GRUP%.local",
+          "extrafield": "None",
+          "command": "dig bck.%GRUP%.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-resolv-local",
+          "tarea": "Resolució local via resolv.conf",
+          "status": "Pending",
+          "tooltip": "El sistema operatiu usa el DNS local",
+          "extrafield": "None",
+          "command": "grep -Eq 'nameserver\\s+127.0.0.1' /etc/resolv.conf || systemd-resolve --status | grep -q '127.0.0.1'"
+        },
+        {
+          "task-id": "dns-authority",
+          "tarea": "Resposta autoritativa per la zona",
+          "status": "Pending",
+          "tooltip": "La resposta té el flag 'aa'",
+          "extrafield": "None",
+          "command": "dig %GRUP%.local SOA @127.0.0.1 +noall +flags | grep -q ' aa '"
+        },
+        {
+          "task-id": "dns-no-axfr",
+          "tarea": "Transferència de zona bloquejada (AXFR)",
+          "status": "Pending",
+          "tooltip": "AXFR denegat",
+          "extrafield": "None",
+          "command": "dig AXFR %GRUP%.local @127.0.0.1 +time=2 +tries=1 | grep -Eq 'Transfer failed|failed|REFUSED|not authorized'"
+        },
+        {
+          "task-id": "dns-forwarders",
+          "tarea": "Reenviadors configurats",
+          "status": "Pending",
+          "tooltip": "Forwarders presents a options",
+          "extrafield": "None",
+          "command": "grep -Riq \"forwarders\\s*{\" /etc/bind"
+        },
+        {
+          "task-id": "dns-ext-resolution",
+          "tarea": "Reenviador funcional (extern)",
+          "status": "Pending",
+          "tooltip": "Resol domini extern via local",
+          "extrafield": "None",
+          "command": "dig +short google.com @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-local-resolution-smx2",
+          "tarea": "Reenviador funcional: resol smx2.local",
+          "status": "Pending",
+          "tooltip": "Resol domini smx2.local",
+          "extrafield": "None",
+          "command": "dig +short smx2.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-zone-file-exists",
+          "tarea": "Fitxer de zona definit a la configuració",
+          "status": "Pending",
+          "tooltip": "Troba la definició 'file' per la zona",
+          "extrafield": "None",
+          "command": "grep -R \"zone \\\"%GRUP%\\.local\\\"\" /etc/bind"
+        }
+      ]
+    },
+    {
+      "title": "Infraestructura WEB",
+      "id": "WEB",
+      "tasks": [
+        {
+          "task-id": "web-apache-install",
+          "tarea": "Apache instal·lat",
+          "status": "Pending",
+          "tooltip": "Verifica paquet apache2",
+          "extrafield": "None",
+          "command": "command -v apache2 >/dev/null 2>&1"
+        },
+        {
+          "task-id": "web-apache-active",
+          "tarea": "Apache actiu",
+          "status": "Pending",
+          "tooltip": "Verifica servei apache2",
+          "extrafield": "None",
+          "command": "systemctl is-active apache2"
+        },
+        {
+          "task-id": "web-vhosts-count",
+          "tarea": "Tres virtual hosts enabled",
+          "status": "Pending",
+          "tooltip": "Comprova sites-enabled",
+          "extrafield": "None",
+          "command": "ls -1 /etc/apache2/sites-enabled/*.conf | wc -l | grep -Eq '^[3-9]$'"
+        },
+        {
+          "task-id": "web-vhost-wp",
+          "tarea": "Virtual host wordpress enabled",
+          "status": "Pending",
+          "tooltip": "Cerca fitxer wordpress a sites-enabled",
+          "extrafield": "None",
+          "command": "ls /etc/apache2/sites-enabled/ | grep -qi wordpress"
+        },
+        {
+          "task-id": "web-vhost-tickets",
+          "tarea": "Virtual host tickets enabled",
+          "status": "Pending",
+          "tooltip": "Cerca fitxer tickets a sites-enabled",
+          "extrafield": "None",
+          "command": "ls /etc/apache2/sites-enabled/ | grep -qi tickets"
+        },
+        {
+          "task-id": "web-vhost-panel",
+          "tarea": "Virtual host panell-control enabled",
+          "status": "Pending",
+          "tooltip": "Cerca fitxer panell o admin a sites-enabled",
+          "extrafield": "None",
+          "command": "ls /etc/apache2/sites-enabled/ | grep -Eiq 'panell|admin|scripting'"
+        },
+        {
+          "task-id": "web-php-install",
+          "tarea": "PHP instal·lat",
+          "status": "Pending",
+          "tooltip": "Verifica versió php",
+          "extrafield": "None",
+          "command": "php -v >/dev/null 2>&1"
+        },
+        {
+          "task-id": "web-mysql-install",
+          "tarea": "Base de dades mysql instal·lada",
+          "status": "Pending",
+          "tooltip": "Verifica client mysql",
+          "extrafield": "None",
+          "command": "command -v mysql >/dev/null 2>&1"
+        },
+        {
+          "task-id": "web-mysql-active",
+          "tarea": "Servidor Base de Dades corrent",
+          "status": "Pending",
+          "tooltip": "Verifica servei mysql/mariadb",
+          "extrafield": "None",
+          "command": "systemctl is-active mysql || systemctl is-active mariadb"
+        },
+        {
+          "task-id": "web-db-user-guille",
+          "tarea": "Usuari guille existeix a la base de dades",
+          "status": "Pending",
+          "tooltip": "Select user from mysql.user",
+          "extrafield": "None",
+          "command": "mysql -e \"SELECT User FROM mysql.user\" | grep -q \"guille\""
+        },
+        {
+          "task-id": "web-db-wp-prefix",
+          "tarea": "Taules amb prefix wp_ existeixen (Wordpress)",
+          "status": "Pending",
+          "tooltip": "Comprova taules a la DB del wordpress",
+          "extrafield": "None",
+          "command": "mysql -e \"SHOW TABLES FROM wordpress_db\" 2>/dev/null | grep -q \"^wp_\" || mysql -e \"SHOW TABLES FROM wordpress\" 2>/dev/null | grep -q \"^wp_\""
+        },
+        {
+          "task-id": "web-db-panel-table",
+          "tarea": "Taula 'adminpanel_users' existeix",
+          "status": "Pending",
+          "tooltip": "Comprova existència taula específica",
+          "extrafield": "None",
+          "command": "mysql -e \"USE scripting_db; SHOW TABLES LIKE 'adminpanel_users';\" 2>/dev/null | grep -q \"adminpanel_users\""
+        },
+        {
+          "task-id": "web-db-panel-user",
+          "tarea": "Usuari guille existeix a adminpanel_users",
+          "status": "Pending",
+          "tooltip": "Select * from adminpanel_users",
+          "extrafield": "None",
+          "command": "mysql -e \"SELECT username FROM scripting_db.adminpanel_users\" 2>/dev/null | grep -qi \"guille\""
+        },
+        {
+          "task-id": "web-db-panel-cols",
+          "tarea": "Taula adminpanel_users té 5 columnes mínim",
+          "status": "Pending",
+          "tooltip": "Compta columnes a information_schema",
+          "extrafield": "None",
+          "command": "mysql -N -e \"SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'adminpanel_users' AND table_schema = 'scripting_db'\" | awk '$1 >= 5 {exit 0} {exit 1}'"
+        }
+      ]
+    },
+    {
+      "title": "Servidor de correu",
+      "id": "MAIL",
+      "tasks": [
+        {
+          "task-id": "mail-postfix-install",
+          "tarea": "Postfix instal·lat",
+          "status": "Pending",
+          "tooltip": "Verifica postfix",
+          "extrafield": "None",
+          "command": "command -v postfix >/dev/null 2>&1"
+        },
+        {
+          "task-id": "mail-dovecot-install",
+          "tarea": "Dovecot instal·lat",
+          "status": "Pending",
+          "tooltip": "Verifica dovecot",
+          "extrafield": "None",
+          "command": "command -v dovecot >/dev/null 2>&1"
+        },
+        {
+          "task-id": "mail-postfix-active",
+          "tarea": "Postfix actiu",
+          "status": "Pending",
+          "tooltip": "Systemctl is-active postfix",
+          "extrafield": "None",
+          "command": "systemctl is-active postfix"
+        },
+        {
+          "task-id": "mail-dovecot-active",
+          "tarea": "Dovecot actiu",
+          "status": "Pending",
+          "tooltip": "Systemctl is-active dovecot",
+          "extrafield": "None",
+          "command": "systemctl is-active dovecot"
+        },
+        {
+          "task-id": "mail-smtp-ports",
+          "tarea": "SMTP Port 25 i 587 escoltant",
+          "status": "Pending",
+          "tooltip": "Comprova ports 25 i 587",
+          "extrafield": "None",
+          "command": "ss -ltn | grep -E ':(25|587)\\b' | wc -l | grep -q '2'"
+        },
+        {
+          "task-id": "mail-imaps-port",
+          "tarea": "IMAPS Port 993 escoltant",
+          "status": "Pending",
+          "tooltip": "Comprova port 993",
+          "extrafield": "None",
+          "command": "ss -ltn | grep -q ':993\\b'"
+        },
+        {
+          "task-id": "mail-domain-check",
+          "tarea": "Domini postfix correcte",
+          "status": "Pending",
+          "tooltip": "Comprova mydomain o myhostname a postconf",
+          "extrafield": "None",
+          "command": "postconf mydomain myhostname | grep -q \"%GRUP%.local\""
+        },
+        {
+          "task-id": "mail-users-exist",
+          "tarea": "Usuaris guille, alice i bob existeixen",
+          "status": "Pending",
+          "tooltip": "Comprova ids",
+          "extrafield": "None",
+          "command": "id guille && id alice && id bob >/dev/null 2>&1"
+        },
+        {
+          "task-id": "mail-dovecot-loc",
+          "tarea": "Existeix Dovecot mail location",
+          "status": "Pending",
+          "tooltip": "Verifica configuració mail_location",
+          "extrafield": "None",
+          "command": "doveconf mail_location | grep -q 'mail_location'"
+        },
+        {
+          "task-id": "mail-perms-varmail",
+          "tarea": "Permisos mail location correctes",
+          "status": "Pending",
+          "tooltip": "Comprova /var/mail permisos",
+          "extrafield": "None",
+          "command": "stat -c '%a' /var/mail | grep -Eq '775|2775'"
+        },
+        {
+          "task-id": "mail-local-delivery",
+          "tarea": "Mailbox d'Alice existeix",
+          "status": "Pending",
+          "tooltip": "Comprova si existeix fitxer/dir per Alice",
+          "extrafield": "None",
+          "command": "ls -d /var/mail/alice || ls -d /home/alice/Maildir"
+        },
+        {
+          "task-id": "mail-postfix-maincf",
+          "tarea": "Fitxer configuració postfix existeix",
+          "status": "Pending",
+          "tooltip": "/etc/postfix/main.cf",
+          "extrafield": "None",
+          "command": "test -f /etc/postfix/main.cf"
+        },
+        {
+          "task-id": "mail-postfix-check",
+          "tarea": "Configuració postfix correcta",
+          "status": "Pending",
+          "tooltip": "postfix check",
+          "extrafield": "None",
+          "command": "postfix check 2>&1 | grep -v 'unused parameter' || true"
+        },
+        {
+          "task-id": "mail-dovecot-conf",
+          "tarea": "Fitxer configuració dovecot existeix",
+          "status": "Pending",
+          "tooltip": "/etc/dovecot/dovecot.conf",
+          "extrafield": "None",
+          "command": "test -f /etc/dovecot/dovecot.conf"
+        },
+        {
+          "task-id": "mail-dovecot-check",
+          "tarea": "Configuració dovecot vàlida",
+          "status": "Pending",
+          "tooltip": "dovecot -n",
+          "extrafield": "None",
+          "command": "dovecot -n >/dev/null"
+        },
+        {
+          "task-id": "mail-smtp-banner",
+          "tarea": "SMTP Banner matches hostname",
+          "status": "Pending",
+          "tooltip": "Comprova el banner al connectar",
+          "extrafield": "None",
+          "command": "timeout 2 bash -c 'echo QUIT | nc localhost 25' | grep -i ESMTP"
+        }
+      ]
+    },
+    {
+      "title": "Wordpress",
+      "id": "WORDPRESS",
+      "tasks": [
+        {
+          "task-id": "wp-web-active",
+          "tarea": "Servidor web en execució",
+          "status": "Pending",
+          "tooltip": "Comprova que Apache o Nginx està actiu",
+          "extrafield": "None",
+          "command": "systemctl is-active apache2 || systemctl is-active nginx"
+        },
+        {
+          "task-id": "wp-php-check",
+          "tarea": "PHP instal·lat",
+          "status": "Pending",
+          "tooltip": "Verifica que PHP està instal·lat i respon",
+          "extrafield": "None",
+          "command": "php -v"
+        },
+        {
+          "task-id": "wp-db-active",
+          "tarea": "Servei de base de dades en execució",
+          "status": "Pending",
+          "tooltip": "Comprova que MySQL o MariaDB està actiu",
+          "extrafield": "None",
+          "command": "systemctl is-active mysql || systemctl is-active mariadb"
+        },
+        {
+          "task-id": "wp-http-200",
+          "tarea": "Resposta HTTP de la portada",
+          "status": "Pending",
+          "tooltip": "La pàgina principal ha de retornar codi 200",
+          "extrafield": "None",
+          "command": "curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/ | grep -q '^200$'"
+        },
+        {
+          "task-id": "wp-html-check",
+          "tarea": "Capçalera HTML present",
+          "status": "Pending",
+          "tooltip": "Comprova que la portada retorna HTML vàlid",
+          "extrafield": "None",
+          "command": "curl -s http://wordpress.%GRUP%.smx2.local/ | grep -Eiq '<!doctype html|<html'"
+        },
+        {
+          "task-id": "wp-config-exists",
+          "tarea": "Fitxer wp-config.php existeix",
+          "status": "Pending",
+          "tooltip": "Comprova que el WordPress està configurat",
+          "extrafield": "None",
+          "command": "test -f /var/www/html/wordpress/wp-config.php || test -f /var/www/wordpress/wp-config.php"
+        },
+        {
+          "task-id": "wp-content-dir",
+          "tarea": "Carpeta wp-content present",
+          "status": "Pending",
+          "tooltip": "Comprova que existeix la carpeta de contingut de WordPress",
+          "extrafield": "None",
+          "command": "find /var/www -type d -name \"wp-content\" | grep -q ."
+        },
+        {
+          "task-id": "wp-plugins-dir",
+          "tarea": "Directori de plugins present",
+          "status": "Pending",
+          "tooltip": "Comprova que existeix la carpeta de plugins",
+          "extrafield": "None",
+          "command": "find /var/www -type d -name \"plugins\" | grep -q \"wp-content/plugins\""
+        },
+        {
+          "task-id": "wp-woo-installed",
+          "tarea": "WooCommerce instal·lat",
+          "status": "Pending",
+          "tooltip": "Comprova que el plugin WooCommerce existeix",
+          "extrafield": "None",
+          "command": "find /var/www -type d -name \"woocommerce\" | grep -q \"wp-content/plugins/woocommerce\""
+        },
+        {
+          "task-id": "wp-cart-page",
+          "tarea": "Pàgina del carret accessible",
+          "status": "Pending",
+          "tooltip": "Comprova que /cart/ retorna codi 200",
+          "extrafield": "None",
+          "command": "curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/cart/ | grep -q '^200$'"
+        },
+        {
+          "task-id": "wp-checkout-page",
+          "tarea": "Pàgina de finalitzar compra accessible",
+          "status": "Pending",
+          "tooltip": "Comprova que /checkout/ retorna codi 200",
+          "extrafield": "None",
+          "command": "curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/checkout/ | grep -q '^200$'"
+        },
+        {
+          "task-id": "wp-shop-page",
+          "tarea": "Pàgina de botiga accessible",
+          "status": "Pending",
+          "tooltip": "Comprova que /shop/ retorna codi 200",
+          "extrafield": "None",
+          "command": "curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/shop/ | grep -q '^200$'"
+        },
+        {
+          "task-id": "wp-generator-tag",
+          "tarea": "WordPress mostra senyals d'identitat",
+          "status": "Pending",
+          "tooltip": "Busca wp-content al codi font",
+          "extrafield": "None",
+          "command": "curl -s http://wordpress.%GRUP%.smx2.local/ | grep -Eiq 'wp-content|wp-includes'"
+        },
+        {
+          "task-id": "wp-contact-page",
+          "tarea": "Pàgina de contacte existeix",
+          "status": "Pending",
+          "tooltip": "Comprova que /contact/ o /contacte/ retorna codi 200",
+          "extrafield": "None",
+          "command": "curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/contact/ | grep -q '^200$' || curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/contacte/ | grep -q '^200$'"
+        },
+        {
+          "task-id": "wp-contact-form",
+          "tarea": "Formulari a la pàgina de contacte",
+          "status": "Pending",
+          "tooltip": "Comprova que hi ha un <form>",
+          "extrafield": "None",
+          "command": "curl -sL http://wordpress.%GRUP%.smx2.local/contact/ | grep -i \"<form\" || curl -sL http://wordpress.%GRUP%.smx2.local/contacte/ | grep -i \"<form\""
+        },
+        {
+          "task-id": "wp-uploads-dir",
+          "tarea": "Directori d’uploads existeix",
+          "status": "Pending",
+          "tooltip": "Comprova wp-content/uploads",
+          "extrafield": "None",
+          "command": "find /var/www -type d -name \"uploads\" | grep -q \"wp-content/uploads\""
+        },
+        {
+          "task-id": "wp-uploads-write",
+          "tarea": "Directori d’uploads és escrivible per www-data",
+          "status": "Pending",
+          "tooltip": "Comprova permisos",
+          "extrafield": "None",
+          "command": "sudo -u www-data test -w $(find /var/www -type d -name \"uploads\" | head -n 1)"
+        },
+        {
+          "task-id": "wp-config-perms",
+          "tarea": "wp-config.php no és world-writable",
+          "status": "Pending",
+          "tooltip": "Evita permisos 777 a wp-config",
+          "extrafield": "None",
+          "command": "test $(( $(stat -c \"%a\" $(find /var/www -name wp-config.php | head -n 1)) % 10 )) -lt 2"
+        },
+        {
+          "task-id": "wp-plugins-perms",
+          "tarea": "Plugins no són world-writable",
+          "status": "Pending",
+          "tooltip": "Evita permisos 777 a plugins",
+          "extrafield": "None",
+          "command": "test $(( $(stat -c \"%a\" $(find /var/www -type d -name plugins | head -n 1)) % 10 )) -lt 2"
+        },
+        {
+          "task-id": "wp-login-page",
+          "tarea": "Pàgina de login accessible",
+          "status": "Pending",
+          "tooltip": "Comprova wp-login.php",
+          "extrafield": "None",
+          "command": "curl -s -o /dev/null -w \"%{http_code}\" http://wordpress.%GRUP%.smx2.local/wp-login.php | grep -Eq '^(200|302)$'"
+        }
+      ]
+    },
+    {
+      "title": "Còpies de seguretat",
+      "id": "BACKUP",
+      "tasks": [
+        {
+          "task-id": "bck-dir-exists",
+          "tarea": "Directori de backups existeix",
+          "status": "Pending",
+          "tooltip": "Comprova que /backups existeix",
+          "extrafield": "None",
+          "command": "test -d /backups"
+        },
+        {
+          "task-id": "bck-dir-perms",
+          "tarea": "Permisos segurs a /backups",
+          "status": "Pending",
+          "tooltip": "Permisos han de ser restrictius (700)",
+          "extrafield": "None",
+          "command": "stat -c '%a' /backups | grep -Eq '^700$'"
+        },
+        {
+          "task-id": "bck-owner-root",
+          "tarea": "Propietari de /backups és root",
+          "status": "Pending",
+          "tooltip": "Owner i Group han de ser root",
+          "extrafield": "None",
+          "command": "stat -c '%U:%G' /backups | grep -Eq '^root:root$'"
+        },
+        {
+          "task-id": "bck-cron-service",
+          "tarea": "Servei cron actiu",
+          "status": "Pending",
+          "tooltip": "Comprova que cron està corrent",
+          "extrafield": "None",
+          "command": "systemctl is-active cron"
+        },
+        {
+          "task-id": "bck-job-file",
+          "tarea": "Fitxer de tasques cron definit",
+          "status": "Pending",
+          "tooltip": "Existeix /etc/cron.d/backup",
+          "extrafield": "None",
+          "command": "test -f /etc/cron.d/backup"
+        },
+        {
+          "task-id": "bck-script-ref",
+          "tarea": "Cron crida a un script",
+          "status": "Pending",
+          "tooltip": "El fitxer cron executa un .sh",
+          "extrafield": "None",
+          "command": "grep -Eq '\\.sh' /etc/cron.d/backup"
+        },
+        {
+          "task-id": "bck-script-exists",
+          "tarea": "Script de backup existeix",
+          "status": "Pending",
+          "tooltip": "L'script referenciat al cron existeix realment",
+          "extrafield": "None",
+          "command": "SCRIPT=$(awk '{for(i=1;i<=NF;i++) if($i ~ /\\.sh/) print $i}' /etc/cron.d/backup | head -n 1); [ -f \"$SCRIPT\" ]"
+        },
+        {
+          "task-id": "bck-script-exec",
+          "tarea": "Script de backup és executable",
+          "status": "Pending",
+          "tooltip": "Té permisos +x",
+          "extrafield": "None",
+          "command": "SCRIPT=$(awk '{for(i=1;i<=NF;i++) if($i ~ /\\.sh/) print $i}' /etc/cron.d/backup | head -n 1); [ -x \"$SCRIPT\" ]"
+        },
+        {
+          "task-id": "bck-zip-installed",
+          "tarea": "Eina zip instal·lada",
+          "status": "Pending",
+          "tooltip": "Comprova command -v zip",
+          "extrafield": "None",
+          "command": "command -v zip >/dev/null"
+        },
+        {
+          "task-id": "bck-mysqldump-installed",
+          "tarea": "Eina mysqldump instal·lada",
+          "status": "Pending",
+          "tooltip": "Comprova client db",
+          "extrafield": "None",
+          "command": "command -v mysqldump >/dev/null"
+        },
+        {
+          "task-id": "bck-file-wp",
+          "tarea": "Còpia de seguretat de WordPress (.zip)",
+          "status": "Pending",
+          "tooltip": "Existeix un zip del projecte web a /backups",
+          "extrafield": "None",
+          "command": "ls /backups/*.zip >/dev/null 2>&1"
+        },
+        {
+          "task-id": "bck-file-db",
+          "tarea": "Còpia de seguretat de BD (.sql)",
+          "status": "Pending",
+          "tooltip": "Existeix un dump sql a /backups",
+          "extrafield": "None",
+          "command": "ls /backups/*.sql >/dev/null 2>&1 || ls /backups/*.sql.gz >/dev/null 2>&1"
+        },
+        {
+          "task-id": "bck-file-etc",
+          "tarea": "Còpia de seguretat de /etc (.tar.gz)",
+          "status": "Pending",
+          "tooltip": "Existeix backup de configuracions",
+          "extrafield": "None",
+          "command": "ls /backups/etc*.tar.gz >/dev/null 2>&1"
+        },
+        {
+          "task-id": "bck-log-file",
+          "tarea": "Fitxer de logs de backup",
+          "status": "Pending",
+          "tooltip": "Existeix un log de l'operació",
+          "extrafield": "None",
+          "command": "ls /var/log/backup*.log >/dev/null 2>&1"
+        },
+        {
+          "task-id": "bck-content-wp",
+          "tarea": "El zip web no està buit",
+          "status": "Pending",
+          "tooltip": "Mida superior a 1MB",
+          "extrafield": "None",
+          "command": "find /backups -name \"*.zip\" -size +1M | grep -q ."
+        },
+        {
+          "task-id": "bck-content-db",
+          "tarea": "El dump SQL conté CREATE TABLE",
+          "status": "Pending",
+          "tooltip": "Verifica contingut vàlid SQL",
+          "extrafield": "None",
+          "command": "zgrep -E \"CREATE TABLE\" /backups/*.sql* | head -n 1 | grep -q ."
+        },
+        {
+          "task-id": "bck-retention",
+          "tarea": "No hi ha backups antics (>30 dies)",
+          "status": "Pending",
+          "tooltip": "Política de neteja activa",
+          "extrafield": "None",
+          "command": "find /backups -mtime +30 | grep -q . && exit 1 || exit 0"
+        },
+        {
+          "task-id": "bck-rsync-check",
+          "tarea": "Rsync està instal·lat",
+          "status": "Pending",
+          "tooltip": "Possible ús per còpies remotes",
+          "extrafield": "None",
+          "command": "command -v rsync >/dev/null"
+        },
+        {
+          "task-id": "bck-recent",
+          "tarea": "Backups actualitzats (últimes 24h)",
+          "status": "Pending",
+          "tooltip": "Comprova data modificació",
+          "extrafield": "None",
+          "command": "find /backups -mtime -1 -type f | grep -q ."
+        },
+        {
+          "task-id": "bck-cron-syntax",
+          "tarea": "Sintaxi del crontab correcta",
+          "status": "Pending",
+          "tooltip": "Valida format de 5 asteriscs/temps",
+          "extrafield": "None",
+          "command": "grep -E \"^(\\*|[0-9,-/]+)\\s+(\\*|[0-9,-/]+)\\s+(\\*|[0-9,-/]+)\\s+(\\*|[0-9,-/]+)\\s+(\\*|[0-9,-/]+)\" /etc/cron.d/backup"
+        }
+      ]
+    },
+    {
+      "title": "Eines de Monitorització (Scripting)",
+      "id": "SCRIPTING",
+      "tasks": [
+        {
+          "task-id": "scr-python-install",
+          "tarea": "Python3 instal·lat",
+          "status": "Pending",
+          "tooltip": "Check python3 version",
+          "extrafield": "None",
+          "command": "command -v python3 >/dev/null"
+        },
+        {
+          "task-id": "scr-pip-install",
+          "tarea": "Pip instal·lat",
+          "status": "Pending",
+          "tooltip": "Check pip3",
+          "extrafield": "None",
+          "command": "command -v pip3 >/dev/null || command -v pip >/dev/null"
+        },
+        {
+          "task-id": "scr-dir-struct",
+          "tarea": "Estructura de directoris creada",
+          "status": "Pending",
+          "tooltip": "/var/www/scripting existeix",
+          "extrafield": "None",
+          "command": "test -d /var/www/scripting"
+        },
+        {
+          "task-id": "scr-scripts-dir",
+          "tarea": "Directori de scripts existeix",
+          "status": "Pending",
+          "tooltip": "/var/www/scripting/scripts",
+          "extrafield": "None",
+          "command": "test -d /var/www/scripting/scripts"
+        },
+        {
+          "task-id": "scr-venv",
+          "tarea": "Entorn virtual (venv) creat",
+          "status": "Pending",
+          "tooltip": "Existeix carpeta venv",
+          "extrafield": "None",
+          "command": "test -d /var/www/scripting/venv"
+        },
+        {
+          "task-id": "scr-flask-lib",
+          "tarea": "Llibreria Flask instal·lada al venv",
+          "status": "Pending",
+          "tooltip": "pip list conté Flask",
+          "extrafield": "None",
+          "command": "/var/www/scripting/venv/bin/pip list | grep -i Flask >/dev/null"
+        },
+        {
+          "task-id": "scr-app-file",
+          "tarea": "Fitxer principal app.py existeix",
+          "status": "Pending",
+          "tooltip": "Codi font de l'aplicació",
+          "extrafield": "None",
+          "command": "test -f /var/www/scripting/app.py || test -f /var/www/scripting/main.py"
+        },
+        {
+          "task-id": "scr-service-file",
+          "tarea": "Servei Systemd creat",
+          "status": "Pending",
+          "tooltip": "Existeix fitxer .service a systemd",
+          "extrafield": "None",
+          "command": "ls /etc/systemd/system/scripting.service || ls /etc/systemd/system/flask*.service"
+        },
+        {
+          "task-id": "scr-service-active",
+          "tarea": "Servei Flask actiu",
+          "status": "Pending",
+          "tooltip": "Systemctl is-active",
+          "extrafield": "None",
+          "command": "systemctl is-active scripting || systemctl is-active flask-app"
+        },
+        {
+          "task-id": "scr-port-listen",
+          "tarea": "Port 5000 (o 8080) escoltant",
+          "status": "Pending",
+          "tooltip": "App escolta peticions",
+          "extrafield": "None",
+          "command": "ss -ltn | grep -Eq ':5000|:8080'"
+        },
+        {
+          "task-id": "scr-http-root",
+          "tarea": "App respon HTTP 200 a l'arrel",
+          "status": "Pending",
+          "tooltip": "Curl a localhost",
+          "extrafield": "None",
+          "command": "curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:5000/ | grep -q 200 || curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8080/ | grep -q 200"
+        },
+        {
+          "task-id": "scr-bash-disk",
+          "tarea": "Script Bash: check_disk.sh",
+          "status": "Pending",
+          "tooltip": "Script per comprovar disc",
+          "extrafield": "None",
+          "command": "test -f /var/www/scripting/scripts/check_disk.sh"
+        },
+        {
+          "task-id": "scr-bash-exec",
+          "tarea": "Scripts Bash són executables",
+          "status": "Pending",
+          "tooltip": "Permís +x",
+          "extrafield": "None",
+          "command": "test -x /var/www/scripting/scripts/check_disk.sh"
+        },
+        {
+          "task-id": "scr-bash-users",
+          "tarea": "Script Bash: list_users.sh",
+          "status": "Pending",
+          "tooltip": "Script per llistar usuaris",
+          "extrafield": "None",
+          "command": "test -f /var/www/scripting/scripts/list_users.sh"
+        },
+        {
+          "task-id": "scr-py-dbcheck",
+          "tarea": "Script Python: db_check.py",
+          "status": "Pending",
+          "tooltip": "Script per comprovar connexió DB",
+          "extrafield": "None",
+          "command": "test -f /var/www/scripting/scripts/db_check.py"
+        },
+        {
+          "task-id": "scr-shebang",
+          "tarea": "Shebang correcte als scripts",
+          "status": "Pending",
+          "tooltip": "#!/bin/bash o python",
+          "extrafield": "None",
+          "command": "head -n 1 /var/www/scripting/scripts/check_disk.sh | grep -q \"^#!/bin/bash\""
+        },
+        {
+          "task-id": "scr-api-disk",
+          "tarea": "Endpoint API: /api/disk funciona",
+          "status": "Pending",
+          "tooltip": "Retorna JSON amb espai disc",
+          "extrafield": "None",
+          "command": "curl -s http://127.0.0.1:5000/api/disk | grep -qi \"usage\" || curl -s http://127.0.0.1:8080/api/disk | grep -qi \"usage\""
+        },
+        {
+          "task-id": "scr-api-services",
+          "tarea": "Endpoint API: /api/services funciona",
+          "status": "Pending",
+          "tooltip": "Retorna estat de serveis",
+          "extrafield": "None",
+          "command": "curl -s http://127.0.0.1:5000/api/services | grep -qiE \"active|inactive\" || curl -s http://127.0.0.1:8080/api/services | grep -qiE \"active|inactive\""
+        },
+        {
+          "task-id": "scr-req-file",
+          "tarea": "Fitxer requirements.txt present",
+          "status": "Pending",
+          "tooltip": "Llista dependències",
+          "extrafield": "None",
+          "command": "test -f /var/www/scripting/requirements.txt"
+        },
+        {
+          "task-id": "scr-gunicorn",
+          "tarea": "Servidor de producció (Gunicorn) usat",
+          "status": "Pending",
+          "tooltip": "No usa el servidor de desenvolupament (Werkzeug) en producció",
+          "extrafield": "None",
+          "command": "ps aux | grep [g]unicorn >/dev/null 2>&1 || ps aux | grep [u]wsgi >/dev/null 2>&1"
+        }
+      ]
+    },
+    {
+      "title": "Servidors de transferència de Fitxers",
+      "id": "FTP",
+      "tasks": [
+        {
+          "task-id": "ftp-client-tool",
+          "tarea": "Eina client FTP disponible (lftp)",
+          "status": "Pending",
+          "tooltip": "Comprova que existeix un client per fer proves",
+          "extrafield": "None",
+          "command": "command -v lftp >/dev/null 2>&1"
+        },
+        {
+          "task-id": "ftp-service-active",
+          "tarea": "Servei vsftpd en execució",
+          "status": "Pending",
+          "tooltip": "Comprova que el servei vsftpd està actiu",
+          "extrafield": "None",
+          "command": "systemctl is-active vsftpd"
+        },
+        {
+          "task-id": "ftp-process-running",
+          "tarea": "Procés vsftpd existent",
+          "status": "Pending",
+          "tooltip": "Comprova que hi ha un procés vsftpd",
+          "extrafield": "None",
+          "command": "pgrep -x vsftpd >/dev/null"
+        },
+        {
+          "task-id": "ftp-port-21",
+          "tarea": "Port 21 escoltant",
+          "status": "Pending",
+          "tooltip": "Comprova que el servidor escolta al port FTP",
+          "extrafield": "None",
+          "command": "ss -ltnp | grep -Eq ':(21)\\s' "
+        },
+        {
+          "task-id": "ftp-banner-check",
+          "tarea": "Banner FTP visible",
+          "status": "Pending",
+          "tooltip": "Comprova el banner de benvinguda",
+          "extrafield": "None",
+          "command": "timeout 5 bash -lc 'exec 3<>/dev/tcp/127.0.0.1/21; head -n 1 <&3' | grep -Eq '^220'"
+        },
+        {
+          "task-id": "ftp-conf-exists",
+          "tarea": "Fitxer de configuració present",
+          "status": "Pending",
+          "tooltip": "Existeix /etc/vsftpd.conf",
+          "extrafield": "None",
+          "command": "test -f /etc/vsftpd.conf"
+        },
+        {
+          "task-id": "ftp-conf-perms",
+          "tarea": "Configuració sense permisos insegurs",
+          "status": "Pending",
+          "tooltip": "vsftpd.conf no és world-writable",
+          "extrafield": "None",
+          "command": "test $(( $(stat -c \"%a\" /etc/vsftpd.conf) % 10 )) -lt 2"
+        },
+        {
+          "task-id": "ftp-anon-disabled",
+          "tarea": "Anonymous desactivat",
+          "status": "Pending",
+          "tooltip": "anonymous_enable=NO",
+          "extrafield": "None",
+          "command": "grep -Eiq '^\\s*anonymous_enable\\s*=\\s*NO\\s*$' /etc/vsftpd.conf"
+        },
+        {
+          "task-id": "ftp-anon-fail",
+          "tarea": "Intent d’anonymous falla",
+          "status": "Pending",
+          "tooltip": "Prova d'accés real",
+          "extrafield": "None",
+          "command": "timeout 6 bash -lc 'printf \"USER anonymous\\r\\nPASS test\\r\\nQUIT\\r\\n\" | nc -w 3 127.0.0.1 21' | grep -Eq '^(530|500|501)'"
+        },
+        {
+          "task-id": "ftp-local-enable",
+          "tarea": "Usuaris locals permesos",
+          "status": "Pending",
+          "tooltip": "local_enable=YES",
+          "extrafield": "None",
+          "command": "grep -Eiq '^\\s*local_enable\\s*=\\s*YES\\s*$' /etc/vsftpd.conf"
+        },
+        {
+          "task-id": "ftp-write-enable",
+          "tarea": "Escriptura controlada (write_enable)",
+          "status": "Pending",
+          "tooltip": "Check write_enable",
+          "extrafield": "None",
+          "command": "grep -Eiq '^\\s*write_enable\\s*=\\s*(YES|NO)\\s*$' /etc/vsftpd.conf"
+        },
+        {
+          "task-id": "ftp-chroot",
+          "tarea": "Chroot d’usuaris locals",
+          "status": "Pending",
+          "tooltip": "chroot_local_user=YES",
+          "extrafield": "None",
+          "command": "grep -Eiq '^\\s*chroot_local_user\\s*=\\s*YES\\s*$' /etc/vsftpd.conf"
+        },
+        {
+          "task-id": "ftp-userlist",
+          "tarea": "Llista d’usuaris denegats (userlist)",
+          "status": "Pending",
+          "tooltip": "userlist_enable=YES",
+          "extrafield": "None",
+          "command": "grep -Eiq '^\\s*userlist_enable\\s*=\\s*YES\\s*$' /etc/vsftpd.conf"
+        },
+        {
+          "task-id": "ftp-userlist-file",
+          "tarea": "Fitxer userlist existeix",
+          "status": "Pending",
+          "tooltip": "Existeix el fitxer de llista d'usuaris",
+          "extrafield": "None",
+          "command": "test -f /etc/vsftpd.userlist || test -f /etc/vsftpd/user_list || true"
+        },
+        {
+          "task-id": "ftp-local-root",
+          "tarea": "Directori arrel FTP definit",
+          "status": "Pending",
+          "tooltip": "local_root està definit",
+          "extrafield": "None",
+          "command": "grep -Eiq '^\\s*local_root\\s*=\\s*.+$' /etc/vsftpd.conf || true"
+        },
+        {
+          "task-id": "ftp-passive-mode",
+          "tarea": "Mode passiu configurat",
+          "status": "Pending",
+          "tooltip": "pasv_enable actiu",
+          "extrafield": "None",
+          "command": "grep -Eiq '^\\s*pasv_enable\\s*=\\s*YES\\s*$' /etc/vsftpd.conf || true"
+        },
+        {
+          "task-id": "ftp-tls",
+          "tarea": "TLS definit (FTPS)",
+          "status": "Pending",
+          "tooltip": "ssl_enable actiu",
+          "extrafield": "None",
+          "command": "grep -Eiq '^\\s*ssl_enable\\s*=\\s*YES\\s*$' /etc/vsftpd.conf || true"
+        },
+        {
+          "task-id": "ftp-login-check",
+          "tarea": "Connexió FTP local amb credencials",
+          "status": "Pending",
+          "tooltip": "Prova de login amb lftp (requereix %FTPUSER%)",
+          "extrafield": "None",
+          "command": "lftp -e \"set net:max-retries 1; set net:timeout 5; open -u %FTPUSER%,%FTPPASS% 127.0.0.1; ls; bye\" >/dev/null 2>&1 || true"
+        },
+        {
+          "task-id": "ftp-home-check",
+          "tarea": "El directori home de l’usuari existeix",
+          "status": "Pending",
+          "tooltip": "Comprova home de %FTPUSER%",
+          "extrafield": "None",
+          "command": "getent passwd %FTPUSER% | awk -F: 'NF>=6 && $6!=\"\" {exit 0} {exit 1}' || true"
+        },
+        {
+          "task-id": "ftp-firewall-21",
+          "tarea": "El port 21 és accessible",
+          "status": "Pending",
+          "tooltip": "Connectivitat TCP bàsica",
+          "extrafield": "None",
+          "command": "timeout 3 bash -lc 'cat < /dev/null > /dev/tcp/127.0.0.1/21'"
+        }
+      ]
+    }
+  ]
 }
