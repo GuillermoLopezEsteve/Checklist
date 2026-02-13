@@ -44,21 +44,30 @@
                     </div>
                 </div>
                 <ul class="tasks">
-                {% for task in zone.tasks %}
-                    <li class="task-card {% if task.status == 'OK' %}task-done{% elif task.status == 'Pending' %}task-pending{% endif %}">
-                        <div class="task-body">
-                            <span class="task-name">{{ task.tarea }}</span>
-                            {% if task.tooltip %}
-                            <span class="info-icon" onclick="toggleTooltip(this)">i</span>
+                    {% for task in zone.tasks %}
+                        <li class="task-card {% if task.status == 'OK' %}task-done{% elif task.status == 'Pending' %}task-pending{% endif %}">
+                            <div class="task-body" id="{{ task['task-id'] }}">
+                                
+                                <span class="task-name">{{ task.tarea }}</span>
+                                
+                                {% if task.tooltip %} 
+                                    <span class="icon info-icon" onclick="toggleTooltip(this)">I</span> 
+                                {% endif %}
+                                
+                                {% if session.get('logged_in') %} 
+                                    <span class="icon command-icon" onclick="toggleCommand(this)">C</span> 
+                                {% endif %}
+                            </div>    
+                            {% if task.tooltip %} 
+                                <div class="tooltip-box show-more-box"> {{ task.tooltip | safe }} </div> 
                             {% endif %}
-                        </div>
-                        {% if task.tooltip %}
-                        <div class="tooltip-box">
-                            {{ task.tooltip }}
-                        </div>
+                            
+                            {% if session.get('logged_in') %} 
+                                <div class="command-box show-more-box"> {{ task.command }} </div> 
                             {% endif %}
-                    </li>
-                {% endfor %}
+                            
+                        </li>
+                    {% endfor %}
                 </ul>
             </div>
             {% endfor %}

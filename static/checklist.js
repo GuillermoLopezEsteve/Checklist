@@ -72,3 +72,12 @@ function toggleTooltip(icon) {
     tooltip.style.display =
         tooltip.style.display === "block" ? "none" : "block";
 }
+
+
+function toggleCommand(icon) {
+    const taskDiv = icon.closest(".task-card");
+    const tooltip = taskDiv.querySelector(".command-box");
+
+    tooltip.style.display =
+        tooltip.style.display === "block" ? "none" : "block";
+}

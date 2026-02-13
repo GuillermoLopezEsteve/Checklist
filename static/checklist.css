@@ -166,22 +166,34 @@ ul.tasks {
 }
 
 
-.info-icon {
+.icon.info-icon {
+  background: #2b6cb0;
+  color: white;
+}
+
+.icon.command-icon {
+  color: white;
+  background: #2ca214;
+}
+
+.icon {  
   margin-left: 8px;
   width: 18px;
   height: 18px;
   line-height: 18px;
   text-align: center;
   border-radius: 50%;
-  background: #2b6cb0;
   color: white;
   font-size: 12px;
   cursor: pointer;
   user-select: none;
   align-self: flex-end;
+  font-family: monospace;
+  padding: 2px 2px 2px 2px;
 }
 
-.tooltip-box {
+
+.show-more-box {
   display: none;
   margin-top: 6px;
   padding: 8px 10px;
@@ -192,7 +204,19 @@ ul.tasks {
   align-self: flex-start;
 }
 
+.show-more-box.tooltip-box {
+  background: #eef4ff;
+  border-left: 3px solid #2b6cb0;
+}
+
+.show-more-box.command-box {
+  background: #e8ffe6;
+  border-left: 3px solid #0e8d30;
+}
+
+
 .task-body{
    display:flex;
    align-self: flex-start;
+   width: 100%;
 }

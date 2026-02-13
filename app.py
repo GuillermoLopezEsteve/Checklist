@@ -366,11 +366,10 @@ if __name__ == "__main__":
         filename = f"data{str(i).zfill(2)}.json"
         target_path = os.path.join(DATA_DIR, filename)
 
-        if not os.path.exists(target_path):
-            print(f"{target_path} not found. Creating from template...")
-            shutil.copyfile(DATA_TEMPLATE, target_path)
-        else:
-            print(f"{target_path} already exists. Skipping.")
+        if os.path.exists(target_path):
+            os.remove(target_path)
+        print(f"{target_path} creating from template...")
+        shutil.copyfile(DATA_TEMPLATE, target_path)
 
     resolve_demo_data_endpoint(DEMO_SRC)
     myExcel.update_demo_data(DEMO_SRC)

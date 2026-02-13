@@ -352,7 +352,7 @@
     ],
     [
       "Detectar i solucionar un problema de configuració entre development i producció",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Restaurar dades d’un usuari concret a partir d’un backup parcial",
@@ -596,19 +596,19 @@
   "Grup 10": [
     [
       "Demostrar Backup Configuracio DNS",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Recuperar una còpia de seguretat completa del web en producció després d’una fallada simulada",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Afegir un usuari nou al servidor de correu i comprovar l’enviament i recepció real",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Buscar i recuperar un correu concret d’un usuari a partir de criteris donats",
-      "FALSE"
+      "TRUE"
     ],
     [
       "Migrar manualment una funcionalitat del servidor de development a producció",
