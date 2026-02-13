@@ -50,7 +50,7 @@
           "status": "Pending",
           "tooltip": "SSH permet restringir qui entra amb les directives AllowUsers o DenyUsers. Assegura't que 'guille' no està bloquejat explícitament a sshd_config. <link src=\"https://manpages.ubuntu.com/manpages/jammy/man5/sshd_config.5.html\">",
           "extrafield": "None",
-          "command": "sshd -T 2>/dev/null | (grep -q '^denyusers ' && ! sshd -T | grep -q '^denyusers .*\\bguille\\b' || true) && (grep -q '^allowusers ' && sshd -T | grep -q '^allowusers .*\\bguille\\b' || true)"
+          "command": "sshd -T 2>/dev/null | awk '$1==\"denyusers\"{for(i=2;i<=NF;i++)if($i==\"guille\")exit 1} $1==\"allowusers\"{has_allow=1;for(i=2;i<=NF;i++)if($i==\"guille\")found=1} END{if(has_allow && !found)exit 1}'"
         },
         {
           "task-id": "ssh-key-auth",
