@@ -81,3 +81,22 @@ function toggleCommand(icon) {
     tooltip.style.display =
         tooltip.style.display === "block" ? "none" : "block";
 }
+
+function url_extractor(str) {
+    pos = str.indexOf("url:") + "url:".length;
+    return str.substring(pos, str.indexOf(":url", pos));
+}
+
+function urlTooltipBox() {
+    const tooltips = document.querySelectorAll(".tooltip-box")
+    tooltips.forEach((tip) => {
+        if (tip.innerText.includes("url:")) {
+            const link = url_extractor(tip.innerText)
+            const old = "url:" + link + ":url"
+            const newHTML = "<a href=\"" + link + "\">Enllaç per més informació</a>"
+            tip.innerHTML = tip.innerHTML.replace(old,newHTML)
+        }
+    })
+}
+
+urlTooltipBox();

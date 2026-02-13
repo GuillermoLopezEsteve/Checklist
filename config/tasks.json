@@ -8,7 +8,7 @@
           "task-id": "ssh-install",
           "tarea": "Servidor SSH instal·lat",
           "status": "Pending",
-          "tooltip": "El servei SSH és fonamental per administrar servidors Linux remotament. Comprova que el paquet 'openssh-server' estigui instal·lat. <link src=\"https://ubuntu.com/server/docs/service-openssh\">",
+          "tooltip": "El servei SSH és fonamental per administrar servidors Linux remotament. Comprova que el paquet 'openssh-server' estigui instal·lat. url:https://ubuntu.com/server/docs/service-openssh:url",
           "extrafield": "None",
           "command": "command -v sshd >/dev/null 2>&1 || dpkg -l | grep -Eq '^ii\\s+openssh-server\\s'"
         },
@@ -16,7 +16,7 @@
           "task-id": "ssh-active",
           "tarea": "Servidor SSH actiu",
           "status": "Pending",
-          "tooltip": "No n'hi ha prou amb instal·lar-lo; el servei ha d'estar en estat 'running'. Utilitza systemctl per verificar-ho. <link src=\"https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units\">",
+          "tooltip": "No n'hi ha prou amb instal·lar-lo; el servei ha d'estar en estat 'running'. Utilitza systemctl per verificar-ho. url:https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units:url",
           "extrafield": "None",
           "command": "systemctl is-active ssh >/dev/null 2>&1 || systemctl is-active sshd"
         },
@@ -32,7 +32,7 @@
           "task-id": "ssh-user-guille",
           "tarea": "Usuari guille existeix",
           "status": "Pending",
-          "tooltip": "Necessitem un usuari no-root per administrar el sistema. Verifica que l'usuari 'guille' ha estat creat correctament.",
+          "tooltip": "Verifica que l'usuari 'guille' ha estat creat correctament.",
           "extrafield": "None",
           "command": "id guille >/dev/null 2>&1"
         },
@@ -40,7 +40,7 @@
           "task-id": "ssh-group-admins",
           "tarea": "Usuari guille forma part del grup admins",
           "status": "Pending",
-          "tooltip": "Per gestionar permisos, agrupem els usuaris. Comprova que 'guille' és membre del grup secundari 'admins'. <link src=\"https://wiki.ubuntu.com/BasicSecurity/ManagingUsers\">",
+          "tooltip": "Per gestionar permisos, agrupem els usuaris. Comprova que 'guille' és membre del grup secundari 'admins'. url:https://wiki.ubuntu.com/BasicSecurity/ManagingUsers:url",
           "extrafield": "None",
           "command": "id -nG guille | grep -qw admins"
         },
@@ -48,7 +48,7 @@
           "task-id": "ssh-access-guille",
           "tarea": "Usuari guille té accés SSH",
           "status": "Pending",
-          "tooltip": "SSH permet restringir qui entra amb les directives AllowUsers o DenyUsers. Assegura't que 'guille' no està bloquejat explícitament a sshd_config. <link src=\"https://manpages.ubuntu.com/manpages/jammy/man5/sshd_config.5.html\">",
+          "tooltip": "SSH permet restringir qui entra amb les directives AllowUsers o DenyUsers. Assegura't que 'guille' no està bloquejat explícitament a sshd_config. url:https://manpages.ubuntu.com/manpages/jammy/man5/sshd_config.5.html:url",
           "extrafield": "None",
           "command": "sshd -T 2>/dev/null | awk '$1==\"denyusers\"{for(i=2;i<=NF;i++)if($i==\"guille\")exit 1} $1==\"allowusers\"{has_allow=1;for(i=2;i<=NF;i++)if($i==\"guille\")found=1} END{if(has_allow && !found)exit 1}'"
         },
@@ -152,7 +152,7 @@
           "task-id": "ssh-firewall",
           "tarea": "Firewall permet el port 2222",
           "status": "Pending",
-          "tooltip": "Si tens UFW actiu, has d'haver obert explícitament el port 2222 o ningú podrà connectar-se des de fora. <link src=\"https://ubuntu.com/server/docs/security-firewall\">",
+          "tooltip": "Si tens UFW actiu, has d'haver obert explícitament el port 2222 o ningú podrà connectar-se des de fora. url:https://ubuntu.com/server/docs/security-firewall:url",
           "extrafield": "None",
           "command": "ufw status | grep -Eq '2222(/tcp)?\\s+ALLOW'"
         },
@@ -160,9 +160,17 @@
           "task-id": "ssh-dev-tunnel",
           "tarea": "Túnel 'dev-tunnel' definit",
           "status": "Pending",
-          "tooltip": "Al fitxer ~/.ssh/config de l'usuari, ha d'haver-hi una entrada 'Host dev-tunnel' per facilitar la connexió al servidor de desenvolupament.",
+          "tooltip": "Al fitxer ~/.ssh/config de l'usuari guille, ha d'haver-hi una entrada 'Host dev-tunnel' per facilitar la connexió al servidor de desenvolupament.",
           "extrafield": "None",
-          "command": "test -f /home/guille/.ssh/config && grep -qi 'Host dev-tunnel' /home/guille/.ssh/config"
+          "command": "grep -qi 'host\\sdev-tunnel' /home/guille/.ssh/config"
+        },
+        {
+          "task-id": "ssh-dev-tunnel",
+          "tarea": "Túnel 'dev-tunnel' definit amb un tunnel",
+          "status": "Pending",
+          "tooltip": "Al fitxer ~/.ssh/config de l'usuari guille, ha d'haver-hi una entrada 'Host dev-tunnel' per facilitar la connexió al servidor de desenvolupament. Aquesta connexió ha de tenir un LocalForward",
+          "extrafield": "None",
+          "command": "grep -Pzoq '(?ism)^host\\s+dev-tunnel\\b(?:(?!^\\s*host\\b).)*LocalForward(?:(?!^\\s*host\\b).)*(?=^\\s*host\\b|\\Z)' /home/guille/.ssh/config"
         },
         {
           "task-id": "vpn-active",
@@ -182,7 +190,7 @@
           "task-id": "dns-install",
           "tarea": "Servidor DNS instal·lat",
           "status": "Pending",
-          "tooltip": "Comprova que el servidor BIND9 (paquet 'bind9' o comanda 'named') estigui instal·lat al sistema. <link src=\"https://ubuntu.com/server/docs/service-domain-name-service-dns\">",
+          "tooltip": "Comprova que el servidor BIND9 (paquet 'bind9' o comanda 'named') estigui instal·lat al sistema. url:https://ubuntu.com/server/docs/service-domain-name-service-dns:url",
           "extrafield": "None",
           "command": "command -v named >/dev/null 2>&1"
         },
@@ -200,7 +208,7 @@
           "status": "Pending",
           "tooltip": "El DNS utilitza principalment UDP port 53 per a les consultes estàndard. Verifica que el port està obert.",
           "extrafield": "None",
-          "command": "ss -lun | awk '{print $5}' | grep -Eq '(:|\\.)53$'"
+          "command": "ss -lun | awk '{print $4}' | grep -Eq '(:|\\.)53$'"
         },
         {
           "task-id": "dns-tcp-53",
@@ -220,27 +228,51 @@
         },
         {
           "task-id": "dns-zone-soa",
-          "tarea": "Zona del grup creada",
+          "tarea": "Zona del grup és una zona subordinada",
           "status": "Pending",
-          "tooltip": "Busca el registre SOA (Start Of Authority) per al domini %GRUP%.local. Confirma que la zona està carregada. <link src=\"https://ca.wikipedia.org/wiki/SOA_(registre)\">",
+          "tooltip": "Comprova que la zona %GRUP%.smx2.local existeix i és una zona esclava, no mestre.",
           "extrafield": "None",
-          "command": "dig +short SOA %GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short SOA %GRUP%.smx2.local @127.0.0.1 | grep -q '.' && ! grep -Ri 'zone \"%GRUP%.smx2.local\".*type master' /etc/bind"
         },
         {
-          "task-id": "dns-ns-record",
-          "tarea": "Registre NS creat",
+          "task-id": "dns-zone-ns",
+          "tarea": "Comprova els servidors autoritatius de la zona",
           "status": "Pending",
-          "tooltip": "El registre NS (Name Server) indica quin servidor té l'autoritat sobre la zona. És obligatori en qualsevol zona DNS.",
+          "tooltip": "Verifica que la zona %GRUP%.smx2.local té definits servidors autoritatius correctes.",
           "extrafield": "None",
-          "command": "dig +short NS %GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short NS %GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+        },
+        {
+          "task-id": "dns-zone-transfer",
+          "tarea": "Comprova que la zona esclava pot sincronitzar-se",
+          "status": "Pending",
+          "tooltip": "Assegura que la zona %GRUP%.smx2.local es pot transferir des del mestre i que la transferència de zona funciona correctament.",
+          "extrafield": "None",
+          "command": "dig AXFR %GRUP%.smx2.local @127.0.0.1 | grep -q 'SOA'"
+        },
+        {
+          "task-id": "dns-master-not-local",
+          "tarea": "Comprova que el mestre no està local",
+          "status": "Pending",
+          "tooltip": "Confirma que la zona mestre smx2.local no està definida a la màquina de l'estudiant.",
+          "extrafield": "None",
+          "command": "! grep -Ri 'zone \"smx2.local\".*type master' /etc/bind"
+        },
+        {
+          "task-id": "dns-zone-a-record",
+          "tarea": "Comprova que hi ha un registre A",
+          "status": "Pending",
+          "tooltip": "Assegura que la zona %GRUP%.smx2.local té almenys un registre A configurat.",
+          "extrafield": "None",
+          "command": "dig +short A %GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-mx-record",
           "tarea": "Registre MX creat",
           "status": "Pending",
-          "tooltip": "El registre MX (Mail Exchange) diu on enviar els correus del domini. Sense això, no rebràs emails. <link src=\"https://ca.wikipedia.org/wiki/Registre_MX\">",
+          "tooltip": "El registre MX (Mail Exchange) diu on enviar els correus del domini. Sense això, no rebràs emails. url:https://ca.wikipedia.org/wiki/Registre_MX:url",
           "extrafield": "None",
-          "command": "dig +short MX %GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short MX %GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-spf-record",
@@ -248,95 +280,95 @@
           "status": "Pending",
           "tooltip": "L'SPF és un registre TXT que ajuda a prevenir l'spam, indicant quines IPs poden enviar correu en nom del teu domini (v=spf1...).",
           "extrafield": "None",
-          "command": "dig +short TXT %GRUP%.local @127.0.0.1 | grep -qi 'v=spf1'"
+          "command": "dig +short TXT %GRUP%.smx2.local @127.0.0.1 | grep -qi 'v=spf1'"
         },
         {
           "task-id": "dns-host-server",
           "tarea": "Host server creat",
           "status": "Pending",
-          "tooltip": "Comprova que el nom 'server.%GRUP%.local' resol a una IP (Registre A).",
+          "tooltip": "Comprova que el nom 'server.%GRUP%.smx2.local' resol a una IP (Registre A).",
           "extrafield": "None",
-          "command": "dig +short server.%GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short server.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-host-dev",
           "tarea": "Host dev creat",
           "status": "Pending",
-          "tooltip": "Comprova que el nom 'dev.%GRUP%.local' resol a una IP.",
+          "tooltip": "Comprova que el nom 'dev.%GRUP%.smx2.local' resol a una IP.",
           "extrafield": "None",
-          "command": "dig +short dev.%GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short dev.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-host-prod",
           "tarea": "Host prod creat",
           "status": "Pending",
-          "tooltip": "Comprova que el nom 'prod.%GRUP%.local' resol a una IP.",
+          "tooltip": "Comprova que el nom 'prod.%GRUP%.smx2.local' resol a una IP.",
           "extrafield": "None",
-          "command": "dig +short prod.%GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short prod.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-host-backups",
           "tarea": "Host backups creat",
           "status": "Pending",
-          "tooltip": "Comprova que el nom 'backups.%GRUP%.local' resol a una IP.",
+          "tooltip": "Comprova que el nom 'backups.%GRUP%.smx2.local' resol a una IP.",
           "extrafield": "None",
-          "command": "dig +short backups.%GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short backups.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-cname-mail",
           "tarea": "CNAME mail creat",
           "status": "Pending",
-          "tooltip": "Mail sol ser un àlies (CNAME) apuntant al servidor principal. Verifica que 'mail.%GRUP%.local' resol.",
+          "tooltip": "Mail sol ser un àlies (CNAME) apuntant al servidor principal. Verifica que 'mail.%GRUP%.smx2.local' resol.",
           "extrafield": "None",
-          "command": "dig mail.%GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig mail.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-cname-ftp",
           "tarea": "CNAME ftp creat",
           "status": "Pending",
-          "tooltip": "Verifica que 'ftp.%GRUP%.local' resol (normalment un CNAME a server).",
+          "tooltip": "Verifica que 'ftp.%GRUP%.smx2.local' resol (normalment un CNAME a server).",
           "extrafield": "None",
-          "command": "dig ftp.%GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig ftp.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-cname-www",
           "tarea": "CNAME www creat",
           "status": "Pending",
-          "tooltip": "El clàssic 'www'. Verifica que 'www.%GRUP%.local' resol correctament.",
+          "tooltip": "El clàssic 'www'. Verifica que 'www.%GRUP%.smx2.local' resol correctament.",
           "extrafield": "None",
-          "command": "dig www.%GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig www.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-cname-wordpress",
           "tarea": "CNAME wordpress creat",
           "status": "Pending",
-          "tooltip": "Verifica que 'wordpress.%GRUP%.local' resol. Serà necessari per als VirtualHosts d'Apache.",
+          "tooltip": "Verifica que 'wordpress.%GRUP%.smx2.local' resol. Serà necessari per als VirtualHosts d'Apache.",
           "extrafield": "None",
-          "command": "dig wordpress.%GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig wordpress.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-cname-tickets",
           "tarea": "CNAME tickets creat",
           "status": "Pending",
-          "tooltip": "Verifica que 'tickets.%GRUP%.local' resol.",
+          "tooltip": "Verifica que 'tickets.%GRUP%.smx2.local' resol.",
           "extrafield": "None",
-          "command": "dig tickets.%GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig tickets.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-cname-scripting",
           "tarea": "CNAME scripting creat",
           "status": "Pending",
-          "tooltip": "Verifica que 'scripting.%GRUP%.local' resol.",
+          "tooltip": "Verifica que 'scripting.%GRUP%.smx2.local' resol.",
           "extrafield": "None",
-          "command": "dig scripting.%GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig scripting.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-cname-bck",
           "tarea": "CNAME bck creat",
           "status": "Pending",
-          "tooltip": "Verifica que 'bck.%GRUP%.local' resol.",
+          "tooltip": "Verifica que 'bck.%GRUP%.smx2.local' resol.",
           "extrafield": "None",
-          "command": "dig bck.%GRUP%.local @127.0.0.1 | grep -q '.'"
+          "command": "dig bck.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
         },
         {
           "task-id": "dns-resolv-local",
@@ -352,7 +384,7 @@
           "status": "Pending",
           "tooltip": "Quan preguntem al servidor per la seva pròpia zona, ha de respondre amb el flag 'aa' (Authoritative Answer), no com a recursiu.",
           "extrafield": "None",
-          "command": "dig %GRUP%.local SOA @127.0.0.1 +noall +flags | grep -q ' aa '"
+          "command": "dig %GRUP%.smx2.local SOA @127.0.0.1 +noall +flags | grep -q ' aa '"
         },
         {
           "task-id": "dns-no-axfr",
@@ -360,7 +392,7 @@
           "status": "Pending",
           "tooltip": "Seguretat: Una transferència de zona completa (AXFR) ha d'estar prohibida excepte per als servidors secundaris autoritzats. Ha de donar error o REFUSED.",
           "extrafield": "None",
-          "command": "dig AXFR %GRUP%.local @127.0.0.1 +time=2 +tries=1 | grep -Eq 'Transfer failed|failed|REFUSED|not authorized'"
+          "command": "dig AXFR %GRUP%.smx2.local @127.0.0.1 +time=2 +tries=1 | grep -Eq 'Transfer failed|failed|REFUSED|not authorized'"
         },
         {
           "task-id": "dns-forwarders",
@@ -390,7 +422,7 @@
           "task-id": "dns-zone-file-exists",
           "tarea": "Fitxer de zona definit a la configuració",
           "status": "Pending",
-          "tooltip": "Comprova que dins de '/etc/bind' existeix una declaració 'zone \"%GRUP%.local\"' que apunta a un fitxer.",
+          "tooltip": "Comprova que dins de '/etc/bind' existeix una declaració 'zone \"%GRUP%.smx2.local\"' que apunta a un fitxer.",
           "extrafield": "None",
           "command": "grep -R \"zone \\\"%GRUP%\\.local\\\"\" /etc/bind"
         }
@@ -404,7 +436,7 @@
           "task-id": "web-apache-install",
           "tarea": "Apache instal·lat",
           "status": "Pending",
-          "tooltip": "Verifica que el servidor web Apache2 està instal·lat. <link src=\"https://ubuntu.com/server/docs/web-servers-apache\">",
+          "tooltip": "Verifica que el servidor web Apache2 està instal·lat. url:https://ubuntu.com/server/docs/web-servers-apache:url",
           "extrafield": "None",
           "command": "command -v apache2 >/dev/null 2>&1"
         },
@@ -452,7 +484,7 @@
           "task-id": "web-php-install",
           "tarea": "PHP instal·lat",
           "status": "Pending",
-          "tooltip": "WordPress i moltes apps web necessiten PHP. Verifica que la comanda 'php' funciona. <link src=\"https://www.php.net/manual/en/install.unix.debian.php\">",
+          "tooltip": "WordPress i moltes apps web necessiten PHP. Verifica que la comanda 'php' funciona. url:https://www.php.net/manual/en/install.unix.debian.php:url",
           "extrafield": "None",
           "command": "php -v >/dev/null 2>&1"
         },
@@ -522,7 +554,7 @@
           "task-id": "mail-postfix-install",
           "tarea": "Postfix instal·lat",
           "status": "Pending",
-          "tooltip": "Postfix actua com a MTA (Mail Transfer Agent) per enviar correus. Verifica la seva instal·lació. <link src=\"https://ubuntu.com/server/docs/mail-postfix\">",
+          "tooltip": "Postfix actua com a MTA (Mail Transfer Agent) per enviar correus. Verifica la seva instal·lació. url:https://ubuntu.com/server/docs/mail-postfix:url",
           "extrafield": "None",
           "command": "command -v postfix >/dev/null 2>&1"
         },
@@ -570,9 +602,9 @@
           "task-id": "mail-domain-check",
           "tarea": "Domini postfix correcte",
           "status": "Pending",
-          "tooltip": "Revisa la variable 'myhostname' o 'mydomain' a la configuració de Postfix per veure si coincideix amb %GRUP%.local.",
+          "tooltip": "Revisa la variable 'myhostname' o 'mydomain' a la configuració de Postfix per veure si coincideix amb %GRUP%.smx2.local.",
           "extrafield": "None",
-          "command": "postconf mydomain myhostname | grep -q \"%GRUP%.local\""
+          "command": "postconf mydomain myhostname | grep -q \"%GRUP%.smx2.local\""
         },
         {
           "task-id": "mail-users-exist",
@@ -696,7 +728,7 @@
           "task-id": "wp-config-exists",
           "tarea": "Fitxer wp-config.php existeix",
           "status": "Pending",
-          "tooltip": "Aquest fitxer connecta el codi PHP amb la base de dades. Ha d'existir a l'arrel de la instal·lació. <link src=\"https://wordpress.org/documentation/article/editing-wp-config-php/\">",
+          "tooltip": "Aquest fitxer connecta el codi PHP amb la base de dades. Ha d'existir a l'arrel de la instal·lació. url:https://wordpress.org/documentation/article/editing-wp-config-php/:url",
           "extrafield": "None",
           "command": "test -f /var/www/html/wordpress/wp-config.php || test -f /var/www/wordpress/wp-config.php"
         },
@@ -974,7 +1006,7 @@
           "task-id": "bck-cron-syntax",
           "tarea": "Sintaxi del crontab correcta",
           "status": "Pending",
-          "tooltip": "Verifica que la línia del cron té els 5 camps de temps (min hora dia mes dia-setmana) i la comanda. <link src=\"https://crontab.guru/\">",
+          "tooltip": "Verifica que la línia del cron té els 5 camps de temps (min hora dia mes dia-setmana) i la comanda. url:https://crontab.guru/:url",
           "extrafield": "None",
           "command": "grep -E \"^(\\*|[0-9,-/]+)\\s+(\\*|[0-9,-/]+)\\s+(\\*|[0-9,-/]+)\\s+(\\*|[0-9,-/]+)\\s+(\\*|[0-9,-/]+)\" /etc/cron.d/backup"
         }
@@ -988,7 +1020,7 @@
           "task-id": "scr-python-install",
           "tarea": "Python3 instal·lat",
           "status": "Pending",
-          "tooltip": "El llenguatge base per al projecte de scripting. Verifica que 'python3' està disponible. <link src=\"https://docs.python.org/3/\">",
+          "tooltip": "El llenguatge base per al projecte de scripting. Verifica que 'python3' està disponible. url:https://docs.python.org/3/:url",
           "extrafield": "None",
           "command": "command -v python3 >/dev/null"
         },
@@ -1020,7 +1052,7 @@
           "task-id": "scr-venv",
           "tarea": "Entorn virtual (venv) creat",
           "status": "Pending",
-          "tooltip": "Sempre s'ha d'usar un entorn virtual ('python3 -m venv venv') per aïllar les dependències del projecte. <link src=\"https://docs.python.org/3/library/venv.html\">",
+          "tooltip": "Sempre s'ha d'usar un entorn virtual ('python3 -m venv venv') per aïllar les dependències del projecte. url:https://docs.python.org/3/library/venv.html:url",
           "extrafield": "None",
           "command": "test -d /var/www/scripting/venv"
         },
@@ -1108,7 +1140,7 @@
           "task-id": "scr-shebang",
           "tarea": "Shebang correcte als scripts",
           "status": "Pending",
-          "tooltip": "La primera línia de l'script ha de ser '#!/bin/bash'. Això indica al sistema quin intèrpret usar. <link src=\"https://ca.wikipedia.org/wiki/Shebang\">",
+          "tooltip": "La primera línia de l'script ha de ser '#!/bin/bash'. Això indica al sistema quin intèrpret usar. url:https://ca.wikipedia.org/wiki/Shebang:url",
           "extrafield": "None",
           "command": "head -n 1 /var/www/scripting/scripts/check_disk.sh | grep -q \"^#!/bin/bash\""
         },
@@ -1140,7 +1172,7 @@
           "task-id": "scr-gunicorn",
           "tarea": "Servidor de producció (Gunicorn) usat",
           "status": "Pending",
-          "tooltip": "No s'ha d'usar 'flask run' en producció. Verifica que el procés corre sota Gunicorn o uWSGI. <link src=\"https://gunicorn.org/\">",
+          "tooltip": "No s'ha d'usar 'flask run' en producció. Verifica que el procés corre sota Gunicorn o uWSGI. url:https://gunicorn.org/:url",
           "extrafield": "None",
           "command": "ps aux | grep [g]unicorn >/dev/null 2>&1 || ps aux | grep [u]wsgi >/dev/null 2>&1"
         }
@@ -1162,7 +1194,7 @@
           "task-id": "ftp-service-active",
           "tarea": "Servei vsftpd en execució",
           "status": "Pending",
-          "tooltip": "Comprova que el dimoni 'vsftpd' (Very Secure FTP Daemon) està funcionant. <link src=\"https://ubuntu.com/server/docs/service-ftp\">",
+          "tooltip": "Comprova que el dimoni 'vsftpd' (Very Secure FTP Daemon) està funcionant. url:https://ubuntu.com/server/docs/service-ftp:url",
           "extrafield": "None",
           "command": "systemctl is-active vsftpd"
         },
@@ -1242,7 +1274,7 @@
           "task-id": "ftp-chroot",
           "tarea": "Chroot d’usuaris locals",
           "status": "Pending",
-          "tooltip": "Seguretat (Jail): Els usuaris han de quedar tancats a la seva carpeta home ('chroot_local_user=YES'). <link src=\"https://en.wikipedia.org/wiki/Chroot\">",
+          "tooltip": "Seguretat (Jail): Els usuaris han de quedar tancats a la seva carpeta home ('chroot_local_user=YES'). url:https://en.wikipedia.org/wiki/Chroot:url",
           "extrafield": "None",
           "command": "grep -Eiq '^\\s*chroot_local_user\\s*=\\s*YES\\s*$' /etc/vsftpd.conf"
         },
