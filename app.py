@@ -368,7 +368,6 @@ if __name__ == "__main__":
 
         if os.path.exists(target_path):
             os.remove(target_path)
-        print(f"{target_path} creating from template...")
         shutil.copyfile(DATA_TEMPLATE, target_path)
 
     resolve_demo_data_endpoint(DEMO_SRC)

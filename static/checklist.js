@@ -100,3 +100,13 @@ function urlTooltipBox() {
 }
 
 urlTooltipBox();
+
+function toggleMenu() {
+    document.getElementById('menuList').classList.toggle("show")
+}
+
+document.querySelectorAll('#menuList a').forEach(link => {
+    link.addEventListener('click', () => {
+        toggleMenu()
+    });
+});

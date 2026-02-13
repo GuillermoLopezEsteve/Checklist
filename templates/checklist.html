@@ -13,7 +13,7 @@
 
     <h1>Grup {{ number }} Taulell</h1>
 
-        <div class="header">
+        <div class="header" id="start">
             <a href="/" class="back-link">← Back to Dashboard</a>
             <div>
                 <button class="btn btn-medallas" onclick="location.href='/group{{number}}/badges'">Galardons</a>
@@ -24,7 +24,13 @@
 
         </div>
     <nav id="menu">
-       <ul>
+        <button id="menu-toggle" onclick="toggleMenu()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </button>
+       <ul id="menuList">
+            <li><a href="#start">Inici</a></li>
         <!-- Filled programatically via fillMenuTasks()--> 
         </ul>
     </nav>
@@ -55,7 +61,7 @@
                                 {% endif %}
                                 
                                 {% if session.get('logged_in') %} 
-                                    <span class="icon command-icon" onclick="toggleCommand(this)">C</span> 
+                                    <span class="icon command-icon" onclick="toggleCommand(this)">C {{ task['task-id'] }}</span> 
                                 {% endif %}
                             </div>    
                             {% if task.tooltip %} 
