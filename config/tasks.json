@@ -550,7 +550,7 @@
           "status": "Pending",
           "tooltip": "A la base de dades 'admin panel existeix la taula 'services'",
           "extrafield": "None",
-          "command": "$(mysql -e \"USE admin_panel; SHOW CREATE TABLE services\" | grep -o \"FOREIGN KEY\" | wc -l) -eq 2 ]"
+          "command": "mysql -e \"SHOW CREATE TABLE admin_panel.admins_of_services\\G\" | grep -o \"FOREIGN KEY\" | wc -l | grep 2 "
         },
         {
           "task-id": "web-db-panel-FK-services",
@@ -590,7 +590,7 @@
           "status": "Pending",
           "tooltip": "USE admin_panel;SHOW COLUMNS FROM services;",
           "extrafield": "None",
-          "command": "mysql -e \"USE admin_panel;SHOW COLUMNS FROM servers;\" | grep -qi port"
+          "command": "mysql -e \"USE admin_panel;SHOW COLUMNS FROM services;\" | grep -qi port"
         },
         {
           "task-id": "web-db-servers-data",
