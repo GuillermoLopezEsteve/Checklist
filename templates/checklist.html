@@ -61,7 +61,8 @@
                                 {% endif %}
                                 
                                 {% if session.get('logged_in') %} 
-                                    <span class="icon command-icon" onclick="toggleCommand(this)">C {{ task['task-id'] }}</span> 
+                                    <span class="icon command-icon" onclick="toggleCommand(this)">C</span>
+                                    <span class="tag-debug">{{ task['task-id'] }}</span>
                                 {% endif %}
                             </div>    
                             {% if task.tooltip %} 
@@ -132,5 +133,22 @@
 
 </div>
 <script src="{{ url_for('static', filename='checklist.js') }}"></script>
+
+{% if session.get('logged_in') %}                         
+    <script>
+        const textTags = [...document.querySelectorAll(".tag-debug")]
+            .map(tag => tag.innerText.trim().toLowerCase());
+
+        const duplicates = [...new Set(
+        textTags.filter((value, index, array) => array.indexOf(value) !== index)
+        )];
+
+        if (duplicates.length > 0) {
+            console.log("Duplicate values found:", duplicates);
+        } else {
+            console.log("All values are unique");
+        }
+    </script>
+{% endif %}
 </body>
 </html>

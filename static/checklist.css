@@ -218,6 +218,22 @@ ul.tasks {
   padding: 2px 2px 2px 2px;
 }
 
+.tag-debug {
+  margin-left: 8px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 5px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  align-self: flex-end;
+  font-family: monospace;
+  padding: 2px 2px 2px 2px;
+  color: white;
+  background: #503062;
+}
 
 .show-more-box {
   display: none;
