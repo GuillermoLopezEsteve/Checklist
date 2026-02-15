@@ -24,8 +24,10 @@ tasks_bp = Blueprint("tasks", __name__, url_prefix="/api")
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
-DATA_TEMPLATE = "config/tasks.json"
-DEMO_SRC = "config/demos.json"
+TIMESTAMP_PATH = "data/timestamps.json"
+
+DATA_TEMPLATE = BASE_DIR / "config/tasks.json"
+DEMO_SRC = BASE_DIR / "config/demos.json"
 
 
 @app.route("/api/update-tasks", methods=["GET", "POST"], strict_slashes=False)
@@ -35,7 +37,8 @@ def update_tasks():
 
     - GET: returns a small help message.
     - POST: validates group_id, reads JSON payload, and stores it
-      as dataXX.json inside the data directory.
+      as dataXX.json inside the data directory. Updates timestamp file also
+      in data directory.
     """
     if request.method == "GET":
         return jsonify({
@@ -50,6 +53,7 @@ def update_tasks():
             return jsonify({"error": "Missing group_id query param"}), 400
         if not re.fullmatch(r"\d+", group_id):
             return jsonify({"error": "group_id must be numeric"}), 400
+        store_timestamp(TIMESTAMP_PATH, group_id)
 
         gid = str(int(group_id)).zfill(2)
         payload = request.get_json(force=True, silent=True)
@@ -241,7 +245,13 @@ def admin():
     """
     Render the admin dashboard.
     """
-    return render_template("admin.html")
+    groups_timestamps = myData.load_json(TIMESTAMP_PATH)
+    print("gt")
+    print(groups_timestamps)
+    return render_template(
+        "admin.html",
+        groups_timestamps=groups_timestamps
+    )
 
 
 @app.route("/updates-demos", methods=["POST"])
@@ -354,6 +364,27 @@ def resolve_demo_data_endpoint(demos_config: str) -> None:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
+def store_timestamp(data_path: str, group_id: int):
+    """
+    Stores ISO timestamp of group in data_path
+    """
+    data = myData.load_json(data_path)
+    data[str(group_id)] = {"last_time": iso_now_utc()}
+    myData.atomic_write_json(data_path, data)
+
+
+def iso_now_utc() -> str:
+    """
+    Return the current UTC time as an ISO-8601 string.
+    Format example:
+        2026-02-15T10:11:12Z
+    Using UTC avoids timezone ambiguity and makes timestamps
+    comparable across systems.
+    """
+    return datetime.datetime.now(
+        datetime.timezone.cet).isoformat().replace("+00:00", "Z")
+
+
 if __name__ == "__main__":
     """
     Application entry point.
@@ -366,9 +397,9 @@ if __name__ == "__main__":
         filename = f"data{str(i).zfill(2)}.json"
         target_path = os.path.join(DATA_DIR, filename)
 
-        if os.path.exists(target_path):
-            os.remove(target_path)
-        shutil.copyfile(DATA_TEMPLATE, target_path)
+        if not os.path.exists(target_path):
+            # os.remove(target_path)
+            shutil.copyfile(DATA_TEMPLATE, target_path)
 
     resolve_demo_data_endpoint(DEMO_SRC)
     myExcel.update_demo_data(DEMO_SRC)

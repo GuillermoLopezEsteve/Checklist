@@ -1,6 +1,7 @@
 import os
 import json
 import random
+import tempfile
 
 
 def get_sheet_url(demo_path_file: str):
@@ -203,3 +204,63 @@ def randomize_task_data(n_groups: int, data_path: str) -> None:
                 task["status"] = random.choice(["OK", "Pending"])
 
         store_task_data(i, data_path, data)
+
+
+def atomic_write_json(path: str, data: dict) -> None:
+    """
+    Atomically write JSON data to disk.
+
+    Why this exists:
+    - Prevents file corruption if the process crashes mid-write
+    - Ensures readers always see a fully valid JSON file
+
+    How it works:
+    1. Write JSON to a temporary file in the same directory
+    2. Flush and fsync to force data onto disk
+    3. Atomically replace the target file using os.replace()
+
+    os.replace() is atomic on POSIX filesystems when the
+    source and destination are on the same filesystem.
+    """
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(
+        prefix=".tmp_", dir=os.path.dirname(path) or "."
+        )
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2, sort_keys=True)
+            f.flush()
+            os.fsync(f.fileno())  # ensure bytes hit disk
+        os.replace(tmp_path, path)  # atomic on same filesystem
+    finally:
+        try:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+        except Exception:
+            pass
+
+
+def load_json(path: str) -> dict:
+    """
+    Load a JSON file from disk safely.
+
+    Behavior:
+    - If the file does not exist → return empty dict
+    - If the file is corrupted → rename it and return empty dict
+
+    This prevents a single corrupted write from permanently
+    breaking the application.
+    """
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+    except json.JSONDecodeError:
+        # file corrupted; keep a backup and start fresh
+        bak = path + ".corrupt"
+        try:
+            os.replace(path, bak)
+        except Exception:
+            pass
+        return {}

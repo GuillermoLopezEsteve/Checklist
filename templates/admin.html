@@ -30,7 +30,43 @@
         <form action="/randomize-task-data" method="post">
             <button type="submit">Randomize Task Data</button>
         </form>
+
+        <div class="tab-panel" id="tab-timestamps" data-panel="timestamps">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Last task updates per group</h2>
+                    <p class="muted">Stored in <code>data/timestamps.json</code></p>
+                </div>
+
+                {% if groups_timestamps %}
+                <div class="table-wrap">
+                    <table class="simple-table">
+                        <thead>
+                            <tr>
+                                <th>Group</th>
+                                <th>Last time (UTC)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {# groups_timestamps = { "9": {"last_time": "...Z"}, ... } #}
+                            {% for gid, info in groups_timestamps|dictsort %}
+                            <tr>
+                                <td><span class="pill">grup{{ "%02d"|format(gid|int) if gid is string else gid }}</span></td>
+                                <td class="mono">{{ info.last_time if info is mapping else info["last_time"] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty">
+                    No timestamp data yet.
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
+        
     <script src="{{ url_for('static', filename='admin.js') }}"></script>
 </body>
 </html>
