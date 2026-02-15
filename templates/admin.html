@@ -47,7 +47,11 @@
                         <thead>
                             <tr>
                                 <th>Group</th>
-                                <th>Last time (UTC)</th>
+                                <th>Last time (CET)</th>
+                                <th>Tasks Completed</th>
+                                <th>Tasks Pending</th>
+                                <th>Errors</th>
+                                <th>Timeouts</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,6 +60,10 @@
                            <tr class="ts-row" data-last-time="{{ info['last_time'] }}">
                                 <td><span class="pill">grup{{ "%02d"|format(gid|int) if gid is string else gid }}</span></td>
                                 <td class="mono">{{ info.last_time if info is mapping else info["last_time"] }}</td>
+                                <td class="mono">{{ info.OK if info is mapping else info["OK"] }}</td>
+                                <td class="mono">{{ info.Pending if info is mapping else info["Pending"] }}</td>
+                                <td class="mono">{{ info.Error if info is mapping else info["Error"] }}</td>
+                                <td class="mono">{{ info.Timeout if info is mapping else info["Timeout"] }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
