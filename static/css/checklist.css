@@ -1,0 +1,281 @@
+html {
+  scroll-behavior: smooth;
+}
+
+#menu {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    font-family: sans-serif;
+}
+
+#menu-toggle {
+    width: 50px;
+    height: 50px;
+    background-color: #333; /* Dark Grey */
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.bar {
+    width: 25px;
+    height: 3px;
+    background-color: #ccc; /* Light Grey */
+    margin: 3px 0;
+    border-radius: 2px;
+    transition: 0.3s;
+}
+
+#menu ul {
+    list-style: none;
+    padding: 10px 0;
+    margin: 10px 0 0 0;
+    background-color: #333; /* Dark Grey */
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    display: none;
+}
+
+#menu ul.show {
+    display: block !important;
+}
+
+#menu li a {
+    display: block;
+    padding: 12px 20px;
+    color: #f0f0f0; /* Whitish */
+    text-decoration: none;
+    font-size: 18px;
+    border-bottom: 1px solid #444;
+}
+
+#menu li a:hover {
+    background-color: #444;
+}
+
+#menu li:last-child a {
+    border-bottom: none;
+}
+
+body { font-family: 'Segoe UI', sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
+.container { max-width: 800px; margin: 0 auto; }
+
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.back-link { text-decoration: none; color: #007bff; font-weight: bold; }
+.last-check { font-size: 0.9rem; color: #666; }
+
+/* Zones (Cards) */
+.zone-card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 25px; overflow: hidden; }
+.zone-header { background-color: #eee; padding: 15px 20px; border-bottom: 1px solid #ddd; }
+.zone-header h2 { margin: 0; font-size: 1.2rem; }
+
+
+
+/* Default Task styling */
+.task-details { flex-grow: 1; }
+.task-name { font-size: 1.05rem; display: block; }
+
+ul.tasks {
+    list-style: none;
+    padding-left: 0;
+}
+
+/* 2. Base style for the task card */
+.task-card {
+    position: relative;
+    padding: 10px 10px 10px 35px; /* Add left padding to make room for the bullet */
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+/* 3. Create the Custom Bullet (The pseudo-element) */
+.task-card::before {
+    content: '';
+    position: absolute;
+    left: 10px;  /* Position it inside the padding we created */
+    top: 50%;
+    transform: translateY(-50%); /* Center it vertically */
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3C/svg%3E");
+}
+
+.task-done::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Ccircle cx='12' cy='12' r='10' fill='%2328a745'/%3E%3Cpath d='M8 12l3 3 7-7' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.task-done {
+    background-color: #f0fff4;
+    border-color: #c3e6cb;
+}
+
+/* Footer Stats */
+.stats-footer { background: #333; color: white; padding: 15px; border-radius: 8px; display: flex; justify-content: space-around; margin-top: 20px; }
+.stat-box { text-align: center; }
+.stat-val { font-size: 1.5rem; font-weight: bold; }
+.stat-label { font-size: 0.8rem; opacity: 0.7; }
+
+/* Done tasks */
+
+#form-tasks.hide-done .task-done{ display: none; }
+
+.task-done .task-name{ text-decoration: line-through; color: #aaa; }
+
+.health-bar {
+    width: 100%;
+    height: 20px;
+    background: #1e1e1e;
+    border: 2px solid #444;
+    border-radius: 999px;
+    overflow: hidden;
+    --p: 0;
+}
+
+.bar__fill {
+    height: 100%;
+    width: calc(var(--p) * 100%);
+    color: white;
+    font-weight: bold;
+    font-size: 1em;
+    transition: width 200ms ease;
+    text-align: center;
+    vertical-align: middle;
+}
+.red-bar{ background: #bf1818;}
+.orange-bar{ background: linear-gradient(90deg, #bf1818, #26c126 50%); }
+.green-bar{ background: #26c126;}
+
+
+.btn {
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px; /* Pill shape */
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Soft shadow */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  text-decoration: none;
+}
+.btn-task-hide {
+  background-color: #4CAF50; /* Green */
+}
+
+.btn-medallas {
+  background-color: #1e6b94;
+}
+
+.btn:hover {
+  transform: translateY(-2px); /* Moves up slightly on hover */
+  box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+
+.btn:active {
+  transform: translateY(0); /* Pushes down when clicked */
+}
+
+
+.icon.info-icon {
+  background: #2b6cb0;
+  color: white;
+}
+
+.icon.command-icon {
+  color: white;
+  background: #2ca214;
+}
+
+.icon {  
+  margin-left: 8px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 50%;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  align-self: flex-end;
+  font-family: monospace;
+  padding: 2px 2px 2px 2px;
+}
+
+.tag-debug {
+  margin-left: 8px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 5px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  align-self: flex-end;
+  font-family: monospace;
+  padding: 2px 2px 2px 2px;
+  color: white;
+  background: #503062;
+}
+
+.tag-status {
+  margin-left: 8px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 5px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  align-self: flex-end;
+  font-family: monospace;
+  padding: 2px 2px 2px 2px;
+  color: white;
+  background: #0d6e9f;
+}
+
+.show-more-box {
+  display: none;
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: #eef4ff;
+  border-left: 3px solid #2b6cb0;
+  border-radius: 4px;
+  font-size: 14px;
+  align-self: flex-start;
+}
+
+.show-more-box.tooltip-box {
+  background: #eef4ff;
+  border-left: 3px solid #2b6cb0;
+}
+
+.show-more-box.command-box {
+  background: #e8ffe6;
+  border-left: 3px solid #0e8d30;
+}
+
+
+.task-body{
+   display:flex;
+   align-self: flex-start;
+   width: 100%;
+}
