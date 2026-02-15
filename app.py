@@ -4,6 +4,7 @@ from flask import (
     current_app, jsonify
 )
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from pathlib import Path
 import scripts.myData as myData
 import scripts.badges as badges
@@ -264,15 +265,50 @@ def update_demos():
     return redirect(url_for("admin"))
 
 
+@app.route("/restart-tasks-10-days-old", methods=["POST"])
+def restart_tasks_10_days_or_older():
+    """
+    Resets data if the groups that have not updated their taks in 10 days.
+    """
+    data = myData.load_json(TIMESTAMP_PATH) or {}
+    now = datetime.now(ZoneInfo("Europe/Madrid"))
+    cutoff = now - timedelta(days=10)
+    affected = 0
+    for group_id, info in list(data.items()):
+        last_time_str = info.get("last_time")
+        if not last_time_str:
+            continue
+        try:
+            last_time = datetime.fromisoformat(last_time_str)
+        except ValueError:
+            continue
+        if last_time <= cutoff:
+            restart_data_group(int(group_id))
+            affected += 1
+    return redirect(url_for("admin"))
+
+
+def restart_data_group(group_id: int):
+    """
+    Reset specific group task files using the default task template.
+    Deletes timestamp entry for that group.
+    """
+    filename = f"data{group_id:02d}.json"
+    target_path = os.path.join(DATA_DIR, filename)
+    shutil.copyfile(DATA_TEMPLATE, target_path)
+
+    data = myData.load_json(TIMESTAMP_PATH) or {}
+    data.pop(str(group_id), None)
+    myData.atomic_write_json(TIMESTAMP_PATH, data)
+
+
 @app.route("/restart-tasks-data", methods=["POST"])
 def restart_tasks_data():
     """
     Reset all group task files using the default task template.
     """
     for i in range(1, N_GROUPS + 1):
-        filename = f"data{str(i).zfill(2)}.json"
-        target_path = os.path.join(DATA_DIR, filename)
-        shutil.copyfile(DATA_TEMPLATE, target_path)
+        restart_data_group(group_id=i)
 
     return redirect(url_for("admin"))
 
@@ -369,11 +405,11 @@ def store_timestamp(data_path: str, group_id: int):
     Stores ISO timestamp of group in data_path
     """
     data = myData.load_json(data_path)
-    data[str(group_id)] = {"last_time": iso_now_utc()}
+    data[str(group_id)] = {"last_time": iso_now_cet()}
     myData.atomic_write_json(data_path, data)
 
 
-def iso_now_utc() -> str:
+def iso_now_cet() -> str:
     """
     Return the current UTC time as an ISO-8601 string.
     Format example:
@@ -381,8 +417,7 @@ def iso_now_utc() -> str:
     Using UTC avoids timezone ambiguity and makes timestamps
     comparable across systems.
     """
-    return datetime.datetime.now(
-        datetime.timezone.cet).isoformat().replace("+00:00", "Z")
+    return datetime.now(ZoneInfo("Europe/Madrid")).isoformat()
 
 
 if __name__ == "__main__":

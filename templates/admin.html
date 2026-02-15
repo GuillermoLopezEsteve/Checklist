@@ -31,6 +31,9 @@
             <button type="submit">Randomize Task Data</button>
         </form>
 
+        <form action="/restart-tasks-10-days-old" method="post">
+            <button type="submit">Reset status of all groups with entries 10 days or older</button>
+        </form>
         <div class="tab-panel" id="tab-timestamps" data-panel="timestamps">
             <div class="card">
                 <div class="card-header">
@@ -50,7 +53,7 @@
                         <tbody>
                             {# groups_timestamps = { "9": {"last_time": "...Z"}, ... } #}
                             {% for gid, info in groups_timestamps|dictsort %}
-                            <tr>
+                           <tr class="ts-row" data-last-time="{{ info['last_time'] }}">
                                 <td><span class="pill">grup{{ "%02d"|format(gid|int) if gid is string else gid }}</span></td>
                                 <td class="mono">{{ info.last_time if info is mapping else info["last_time"] }}</td>
                             </tr>
@@ -65,8 +68,9 @@
                 {% endif %}
             </div>
         </div>
+       
     </div>
-        
+     
     <script src="{{ url_for('static', filename='admin.js') }}"></script>
 </body>
 </html>

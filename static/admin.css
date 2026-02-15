@@ -134,3 +134,11 @@ button:hover {
   opacity: .7;
 }
 
+/* Groups that will be reset (>= 10 days old) */
+.ts-row.is-stale {
+  background: rgba(235, 42, 42, 0.664);
+}
+
+.ts-row.is-stale:hover {
+  background: rgba(142, 8, 8, 0.61);
+}

@@ -1,15 +1,23 @@
+function showStaleTasks(){
+  const THRESHOLD_DAYS = 10;
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-(function () {
-    const tabs = document.querySelectorAll('[data-tabs] .tab');
-    const panels = document.querySelectorAll('[data-panel]');
-    if (!tabs.length) return;
+  const rows = document.querySelectorAll("tr.ts-row[data-last-time]");
+  if (!rows.length) return;
 
-    function setActive(name) {
-        tabs.forEach(t => t.classList.toggle('is-active', t.dataset.tab === name));
-        panels.forEach(p => p.classList.toggle('is-active', p.dataset.panel === name));
+  const now = Date.now();
+
+  rows.forEach((row) => {
+    const s = row.dataset.lastTime;
+    const t = Date.parse(s); // works for ISO with Z or +01:00
+
+    if (Number.isNaN(t)) return;
+
+    const ageDays = (now - t) / MS_PER_DAY;
+    if (ageDays >= THRESHOLD_DAYS) {
+      row.classList.add("is-stale");
     }
+  });
+}
 
-    tabs.forEach(btn => {
-        btn.addEventListener('click', () => setActive(btn.dataset.tab));
-    });
-})();   
+showStaleTasks()
