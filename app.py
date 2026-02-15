@@ -54,16 +54,26 @@ def update_tasks():
             return jsonify({"error": "Missing group_id query param"}), 400
         if not re.fullmatch(r"\d+", group_id):
             return jsonify({"error": "group_id must be numeric"}), 400
-        store_timestamp(TIMESTAMP_PATH, group_id)
+
+        payload = request.get_json(force=True, silent=True)
+        tasks_data = payload.get("tasks")
+        if tasks_data is None:
+            return jsonify({"error":
+                            "Request body must be JSON, missing tasks_data"}),
+            400
+        counts = payload.get("counts") or {}
+        if counts is None:
+            return jsonify({"error":
+                            "Request body must be JSON, missing counts"}),
+            400
+
+        store_timestamp(TIMESTAMP_PATH, group_id, counts)
 
         gid = str(int(group_id)).zfill(2)
-        payload = request.get_json(force=True, silent=True)
-        if payload is None:
-            return jsonify({"error": "Request body must be JSON"}), 400
 
         out_path = DATA_DIR / f"data{gid}.json"
         out_path.write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2),
+            json.dumps(tasks_data, ensure_ascii=False, indent=2),
             encoding="utf-8"
         )
 
@@ -400,12 +410,14 @@ def resolve_demo_data_endpoint(demos_config: str) -> None:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def store_timestamp(data_path: str, group_id: int):
+def store_timestamp(data_path: str, group_id: int, counts: dict):
     """
-    Stores ISO timestamp of group in data_path
+    Stores ISO timestamp of group in data_path.
+    counts contains a summary of the status requests
     """
+    counts["last_time"] = iso_now_cet()
     data = myData.load_json(data_path)
-    data[str(group_id)] = {"last_time": iso_now_cet()}
+    data[str(group_id)] = counts
     myData.atomic_write_json(data_path, data)
 
 
