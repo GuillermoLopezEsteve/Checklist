@@ -125,7 +125,7 @@ def echo():
     return request.json, 200
 
 
-@app.route("/group<number>")
+@app.route("/group<number>", strict_slashes=False)
 def group_checklist(number: int):
     """
     Render the checklist page for a specific group.
@@ -151,7 +151,7 @@ def group_checklist(number: int):
     )
 
 
-@app.route("/leaderboard")
+@app.route("/leaderboard", strict_slashes=False)
 def leaderboard():
     """
     Render the leaderboard page.
@@ -170,11 +170,10 @@ def leaderboard():
     )
 
 
-@app.route("/group<number>/badges")
+@app.route("/group<number>/badges", strict_slashes=False)
 def medallas(number: int):
     """
     Render the badges page for a specific group.
-
     Displays earned badges and whether all demos are completed.
     """
     medallas = badges.get_badges_group(number, DATA_DIR)
@@ -204,37 +203,34 @@ def check_auth(username: str, password: str) -> bool:
 def login_required(f: Callable):
     """
     Decorator that restricts access to authenticated users only.
-
     Redirects to the login page if the user is not logged in.
     """
     from functools import wraps
 
     @wraps(f)
-    def decorated(*args, **kwargs):
+    def decorated_function(*args, **kwargs):
         if not session.get("logged_in"):
-            return redirect(url_for("login"))
+            return redirect(url_for("login", next=request.path))
         return f(*args, **kwargs)
+    return decorated_function
 
-    return decorated
 
-
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"], strict_slashes=False)
 def login():
     """
     Handle user authentication.
-
     - GET: render login form
     - POST: validate credentials and start session
     """
     error: str | None = None
-
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
 
         if check_auth(username, password):
             session["logged_in"] = True
-            return redirect(url_for("go_to_demo_sheet"))
+            next_url = request.args.get("next")
+            return redirect(next_url or url_for("go_to_demo_sheet"))
         else:
             error = "Invalid credentials"
 
@@ -250,8 +246,8 @@ def logout():
     return redirect(url_for("home"))
 
 
-@login_required
 @app.route("/admin")
+@login_required
 def admin():
     """
     Render the admin dashboard.
@@ -275,7 +271,9 @@ def update_demos():
     return redirect(url_for("admin"))
 
 
-@app.route("/restart-tasks-10-days-old", methods=["POST"])
+@app.route("/restart-tasks-10-days-old",
+           methods=["POST"],
+           strict_slashes=False)
 def restart_tasks_10_days_or_older():
     """
     Resets data if the groups that have not updated their taks in 10 days.
@@ -312,7 +310,7 @@ def restart_data_group(group_id: int):
     myData.atomic_write_json(TIMESTAMP_PATH, data)
 
 
-@app.route("/restart-tasks-data", methods=["POST"])
+@app.route("/restart-tasks-data", methods=["POST"], strict_slashes=False)
 def restart_tasks_data():
     """
     Reset all group task files using the default task template.
@@ -323,7 +321,7 @@ def restart_tasks_data():
     return redirect(url_for("admin"))
 
 
-@app.route("/randomize-task-data", methods=["POST"])
+@app.route("/randomize-task-data", methods=["POST"], strict_slashes=False)
 def randomize_task_data():
     """
     Randomly assign task statuses for all groups.
@@ -334,7 +332,7 @@ def randomize_task_data():
     return redirect(url_for("admin"))
 
 
-@app.route("/demos-sheet")
+@app.route("/demos-sheet", strict_slashes=False)
 @login_required
 def go_to_demo_sheet():
     """
@@ -445,7 +443,6 @@ if __name__ == "__main__":
         target_path = os.path.join(DATA_DIR, filename)
 
         if not os.path.exists(target_path):
-            # os.remove(target_path)
             shutil.copyfile(DATA_TEMPLATE, target_path)
 
     resolve_demo_data_endpoint(DEMO_SRC)

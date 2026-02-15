@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <meta charset="UTF-8">
     <title>Projecte SMX2</title>
 </head>
 <body>
+    {% if not session.get('logged_in') %}
+        <div class="admin-panel-button"><a href="/admin"><img src="{{ url_for('static', filename='img/admin_panel.png') }}"></a></div>
+    {% endif %}
 
     <h1>Projecte SMX2  -  1713</h1>
 

@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Panel</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
 </head>
 <body>
     <div class="container">
@@ -57,7 +57,7 @@
                         <tbody>
                             {# groups_timestamps = { "9": {"last_time": "...Z"}, ... } #}
                             {% for gid, info in groups_timestamps|dictsort %}
-                           <tr class="ts-row" data-last-time="{{ info['last_time'] }}">
+                           <tr class="ts-row" data-last-time="{{ info['last_time'] }}" onclick="location.href=/group{{ '%02d'|format(gid|int) if gid is string else gid }}/">
                                 <td><span class="pill">grup{{ "%02d"|format(gid|int) if gid is string else gid }}</span></td>
                                 <td class="mono">{{ info.last_time if info is mapping else info["last_time"] }}</td>
                                 <td class="mono">{{ info.OK if info is mapping else info["OK"] }}</td>
@@ -79,6 +79,6 @@
        
     </div>
      
-    <script src="{{ url_for('static', filename='admin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 </body>
 </html>
