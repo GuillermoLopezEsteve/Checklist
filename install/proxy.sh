@@ -60,28 +60,29 @@ cp "${SECRET_DIR}/web.crt" /usr/local/share/ca-certificates/web.crt \
 
 update-ca-certificates && success "Updated Trusted Certificates" || fail "Could not update-ca-certificates"
 
-
 FOUND_KEYS=true
 
 [[ -f "${SECRET_DIR}/ACCESS_KEY_PROD" ]] || { warn "ACCESS_KEY_PROD not found"; FOUND_KEYS=false; }
 [[ -f "${SECRET_DIR}/ACCESS_KEY_DEV"  ]] || { warn "ACCESS_KEY_DEV not found";  FOUND_KEYS=false; }
 
 if [[ "$FOUND_KEYS" != true ]]; then
-  read -rp "Access keys missing. Create SSH keys now? [Y/n]: " ans
+  read -rp "Access keys missing. Create new secrets via OpenSSL now? [Y/n]: " ans
   if [[ ! "$ans" =~ ^[Nn]$ ]]; then
-    pending "Creating SSH keys in $SECRET_DIR"
+    pending "Creating secrets in $SECRET_DIR"
 
+    # Generate PROD key
     [[ -f "${SECRET_DIR}/ACCESS_KEY_PROD" ]] || \
-      ssh-keygen -t ed25519 -N "" -f "${SECRET_DIR}/ACCESS_KEY_PROD" -C "checklist-prod" \
-        && success "Created ACCESS_KEY_PROD" || fail "Failed to create ACCESS_KEY_PROD"
+      openssl rand -hex 32 > "${SECRET_DIR}/ACCESS_KEY_PROD" \
+      && success "Created ACCESS_KEY_PROD" || fail "Failed to create ACCESS_KEY_PROD"
 
+    # Generate DEV key
     [[ -f "${SECRET_DIR}/ACCESS_KEY_DEV" ]] || \
-      ssh-keygen -t ed25519 -N "" -f "${SECRET_DIR}/ACCESS_KEY_DEV" -C "checklist-dev" \
-        && success "Created ACCESS_KEY_DEV" || fail "Failed to create ACCESS_KEY_DEV"
+      openssl rand -hex 32 > "${SECRET_DIR}/ACCESS_KEY_DEV" \
+      && success "Created ACCESS_KEY_DEV" || fail "Failed to create ACCESS_KEY_DEV"
 
-    success "SSH keys ready"
+    success "Secrets ready"
   else
-    warn "SSH keys not created"
+    warn "Secrets not created"
     fail "Access keys must be placed in ${SECRET_DIR}"
   fi
 else

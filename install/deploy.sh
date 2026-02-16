@@ -15,7 +15,7 @@ source $ENVIRONMENT || fail "Failure in enviroment"
 for v in RUNTIME_DIR SERVICE_USER N_GROUPS; do
   [[ -n "${!v:-}" ]] || fail "$v is required"
 done
-id $SERVICE_USER &>/dev/null && || fail "User '$SERVICE_USER' does not exist"
+id $SERVICE_USER &>/dev/null || fail "User '$SERVICE_USER' does not exist"
 [[ $N_GROUPS =~ ^[+-]?[0-9]+$ ]] || fail "N_GROUPS is not a number"
 [[ -d "$RUNTIME_DIR" ]] || fail "$RUNTIME_DIR does not exist"
 sudo -u $SERVICE_USER test -r $RUNTIME_DIR || echo "$SERVICE_USER cannot read $RUNTIME_DIR"

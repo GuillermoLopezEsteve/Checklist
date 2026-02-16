@@ -18,10 +18,6 @@ from typing import Callable
 
 N_GROUPS = 12
 
-app = Flask(__name__)
-app.secret_key = "supersecretkey"
-tasks_bp = Blueprint("tasks", __name__, url_prefix="/api")
-
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -29,6 +25,15 @@ TIMESTAMP_PATH = "data/timestamps.json"
 
 DATA_TEMPLATE = BASE_DIR / "config/tasks.json"
 DEMO_SRC = BASE_DIR / "config/demos.json"
+
+app = Flask(__name__)
+tasks_bp = Blueprint("tasks", __name__, url_prefix="/api")
+KEY_PATH = BASE_DIR / ".secret" / "ACCESS_KEY_PROD"
+try:
+    app.secret_key = KEY_PATH.read_text().strip()
+except FileNotFoundError:
+    print(f"Warning: Secret key file not found at {KEY_PATH}")
+    app.secret_key = "dev-key-only-use-in-local"
 
 
 @app.route("/api/update-tasks", methods=["GET", "POST"], strict_slashes=False)
