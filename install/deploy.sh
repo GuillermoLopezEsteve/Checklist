@@ -12,40 +12,53 @@ pending() { echo -e "${CYAN}[PENDING] ${NC}$1"; }
 ENVIRONMENT="%ENVIRONMENT_PATH%"
 source $ENVIRONMENT || fail "Failure in enviroment"
 
-LOCAL_CONF="${RUNTIME_DIR}/config/proxy.conf"
+for v in RUNTIME_DIR SERVICE_USER N_GROUPS; do
+  [[ -n "${!v:-}" ]] || fail "$v is required"
+done
+id $SERVICE_USER &>/dev/null && || fail "User '$SERVICE_USER' does not exist"
+[[ $N_GROUPS =~ ^[+-]?[0-9]+$ ]] || fail "N_GROUPS is not a number"
+[[ -d "$RUNTIME_DIR" ]] || fail "$RUNTIME_DIR does not exist"
+sudo -u $SERVICE_USER test -r $RUNTIME_DIR || echo "$SERVICE_USER cannot read $RUNTIME_DIR"
+
+success "Environment setup correct"
+
 SECRET_DIR="${RUNTIME_DIR}/.secret"
 NGINX_LINK="/etc/nginx/sites-enabled/reverse-proxy"
+LOCAL_CONF="${RUNTIME_DIR}/config/proxy.conf"
 
 FILES=(
-    "${RUNTIME_DIR}/.secret/ACCESS_KEY_DEV"
-    "${RUNTIME_DIR}/.secret/ACCESS_KEY_DEV.pub"
-    "${RUNTIME_DIR}/.secret/ACCESS_KEY_PROD"
-    "${RUNTIME_DIR}/.secret/ACCESS_KEY_PROD.pub"
-    "${RUNTIME_DIR}/config/demos.json"
-    "${RUNTIME_DIR}/config/tasks.json"
+    "${SECRET_DIR}/ACCESS_KEY_DEV" "${SECRET_DIR}/ACCESS_KEY_DEV.pub" "${SECRET_DIR}/ACCESS_KEY_PROD" "${SECRET_DIR}/ACCESS_KEY_PROD.pub"
+    "${RUNTIME_DIR}/config/demos.json" "${RUNTIME_DIR}/config/tasks.json" "${RUNTIME_DIR}/scripts/launcher.py" "${RUNTIME_DIR}/scripts/src/myExcel.py"
 )
 
-pending "Checking .secret/ keys for required cron jobs init"
-pending "Checking config for json files"
+pending "Checking .secret/ keys for required cron jobs init and Checking config for json files"
 for FILE in "${FILES[@]}"; do
     if [ ! -f "$FILE" ]; then
         fail "Required file missing: $FILE"
     fi
 done
 
+CRON_LOG="${RUNTIME_DIR}/logs/launcher.log"
+touch "${CRON_LOG}"
+chown ${SERVICE_USER}:${SERVICE_USER} "${CRON_LOG}"
 
-CRON="${RUNTIME_DIR}/install/launch_cron.sh"
-success "Needed secret files are available"
-bash "${CRON}" && success "Cron jobs launched successfully" || fail "Failed to launch cron jobs"
+L_COMMAND="${RUNTIME_DIR}/venv/bin/python ${RUNTIME_DIR}/scripts/launcher.py"
 
+LAUNCHER_CMD="*/2 * * * * ${SERVICE_USER} ${L_COMMAND} ${RUNTIME_DIR}/config/demos.json >> ${CRON_LOG} 2>&1"
+CRON_FILE="/etc/cron.d/checklist-auto-update-demo"
+{
+  echo "SHELL=/bin/bash"
+  echo "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  echo "$LAUNCHER_CMD"
+} > "$CRON_FILE" || fail "Failure to write cron job"
 
-pending "Checking if proxy conf exists in $NGINX_LINK"
+chmod 0644 "$CRON_FILE" || fail "Failed to set permissions on $CRON_FILE"
+success "Cron File setup"
 
 if [[ -f "$NGINX_LINK" ]]; then
     success "Nginx conf exists"
 else
-    warn "Nginx conf $LOCAL_CONF"
-    pending "Trying to set up proxy conf"
+    warn "Setting up Nginx conf from $LOCAL_CONF"
 
     cp "$LOCAL_CONF" "/etc/nginx/sites-available/reverse-proxy" \
         && success "Config copied to sites-available" || warn "Failed to copy config to sites-available"
@@ -70,6 +83,6 @@ sudo -u ${SERVICE_USER} -- test -x  ${RUNTIME_DIR}/venv/bin/gunicorn \
   && success "OK: gunicorn exists/executable" \
   || fail "NO: missing or not executable"
 
-sudo -u ${SERVICE_USER} -- ${RUNTIME_DIR}/venv/bin/gunicorn app:app 12 \
+sudo -u ${SERVICE_USER} -- ${RUNTIME_DIR}/venv/bin/gunicorn app:app ${N_GROUPS} \
   --bind 127.0.0.1:8443 \
   --workers 4 --threads 2 --timeout 60

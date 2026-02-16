@@ -44,24 +44,8 @@ else
 fi
 
 
-JOB_MATCH="launcher.py"
-
 pending "Removing cron jobs for ${SERVICE_USER} containing: ${JOB_MATCH}"
-
-CURRENT_CRON="$(crontab -u "$SERVICE_USER" -l 2>/dev/null || true)"
-MATCHING="$(printf '%s\n' "$CURRENT_CRON" | grep -F "$JOB_MATCH" || true)"
-
-if [ -z "$MATCHING" ]; then
-    success "No cron jobs to remove for ${SERVICE_USER}."
-else
-    COUNT="$(printf '%s\n' "$MATCHING" | wc -l | tr -d ' ')"
-    pending "Found ${COUNT} job(s). Deleting..."
-
-    UPDATED_CRON="$(printf '%s\n' "$CURRENT_CRON" | grep -Fv "$JOB_MATCH" || true)"
-
-    if printf '%s\n' "$UPDATED_CRON" | crontab -u "$SERVICE_USER" -; then
-        success "Removed ${COUNT} cron job(s) for ${SERVICE_USER}."
-    else
-        warn "Failed to update crontab for ${SERVICE_USER}."
-    fi
-fi
+CRON_FILE="/etc/cron.d/checklist-auto-update-demo"
+rm $CRON_FILE || warn "Could not remove $CRON_FILE, might not exist"
+ls $CRON_FILE && success "CRON JOB File does not exist" || warn "CRON JOB File still remains"
+success "Clean Script finished"
