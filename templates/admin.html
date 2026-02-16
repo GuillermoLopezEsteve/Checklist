@@ -9,8 +9,13 @@
 </head>
 <body>
     <div class="container">
+        <div class="admin-header">  
+            <a href="/" class="back-link">← Panell central</a>
+            <form action="/logout" method="post">
+                <button class="logout-button" type="submit">Log out</button>
+            </form>
+        </div>
 
-        <a href="/" class="back-link">← Panell central</a>
         <h1>Admin Panel</h1>
 
         {% if message %}
@@ -23,6 +28,8 @@
             <button type="submit">Update Demos</button>
         </form>
 
+
+
         <form action="/restart-tasks-data" method="post">
             <button type="submit">Restart Tasks Data</button>
         </form>
@@ -32,8 +39,9 @@
         </form>
 
         <form action="/restart-tasks-10-days-old" method="post">
-            <button type="submit">Reset status of all groups with entries 10 days or older</button>
+             <button type="submit" class="reset-10days-button">Reset status of all groups with entries 10 days or older</button>
         </form>
+
         <div class="tab-panel" id="tab-timestamps" data-panel="timestamps">
             <div class="card">
                 <div class="card-header">

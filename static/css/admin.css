@@ -35,6 +35,18 @@ button {
     transition: background-color 0.2s ease;
 }
 
+.logout-button {
+    background-color: #880a56;
+}
+
+.admin-header {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+}
+
 button:hover {
     background-color: #1f66cc;
 }

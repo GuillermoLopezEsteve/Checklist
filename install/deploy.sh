@@ -27,7 +27,7 @@ NGINX_LINK="/etc/nginx/sites-enabled/reverse-proxy"
 LOCAL_CONF="${RUNTIME_DIR}/config/proxy.conf"
 
 FILES=(
-    "${SECRET_DIR}/ACCESS_KEY_DEV" "${SECRET_DIR}/ACCESS_KEY_PROD"
+    "${SECRET_DIR}/ACCESS_KEY_DEV" "${SECRET_DIR}/ACCESS_KEY_PROD" "${SECRET_DIR}/GOOGLE_CLIENT_ID" "${SECRET_DIR}/GOOGLE_CLIENT_SECRET"
     "${RUNTIME_DIR}/config/demos.json" "${RUNTIME_DIR}/config/tasks.json" "${RUNTIME_DIR}/scripts/launcher.py" "${RUNTIME_DIR}/scripts/src/myExcel.py"
 )
 

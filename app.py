@@ -1,11 +1,12 @@
 from flask import (
     Flask, request, redirect, render_template,
     session, url_for, Blueprint, send_file,
-    current_app, jsonify
+    current_app, jsonify, abort
 )
+from authlib.integrations.flask_client import OAuth
+from pathlib import Path
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-from pathlib import Path
 import scripts.myData as myData
 import scripts.badges as badges
 import scripts.src.myExcel as myExcel
@@ -15,6 +16,7 @@ import re
 import shutil
 from typing import Callable
 
+app = Flask(__name__)
 
 N_GROUPS = 12
 
@@ -22,11 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 TIMESTAMP_PATH = "data/timestamps.json"
-
 DATA_TEMPLATE = BASE_DIR / "config/tasks.json"
 DEMO_SRC = BASE_DIR / "config/demos.json"
 
-app = Flask(__name__)
 tasks_bp = Blueprint("tasks", __name__, url_prefix="/api")
 KEY_PATH = BASE_DIR / ".secret" / "ACCESS_KEY_PROD"
 try:
@@ -35,6 +35,16 @@ except FileNotFoundError:
     print(f"Warning: Secret key file not found at {KEY_PATH}")
     app.secret_key = "dev-key-only-use-in-local"
 
+GOOGLE_CLIENT_ID_PATH = BASE_DIR / ".secret" / "GOOGLE_CLIENT_ID"
+GOOGLE_CLIENT_ID_SECRET = BASE_DIR / ".secret" / "GOOGLE_CLIENT_SECRET"
+app.config['GOOGLE_CLIENT_ID'] = GOOGLE_CLIENT_ID_PATH.read_text().strip()
+app.config['GOOGLE_CLIENT_SECRET'] = GOOGLE_CLIENT_ID_SECRET.read_text().strip()
+oauth = OAuth(app)
+google = oauth.register(
+  name='google',
+  server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+  client_kwargs={'scope': 'openid email profile'}
+)
 
 @app.route("/api/update-tasks", methods=["GET", "POST"], strict_slashes=False)
 def update_tasks():
@@ -63,14 +73,10 @@ def update_tasks():
         payload = request.get_json(force=True, silent=True)
         tasks_data = payload.get("tasks")
         if tasks_data is None:
-            return jsonify({"error":
-                            "Request body must be JSON, missing tasks_data"}),
-            400
+            return jsonify({"error": "Request body must be JSON, missing tasks_data"}), 400
         counts = payload.get("counts") or {}
         if counts is None:
-            return jsonify({"error":
-                            "Request body must be JSON, missing counts"}),
-            400
+            return jsonify({"error": "Request body must be JSON, missing counts"}), 400
 
         store_timestamp(TIMESTAMP_PATH, group_id, counts)
 
@@ -214,19 +220,53 @@ def login_required(f: Callable):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get("logged_in"):
-            return redirect(url_for("login", next=request.path))
+        if 'user' not in session:
+            return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
     return decorated_function
 
 
+ALLOWED_EMAILS_PATH = BASE_DIR / ".secret" / "ALLOWED_EMAILS"
+ALLOWED_EMAILS = [
+    line.strip() 
+    for line in ALLOWED_EMAILS_PATH.read_text().splitlines() 
+    if line.strip()
+]
+
+
+@app.route('/auth/callback')
+@app.route('/auth/callback')
+def auth_callback():
+    token = google.authorize_access_token()
+    user_info = token.get('userinfo')
+    email = user_info.get('email')
+
+    if email in ALLOWED_EMAILS:
+        session['user'] = user_info
+        target_url = session.pop('next_url', url_for('home'))
+        return redirect(target_url)
+    else:
+        abort(403, description="USER IS NOT ALLOWED AS ADMIN")
+
+
+@app.route('/login')
+def login():
+    next_url = request.args.get('next')
+    if next_url:
+        session['next_url'] = next_url
+        
+    redirect_uri = url_for('auth_callback', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+
+"""
 @app.route("/login", methods=["GET", "POST"], strict_slashes=False)
 def login():
-    """
+
     Handle user authentication.
     - GET: render login form
     - POST: validate credentials and start session
-    """
+
     error: str | None = None
     if request.method == "POST":
         username = request.form.get("username")
@@ -240,14 +280,15 @@ def login():
             error = "Invalid credentials"
 
     return render_template("needs_auth.html", error=error)
+"""
 
 
-@app.route("/logout")
+@app.route("/logout", methods=["GET", "POST"])
 def logout():
     """
     Log out the current user and clear the session.
     """
-    session.pop("logged_in", None)
+    session.clear()
     return redirect(url_for("home"))
 
 
@@ -382,12 +423,13 @@ def client_error(error):
     """
     Render custom client-side error pages (400–403).
     """
+    desc = getattr(error, 'description', "Access Error")
     return render_template(
         "base_error.html",
         title=f"{error.code} - Error",
         code=error.code,
-        message="Access Error",
-        description=error.description
+        message="Unauthorized access",
+        description=desc
     ), error.code
 
 
@@ -433,7 +475,6 @@ def iso_now_cet() -> str:
     comparable across systems.
     """
     return datetime.now(ZoneInfo("Europe/Madrid")).isoformat()
-
 
 if __name__ == "__main__":
     """

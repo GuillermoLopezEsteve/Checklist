@@ -22,7 +22,7 @@ APT_PACKAGES=(
 )
 
 PIP_PACKAGES=(
-  pandas flask pyOpenSSL gunicorn
+  pandas flask pyOpenSSL gunicorn Authlib requests
 )
 
 export DEBIAN_FRONTEND=noninteractive
