@@ -37,9 +37,9 @@ except FileNotFoundError:
     app.secret_key = "dev-key-only-use-in-local"
 
 GOOGLE_CLIENT_ID_PATH = BASE_DIR / ".secret" / "GOOGLE_CLIENT_ID"
-GOOGLE_CLIENT_ID_SECRET = BASE_DIR / ".secret" / "GOOGLE_CLIENT_SECRET"
+GOOGLE_CLIENT_ID_SECRET_PATH = BASE_DIR / ".secret" / "GOOGLE_CLIENT_SECRET"
 app.config['GOOGLE_CLIENT_ID'] = GOOGLE_CLIENT_ID_PATH.read_text().strip()
-app.config['GOOGLE_CLIENT_SECRET'] = GOOGLE_CLIENT_ID_SECRET.read_text().strip()
+app.config['GOOGLE_CLIENT_SECRET'] = GOOGLE_CLIENT_ID_SECRET_PATH.read_text().strip()
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 oauth = OAuth(app)
 google = oauth.register(
@@ -47,6 +47,8 @@ google = oauth.register(
   server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
   client_kwargs={'scope': 'openid email profile'}
 )
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '0'
+app.config['PREFERRED_URL_SCHEME'] = 'https'
 
 
 @app.route("/api/update-tasks", methods=["GET", "POST"], strict_slashes=False)
@@ -258,6 +260,7 @@ def login():
     if next_url:
         session['next_url'] = next_url
     redirect_uri = url_for('auth_callback', _external=True)
+    print(f"DEBUG REDIRECT URI: {redirect_uri}")
     return google.authorize_redirect(redirect_uri)
 
 
