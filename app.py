@@ -3,6 +3,7 @@ from flask import (
     session, url_for, Blueprint, send_file,
     current_app, jsonify, abort
 )
+from werkzeug.middleware.proxy_fix import ProxyFix
 from authlib.integrations.flask_client import OAuth
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -39,12 +40,14 @@ GOOGLE_CLIENT_ID_PATH = BASE_DIR / ".secret" / "GOOGLE_CLIENT_ID"
 GOOGLE_CLIENT_ID_SECRET = BASE_DIR / ".secret" / "GOOGLE_CLIENT_SECRET"
 app.config['GOOGLE_CLIENT_ID'] = GOOGLE_CLIENT_ID_PATH.read_text().strip()
 app.config['GOOGLE_CLIENT_SECRET'] = GOOGLE_CLIENT_ID_SECRET.read_text().strip()
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 oauth = OAuth(app)
 google = oauth.register(
   name='google',
   server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
   client_kwargs={'scope': 'openid email profile'}
 )
+
 
 @app.route("/api/update-tasks", methods=["GET", "POST"], strict_slashes=False)
 def update_tasks():
@@ -228,8 +231,8 @@ def login_required(f: Callable):
 
 ALLOWED_EMAILS_PATH = BASE_DIR / ".secret" / "ALLOWED_EMAILS"
 ALLOWED_EMAILS = [
-    line.strip() 
-    for line in ALLOWED_EMAILS_PATH.read_text().splitlines() 
+    line.strip()
+    for line in ALLOWED_EMAILS_PATH.read_text().splitlines()
     if line.strip()
 ]
 
@@ -243,8 +246,8 @@ def auth_callback():
 
     if email in ALLOWED_EMAILS:
         session['user'] = user_info
-        target_url = session.pop('next_url', url_for('home'))
-        return redirect(target_url)
+        target = session.pop('next_url', url_for('home'))
+        return redirect(target)
     else:
         abort(403, description="USER IS NOT ALLOWED AS ADMIN")
 
@@ -254,7 +257,6 @@ def login():
     next_url = request.args.get('next')
     if next_url:
         session['next_url'] = next_url
-        
     redirect_uri = url_for('auth_callback', _external=True)
     return google.authorize_redirect(redirect_uri)
 
@@ -475,6 +477,7 @@ def iso_now_cet() -> str:
     comparable across systems.
     """
     return datetime.now(ZoneInfo("Europe/Madrid")).isoformat()
+
 
 if __name__ == "__main__":
     """
