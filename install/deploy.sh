@@ -78,6 +78,9 @@ fi
 
 
 pending "Launching Gunicorn..."
+touch ${RUNTIME_DIR}/logs/gunicorn_error.log ${RUNTIME_DIR}/logs/gunicorn_access.log || fail "Could not create files"
+chown ${SERVICE_USER}:${SERVICE_USER} ${RUNTIME_DIR}/logs/gunicorn_error.log || fail "Could not create files"
+chown ${SERVICE_USER}:${SERVICE_USER} ${RUNTIME_DIR}/logs/gunicorn_access.log || fail "Could not create files"
 
 sudo -u ${SERVICE_USER} -- test -x  ${RUNTIME_DIR}/venv/bin/gunicorn \
   && success "OK: gunicorn exists/executable" \
@@ -85,4 +88,6 @@ sudo -u ${SERVICE_USER} -- test -x  ${RUNTIME_DIR}/venv/bin/gunicorn \
 
 sudo -u ${SERVICE_USER} -- ${RUNTIME_DIR}/venv/bin/gunicorn app:app ${N_GROUPS} \
   --bind 127.0.0.1:8443 \
-  --workers 4 --threads 2 --timeout 60
+  --workers 4 --threads 2 --timeout 60 \
+  --error-logfile "${RUNTIME_DIR}/logs/gunicorn_error.log" \
+  --access-logfile "${RUNTIME_DIR}/logs/gunicorn_access.log"
