@@ -487,21 +487,8 @@ def iso_now_cet() -> str:
     return datetime.now(ZoneInfo("Europe/Madrid")).isoformat()
 
 
-if __name__ == "__main__":
-    """
-    Application entry point.
-
-    Ensures all group task files exist before starting
-    the Flask development server.
-    """
-    N_GROUPS = 12
-    if len(sys.argv) > 1:
-        try:
-            N_GROUPS = int(sys.argv[1])
-        except ValueError:
-            print("INVALID ARGUMENT: " + sys.argv[1])
-            N_GROUPS = 12
-
+def setup(n: int):
+    N_GROUPS = n
     for i in range(1, N_GROUPS + 1):
         filename = f"data{str(i).zfill(2)}.json"
         target_path = os.path.join(DATA_DIR, filename)
@@ -513,4 +500,20 @@ if __name__ == "__main__":
     myExcel.update_demo_data(DEMO_SRC)
     myData.update_demos_timestamp(TIMESTAMP_PATH, iso_now_cet())
 
+if __name__ == "__main__":
+    """
+    Application entry point.
+
+    Ensures all group task files exist before starting
+    the Flask development server.
+    """
+
+    if len(sys.argv) > 1:
+        try:
+            N_GROUPS = int(sys.argv[1])
+        except ValueError:
+            print("INVALID ARGUMENT: " + sys.argv[1])
+            N_GROUPS = 12
+    setup(N_GROUPS)
     app.run()
+
