@@ -8,9 +8,7 @@
     <title>Projecte SMX2</title>
 </head>
 <body>
-    {% if not session.get('logged_in') %}
         <div class="admin-panel-button"><a href="/admin"><img src="{{ url_for('static', filename='img/admin_panel.png') }}"></a></div>
-    {% endif %}
 
     <h1>Projecte SMX2  -  1713</h1>
 
@@ -21,13 +19,13 @@
             <p>Mirar tasques</p>
         </a>
         {% endfor %}
-        
+
         <a href="{{ url_for('go_to_demo_sheet') }}" target="_blank" class="card big demoTasques" rel="noopener noreferrer">
             <h2>Demostració<br>Tasques</h2>
         </a>
        <a href="{{ url_for('leaderboard') }}" class="card big ranking"><h2>Ranking</h2></a>
-       
-        {% if session.get('logged_in') %}
+
+        {% if session.get('user') %}
             <a href="{{ url_for('admin') }}" class="card big demoTasques"><h2>Admin Panel</h2></a>
             <a href="{{ url_for('logout') }}" class="card big ranking"><h2>Logout</h2></a>
         {% endif %}

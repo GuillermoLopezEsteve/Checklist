@@ -1,5 +1,5 @@
 {
   "file_url": "https://docs.google.com/spreadsheets/d/1cma0J7eTugMeRtG8VCHbYiHb5RlJ6TLK_SPYUoxfDFA/edit#gid=0",
-  "relative_data_endpoint": "json/excel.json",
-  "data_endpoint": "C:\\Checklist\\data\\json\\excel.json"
+  "relative_data_endpoint": "excel.json",
+  "data_endpoint": "/home/guille/Checklist/data/excel.json"
 }

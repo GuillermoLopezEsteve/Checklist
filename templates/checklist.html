@@ -60,7 +60,7 @@
                                     <span class="icon info-icon" onclick="toggleTooltip(this)">I</span> 
                                 {% endif %}
                                 
-                                {% if session.get('logged_in') %} 
+                                {% if session.get('user') %} 
                                     <span class="icon command-icon" onclick="toggleCommand(this)">C</span>
                                     <span class="tag-debug">{{ task['task-id'] }}</span>
                                     <span class="tag-status">{{ task.status }}</span>
@@ -70,7 +70,7 @@
                                 <div class="tooltip-box show-more-box"> {{ task.tooltip | safe }} </div> 
                             {% endif %}
                             
-                            {% if session.get('logged_in') %} 
+                            {% if session.get('user') %} 
                                 <div class="command-box show-more-box"> {{ task.command }} </div> 
                             {% endif %}
                             
@@ -86,6 +86,11 @@
     {% endif %}
 
     {% if demo %}
+        {% if session.get('user') %}  
+            <form action="/updates-demos" method="post">
+                <button type="submit">Update Demos</button>
+            </form>
+        {% endif %}
 	<form id="form-demo">
             <div class="zone-card" id="automatic-demo">
                 <div class="zone-header">
@@ -135,7 +140,7 @@
 </div>
 <script src="{{ url_for('static', filename='js/checklist.js') }}"></script>
 
-{% if session.get('logged_in') %}                         
+{% if session.get('user') %}                         
     <script>
         const textTags = [...document.querySelectorAll(".tag-debug")]
             .map(tag => tag.innerText.trim().toLowerCase());

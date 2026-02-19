@@ -70,13 +70,13 @@ DATA_TEMPLATE="${RUNTIME_DIR}/config/tasks.json"
 [[ -f "$TIMEZONE" ]]     && success "File exists: $TIMEZONE" || fail "File not found: $TIMEZONE"
 [[ -f "$DATA_TEMPLATE" ]]     && success "File exists: $DATA_TEMPLATE" || fail "File not found: $DATA_TEMPLATE"
 
-pending "Copying group data files from data template: $DATA_TEMPLATE"
-for ((i=1; i<=N_GROUPS; i++)); do
-    printf -v idx "%02d" "$i"
-    file="${RUNTIME_DIR}/data/data${idx}.json"
-    cp $DATA_TEMPLATE $file \
-       && success "Copying $file" || fail "Couldnt copy $DATA_TEMPLATE to $file"
-done
+#pending "Copying group data files from data template: $DATA_TEMPLATE"
+#for ((i=1; i<=N_GROUPS; i++)); do
+#    printf -v idx "%02d" "$i"
+#    file="${RUNTIME_DIR}/data/data${idx}.json"
+#    cp $DATA_TEMPLATE $file \
+#       && success "Copying $file" || fail "Couldnt copy $DATA_TEMPLATE to $file"
+#done
 
 
 pending "Trying to set up Timezone"

@@ -279,3 +279,16 @@ ul.tasks {
    align-self: flex-start;
    width: 100%;
 }
+
+button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #6214b4;
+    color: white;
+    transition: background-color 0.2s ease;
+    margin-bottom: 15px;
+}

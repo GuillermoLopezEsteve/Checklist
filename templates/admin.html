@@ -27,9 +27,12 @@
         <form action="/updates-demos" method="post">
             <button type="submit">Update Demos</button>
         </form>
-
-
-
+        {% if demo_timestamp %} 
+        <div>
+            Last Updated Demos: 
+            <span class="time-counter" data-time="{{ demo_timestamp }}"></span>
+        </div>
+        {% endif %} 
         <form action="/restart-tasks-data" method="post">
             <button type="submit">Restart Tasks Data</button>
         </form>
@@ -56,6 +59,7 @@
                             <tr>
                                 <th>Group</th>
                                 <th>Last time (CET)</th>
+                                <th>Since</th>
                                 <th>Tasks Completed</th>
                                 <th>Tasks Pending</th>
                                 <th>Errors</th>
@@ -68,6 +72,7 @@
                            <tr class="ts-row" data-last-time="{{ info['last_time'] }}" onclick="location.href=/group{{ '%02d'|format(gid|int) if gid is string else gid }}/">
                                 <td><span class="pill">grup{{ "%02d"|format(gid|int) if gid is string else gid }}</span></td>
                                 <td class="mono">{{ info.last_time if info is mapping else info["last_time"] }}</td>
+                                <td class="mono time-counter" data-time="{{info['last_time']}}"></td>
                                 <td class="mono">{{ info.OK if info is mapping else info["OK"] }}</td>
                                 <td class="mono">{{ info.Pending if info is mapping else info["Pending"] }}</td>
                                 <td class="mono">{{ info.Error if info is mapping else info["Error"] }}</td>
@@ -85,6 +90,7 @@
             </div>
         </div>
        
+
     </div>
      
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>

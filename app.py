@@ -15,6 +15,7 @@ import json
 import os
 import re
 import shutil
+import sys
 from typing import Callable
 
 app = Flask(__name__)
@@ -157,7 +158,7 @@ def group_checklist(number: int):
 
     demo = myData.get_demo_data(number, DATA_DIR)
     time = datetime.now() + timedelta(minutes=5)
-
+    print(demo)
     return render_template(
         "checklist.html",
         number=number,
@@ -303,12 +304,15 @@ def admin():
     """
     Render the admin dashboard.
     """
-    groups_timestamps = myData.load_json(TIMESTAMP_PATH)
-    print("gt")
-    print(groups_timestamps)
+    timestamps = myData.load_json(TIMESTAMP_PATH)
+    try:
+        demo_timestamp = timestamps.pop("demo")
+    except Exception as e:
+        demo_timestamp = "NO DATA: " + str(e)
     return render_template(
         "admin.html",
-        groups_timestamps=groups_timestamps
+        groups_timestamps = timestamps,
+        demo_timestamp = demo_timestamp
     )
 
 
@@ -319,7 +323,8 @@ def update_demos():
     and update the local demos JSON file.
     """
     myExcel.update_demo_data(DEMO_SRC)
-    return redirect(url_for("admin"))
+    myData.update_demos_timestamp(TIMESTAMP_PATH, iso_now_cet())
+    return redirect(request.referrer or "/")
 
 
 @app.route("/restart-tasks-10-days-old",
@@ -490,6 +495,13 @@ if __name__ == "__main__":
     the Flask development server.
     """
     N_GROUPS = 12
+    if len(sys.argv) > 1:
+        try:
+            N_GROUPS = int(sys.argv[1])
+        except ValueError:
+            print("INVALID ARGUMENT: " + sys.argv[1])
+            N_GROUPS = 12
+
     for i in range(1, N_GROUPS + 1):
         filename = f"data{str(i).zfill(2)}.json"
         target_path = os.path.join(DATA_DIR, filename)
@@ -499,5 +511,6 @@ if __name__ == "__main__":
 
     resolve_demo_data_endpoint(DEMO_SRC)
     myExcel.update_demo_data(DEMO_SRC)
+    myData.update_demos_timestamp(TIMESTAMP_PATH, iso_now_cet())
 
     app.run()

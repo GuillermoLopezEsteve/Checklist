@@ -23,8 +23,7 @@ def get_tasks_file(g: int, data_path: str) -> str:
 def get_demos_file(data_path: str) -> str:
     """Build the path to the demos excel export JSON."""
     return os.path.join(
-        data_path,
-        "json", "excel.json")
+        data_path, "excel.json")
 
 
 def get_demo_data(group_number: int, data_path: str) -> dict:
@@ -238,6 +237,13 @@ def atomic_write_json(path: str, data: dict) -> None:
                 os.remove(tmp_path)
         except Exception:
             pass
+
+
+def update_demos_timestamp(path: str, time: str):
+    timestamps = load_json(path)
+    timestamps["demo"] = time
+    atomic_write_json(path, timestamps)
+    return
 
 
 def load_json(path: str) -> dict:
