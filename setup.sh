@@ -70,6 +70,7 @@ DATA_TEMPLATE="${RUNTIME_DIR}/config/tasks.json"
 [[ -f "$TIMEZONE" ]]     && success "File exists: $TIMEZONE" || fail "File not found: $TIMEZONE"
 [[ -f "$DATA_TEMPLATE" ]]     && success "File exists: $DATA_TEMPLATE" || fail "File not found: $DATA_TEMPLATE"
 
+mkdir -p ${RUNTIME_DIR}/data
 #pending "Copying group data files from data template: $DATA_TEMPLATE"
 for ((i=1; i<=N_GROUPS; i++)); do
     printf -v idx "%02d" "$i"

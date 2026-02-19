@@ -8,7 +8,7 @@ __pycache__/
 
 # data
 data/data*.json
-
+data/*.json
 .secret
 .secret/*
 .flake8
