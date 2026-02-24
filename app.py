@@ -158,7 +158,7 @@ def group_checklist(number: int):
 
     demo = myData.get_demo_data(number, DATA_DIR)
     time = datetime.now() + timedelta(minutes=5)
-    print(demo)
+    # print(demo)
     return render_template(
         "checklist.html",
         number=number,
@@ -195,6 +195,7 @@ def medallas(number: int):
     """
     medallas = badges.get_badges_group(number, DATA_DIR)
     demosDone = badges.has_all_demos(number, DATA_DIR)
+    print(medallas)
     return render_template(
         "badges.html",
         number=number,

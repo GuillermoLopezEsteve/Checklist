@@ -9,7 +9,7 @@ dict_id_images = {
     "MAIL": "badges/badge_mail.png",
     "WORDPRESS": "badges/badge_wordpress.png",
     "BACKUP": "badges/badge_backups.png",
-    "Scripting": "badges/badge_scripting.png",
+    "SCRIPTING": "badges/badge_scripting.png",
     "FTP": "badges/badge_ftp.png",
 }
 
