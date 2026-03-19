@@ -70,6 +70,22 @@ DATA_TEMPLATE="${RUNTIME_DIR}/config/tasks.json"
 [[ -f "$TIMEZONE" ]]     && success "File exists: $TIMEZONE" || fail "File not found: $TIMEZONE"
 [[ -f "$DATA_TEMPLATE" ]]     && success "File exists: $DATA_TEMPLATE" || fail "File not found: $DATA_TEMPLATE"
 
+DEMOS_JSON="${RUNTIME_DIR}/config/demos.json"
+[[ -f "$DEMOS_JSON" ]] && success "File exists: $DEMOS_JSON" || fail "File not found: $DEMOS_JSON"
+
+pending "Validating and pre-resolving demos.json data_endpoint"
+python3 -c "
+import json, os
+with open('${DEMOS_JSON}') as f:
+    d = json.load(f)
+rel = d.get('relative_data_endpoint')
+if not rel:
+    raise ValueError('relative_data_endpoint missing in demos.json')
+d['data_endpoint'] = os.path.abspath(os.path.join('${RUNTIME_DIR}/data', rel))
+with open('${DEMOS_JSON}', 'w') as f:
+    json.dump(d, f, ensure_ascii=False, indent=2)
+" && success "demos.json data_endpoint resolved" || fail "Failed to resolve demos.json (empty or invalid JSON?)"
+
 mkdir -p ${RUNTIME_DIR}/data
 #pending "Copying group data files from data template: $DATA_TEMPLATE"
 for ((i=1; i<=N_GROUPS; i++)); do

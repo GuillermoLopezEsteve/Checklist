@@ -77,6 +77,12 @@ else
 fi
 
 
+DEMOS_JSON="${RUNTIME_DIR}/config/demos.json"
+pending "Validating demos.json before launch"
+python3 -c "import json; json.load(open('${DEMOS_JSON}'))" \
+  && success "demos.json is valid" \
+  || fail "demos.json is empty or invalid — re-run setup.sh to fix"
+
 pending "Launching Gunicorn..."
 touch ${RUNTIME_DIR}/logs/gunicorn_error.log ${RUNTIME_DIR}/logs/gunicorn_access.log || fail "Could not create files"
 chown ${SERVICE_USER}:${SERVICE_USER} ${RUNTIME_DIR}/logs/gunicorn_error.log || fail "Could not create files"

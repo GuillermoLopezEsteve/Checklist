@@ -503,9 +503,12 @@ def setup(n: int):
         if not os.path.exists(target_path):
             shutil.copyfile(DATA_TEMPLATE, target_path)
 
-    resolve_demo_data_endpoint(DEMO_SRC)
-    myExcel.update_demo_data(DEMO_SRC)
-    myData.update_demos_timestamp(TIMESTAMP_PATH, iso_now_cet())
+    try:
+        resolve_demo_data_endpoint(DEMO_SRC)
+        myExcel.update_demo_data(DEMO_SRC)
+        myData.update_demos_timestamp(TIMESTAMP_PATH, iso_now_cet())
+    except Exception as e:
+        print(f"Warning: Could not load demo data during setup: {e}")
 
 
 if __name__ == "__main__":
