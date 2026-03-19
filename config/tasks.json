@@ -204,128 +204,128 @@
           "task-id": "dns-zone-soa",
           "tarea": "Zona del grup és una zona subordinada",
           "status": "Pending",
-          "tooltip": "Comprova que la zona %GRUP%.smx2.local existeix i és una zona esclava, no mestre.",
+          "tooltip": "Comprova que la zona %GRUP%.smx2.internal existeix i és una zona esclava, no mestre.",
           "extrafield": "None",
-          "command": "dig +short SOA %GRUP%.smx2.local @127.0.0.1 | grep -q '.' && ! grep -Ri 'zone '%GRUP%.smx2.local'.*type master' /etc/bind"
+          "command": "dig +short SOA %GRUP%.smx2.internal @127.0.0.1 | grep -q '.' && ! grep -Ri 'zone '%GRUP%.smx2.internal'.*type master' /etc/bind"
         }, {
           "task-id": "dns-zone-ns",
           "tarea": "Comprova els servidors autoritatius de la zona",
           "status": "Pending",
-          "tooltip": "Verifica que la zona %GRUP%.smx2.local té definits servidors autoritatius correctes.",
+          "tooltip": "Verifica que la zona %GRUP%.smx2.internal té definits servidors autoritatius correctes.",
           "extrafield": "None",
-          "command": "dig +short NS %GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short NS %GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-zone-transfer",
           "tarea": "Comprova que la zona esclava pot sincronitzar-se",
           "status": "Pending",
-          "tooltip": "Assegura que la zona %GRUP%.smx2.local es pot transferir des del mestre i que la transferència de zona funciona correctament.",
+          "tooltip": "Assegura que la zona %GRUP%.smx2.internal es pot transferir des del mestre i que la transferència de zona funciona correctament.",
           "extrafield": "None",
-          "command": "dig AXFR %GRUP%.smx2.local @127.0.0.1 | grep -q 'SOA'"
+          "command": "dig AXFR %GRUP%.smx2.internal @127.0.0.1 | grep -q 'SOA'"
         }, {
           "task-id": "dns-master-not-local",
           "tarea": "Comprova que el mestre no està local",
           "status": "Pending",
-          "tooltip": "Confirma que la zona mestre smx2.local no està definida a la màquina de l'estudiant.",
+          "tooltip": "Confirma que la zona mestre smx2.internal no està definida a la màquina de l'estudiant.",
           "extrafield": "None",
-          "command": "! grep -Ri 'zone 'smx2.local'.*type master' /etc/bind"
+          "command": "! grep -Ri 'zone 'smx2.internal'.*type master' /etc/bind"
         }, {
           "task-id": "dns-zone-a-record",
           "tarea": "Comprova que hi ha un registre A",
           "status": "Pending",
-          "tooltip": "Assegura que la zona %GRUP%.smx2.local té almenys un registre A configurat.",
+          "tooltip": "Assegura que la zona %GRUP%.smx2.internal té almenys un registre A configurat.",
           "extrafield": "None",
-          "command": "dig +short A %GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short A %GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-mx-record",
           "tarea": "Registre MX creat",
           "status": "Pending",
           "tooltip": "El registre MX (Mail Exchange) diu on enviar els correus del domini. Sense això, no rebràs emails. url:https://ca.wikipedia.org/wiki/Registre_MX:url",
           "extrafield": "None",
-          "command": "dig +short MX %GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short MX %GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-spf-record",
           "tarea": "Registre TXT amb SPF creat",
           "status": "Pending",
           "tooltip": "L'SPF és un registre TXT que ajuda a prevenir l'spam, indicant quines IPs poden enviar correu en nom del teu domini (v=spf1...).",
           "extrafield": "None",
-          "command": "dig +short TXT %GRUP%.smx2.local @127.0.0.1 | grep -qi 'v=spf1'"
+          "command": "dig +short TXT %GRUP%.smx2.internal @127.0.0.1 | grep -qi 'v=spf1'"
         }, {
           "task-id": "dns-host-server",
           "tarea": "Host server creat",
           "status": "Pending",
-          "tooltip": "Comprova que el nom 'server.%GRUP%.smx2.local' resol a una IP (Registre A).",
+          "tooltip": "Comprova que el nom 'server.%GRUP%.smx2.internal' resol a una IP (Registre A).",
           "extrafield": "None",
-          "command": "dig +short server.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short server.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-host-dev",
           "tarea": "Host dev creat",
           "status": "Pending",
-          "tooltip": "Comprova que el nom 'dev.%GRUP%.smx2.local' resol a una IP.",
+          "tooltip": "Comprova que el nom 'dev.%GRUP%.smx2.internal' resol a una IP.",
           "extrafield": "None",
-          "command": "dig +short dev.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short dev.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-host-prod",
           "tarea": "Host prod creat",
           "status": "Pending",
-          "tooltip": "Comprova que el nom 'prod.%GRUP%.smx2.local' resol a una IP.",
+          "tooltip": "Comprova que el nom 'prod.%GRUP%.smx2.internal' resol a una IP.",
           "extrafield": "None",
-          "command": "dig +short prod.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short prod.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-host-backups",
           "tarea": "Host backups creat",
           "status": "Pending",
-          "tooltip": "Comprova que el nom 'backups.%GRUP%.smx2.local' resol a una IP.",
+          "tooltip": "Comprova que el nom 'backups.%GRUP%.smx2.internal' resol a una IP.",
           "extrafield": "None",
-          "command": "dig +short backups.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short backups.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-cname-mail",
           "tarea": "CNAME mail creat",
           "status": "Pending",
-          "tooltip": "Mail sol ser un àlies (CNAME) apuntant al servidor principal. Verifica que 'mail.%GRUP%.smx2.local' resol.",
+          "tooltip": "Mail sol ser un àlies (CNAME) apuntant al servidor principal. Verifica que 'mail.%GRUP%.smx2.internal' resol.",
           "extrafield": "None",
-          "command": "dig mail.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short mail.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-cname-ftp",
           "tarea": "CNAME ftp creat",
           "status": "Pending",
-          "tooltip": "Verifica que 'ftp.%GRUP%.smx2.local' resol (normalment un CNAME a server).",
+          "tooltip": "Verifica que 'ftp.%GRUP%.smx2.internal' resol (normalment un CNAME a server).",
           "extrafield": "None",
-          "command": "dig ftp.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short ftp.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-cname-www",
           "tarea": "CNAME www creat",
           "status": "Pending",
-          "tooltip": "El clàssic 'www'. Verifica que 'www.%GRUP%.smx2.local' resol correctament.",
+          "tooltip": "El clàssic 'www'. Verifica que 'www.%GRUP%.smx2.internal' resol correctament.",
           "extrafield": "None",
-          "command": "dig www.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short www.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-cname-wordpress",
           "tarea": "CNAME wordpress creat",
           "status": "Pending",
-          "tooltip": "Verifica que 'wordpress.%GRUP%.smx2.local' resol. Serà necessari per als VirtualHosts d'Apache.",
+          "tooltip": "Verifica que 'wordpress.%GRUP%.smx2.internal' resol. Serà necessari per als VirtualHosts d'Apache.",
           "extrafield": "None",
-          "command": "dig wordpress.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short wordpress.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-cname-tickets",
           "tarea": "CNAME tickets creat",
           "status": "Pending",
-          "tooltip": "Verifica que 'tickets.%GRUP%.smx2.local' resol.",
+          "tooltip": "Verifica que 'tickets.%GRUP%.smx2.internal' resol.",
           "extrafield": "None",
-          "command": "dig tickets.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short tickets.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-cname-scripting",
           "tarea": "CNAME scripting creat",
           "status": "Pending",
-          "tooltip": "Verifica que 'scripting.%GRUP%.smx2.local' resol.",
+          "tooltip": "Verifica que 'scripting.%GRUP%.smx2.internal' resol.",
           "extrafield": "None",
-          "command": "dig scripting.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short scripting.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-cname-bck",
           "tarea": "CNAME bck creat",
           "status": "Pending",
-          "tooltip": "Verifica que 'bck.%GRUP%.smx2.local' resol.",
+          "tooltip": "Verifica que 'bck.%GRUP%.smx2.internal' resol.",
           "extrafield": "None",
-          "command": "dig bck.%GRUP%.smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short bck.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-resolv-local",
           "tarea": "Resolució local via resolv.conf",
@@ -339,14 +339,14 @@
           "status": "Pending",
           "tooltip": "Quan preguntem al servidor per la seva pròpia zona, ha de respondre amb el flag 'aa' (Authoritative Answer), no com a recursiu.",
           "extrafield": "None",
-          "command": "dig %GRUP%.smx2.local SOA @127.0.0.1 +noall +flags | grep -q ' aa '"
+          "command": "dig %GRUP%.smx2.internal SOA @127.0.0.1 +noall +flags | grep -q ' aa '"
         }, {
           "task-id": "dns-no-axfr",
           "tarea": "Transferència de zona bloquejada (AXFR)",
           "status": "Pending",
           "tooltip": "Seguretat: Una transferència de zona completa (AXFR) ha d'estar prohibida excepte per als servidors secundaris autoritzats. Ha de donar error o REFUSED.",
           "extrafield": "None",
-          "command": "dig AXFR %GRUP%.smx2.local @127.0.0.1 +time=2 +tries=1 | grep -Eq 'Transfer failed|failed|REFUSED|not authorized'"
+          "command": "dig AXFR %GRUP%.smx2.internal @127.0.0.1 +time=2 +tries=1 | grep -Eq 'Transfer failed|failed|REFUSED|not authorized'"
         }, {
           "task-id": "dns-forwarders",
           "tarea": "Reenviadors configurats",
@@ -363,16 +363,16 @@
           "command": "dig +short google.com @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-local-resolution-smx2",
-          "tarea": "Reenviador funcional: resol smx2.local",
+          "tarea": "Reenviador funcional: resol smx2.internal",
           "status": "Pending",
-          "tooltip": "Prova específica: El teu DNS pot resoldre dominis d'altres grups o de l'institut (smx2.local)?",
+          "tooltip": "Prova específica: El teu DNS pot resoldre dominis d'altres grups o de l'institut (smx2.internal)?",
           "extrafield": "None",
-          "command": "dig +short smx2.local @127.0.0.1 | grep -q '.'"
+          "command": "dig +short smx2.internal @127.0.0.1 | grep -q '.'"
         }, {
           "task-id": "dns-zone-file-exists",
           "tarea": "Fitxer de zona definit a la configuració",
           "status": "Pending",
-          "tooltip": "Comprova que dins de '/etc/bind' existeix una declaració 'zone '%GRUP%.smx2.local'' que apunta a un fitxer.",
+          "tooltip": "Comprova que dins de '/etc/bind' existeix una declaració 'zone '%GRUP%.smx2.internal'' que apunta a un fitxer.",
           "extrafield": "None",
           "command": "grep -R 'zone \\'%GRUP%\\.local\\'' /etc/bind"
         }
@@ -603,9 +603,9 @@
           "task-id": "mail-domain-check",
           "tarea": "Domini postfix correcte",
           "status": "Pending",
-          "tooltip": "Revisa la variable 'myhostname' o 'mydomain' a la configuració de Postfix per veure si coincideix amb %GRUP%.smx2.local.",
+          "tooltip": "Revisa la variable 'myhostname' o 'mydomain' a la configuració de Postfix per veure si coincideix amb %GRUP%.smx2.internal.",
           "extrafield": "None",
-          "command": "postconf mydomain myhostname | grep -q '%GRUP%.smx2.local'"
+          "command": "postconf mydomain myhostname | grep -q '%GRUP%.smx2.internal'"
         }, {
           "task-id": "mail-users-exist",
           "tarea": "Usuaris guille, alice i bob existeixen",
@@ -682,14 +682,14 @@
           "status": "Pending",
           "tooltip": "Comprova que el virtualhost HTTPS respon. Accepta certificat no fiable (autotrust) per poder diagnosticar encara que no estigui instal·lat al trust store.",
           "extrafield": "None",
-          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.local/ | grep -Eq '^(200|301|302)$'"
+          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.internal/ | grep -Eq '^(200|301|302)$'"
         }, {
           "task-id": "wp-cert-trusted",
           "tarea": "Certificat HTTPS és de confiança (sense -k)",
           "status": "Pending",
           "tooltip": "Valida que el certificat està signat per una CA confiable pel client (curl no ha de donar error TLS).",
           "extrafield": "None",
-          "command": "curl -sS -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.local/ | grep -Eq '^(200|301|302)$'"
+          "command": "curl -sS -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.internal/ | grep -Eq '^(200|301|302)$'"
         }, {
           "task-id": "wp-web-active",
           "tarea": "Servidor web en execució",
@@ -717,14 +717,14 @@
           "status": "Pending",
           "tooltip": "Fent una petició a la URL principal per HTTPS, el servidor ha de retornar codi 200 OK. (Si dóna 500, hi ha error de codi/server; si dóna 404, no troba els fitxers).",
           "extrafield": "None",
-          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.local/ | grep -q '^200$'"
+          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.internal/ | grep -q '^200$'"
         }, {
           "task-id": "wp-html-check",
           "tarea": "Capçalera HTML present",
           "status": "Pending",
           "tooltip": "Comprova que el que retorna el servidor és realment HTML (busca l'etiqueta <!doctype html> o <html>).",
           "extrafield": "None",
-          "command": "curl -sk https://wordpress.%GRUP%.smx2.local/ | grep -Eiq '<!doctype html|<html'"
+          "command": "curl -sk https://wordpress.%GRUP%.smx2.internal/ | grep -Eiq '<!doctype html|<html'"
         }, {
           "task-id": "wp-config-exists",
           "tarea": "Fitxer wp-config.php existeix",
@@ -759,42 +759,42 @@
           "status": "Pending",
           "tooltip": "Prova d'accedir a /cart/. Ha de tornar 200 OK. Si falla, revisa els Permalinks a la configuració de WP.",
           "extrafield": "None",
-          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.local/cart/ | grep -q '^200$'"
+          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.internal/cart/ | grep -q '^200$'"
         }, {
           "task-id": "wp-checkout-page",
           "tarea": "Pàgina de finalitzar compra accessible",
           "status": "Pending",
           "tooltip": "Prova d'accedir a /checkout/. Ha de tornar 200 OK.",
           "extrafield": "None",
-          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.local/checkout/ | grep -q '^200$'"
+          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.internal/checkout/ | grep -q '^200$'"
         }, {
           "task-id": "wp-shop-page",
           "tarea": "Pàgina de botiga accessible",
           "status": "Pending",
           "tooltip": "Prova d'accedir a /shop/. Ha de tornar 200 OK.",
           "extrafield": "None",
-          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.local/shop/ | grep -q '^200$'"
+          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.internal/shop/ | grep -q '^200$'"
         }, {
           "task-id": "wp-generator-tag",
           "tarea": "WordPress mostra senyals d'identitat",
           "status": "Pending",
           "tooltip": "Analitza el codi font buscant rutes típiques com 'wp-content' o 'wp-includes' per confirmar que és un WP.",
           "extrafield": "None",
-          "command": "curl -sk https://wordpress.%GRUP%.smx2.local/ | grep -Eiq 'wp-content|wp-includes'"
+          "command": "curl -sk https://wordpress.%GRUP%.smx2.internal/ | grep -Eiq 'wp-content|wp-includes'"
         }, {
           "task-id": "wp-contact-page",
           "tarea": "Pàgina de contacte existeix",
           "status": "Pending",
           "tooltip": "Busca la URL /contact/ o /contacte/. Ha de respondre correctament.",
           "extrafield": "None",
-          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.local/contact/ | grep -q '^200$' || curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.local/contacte/ | grep -q '^200$'"
+          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.internal/contact/ | grep -q '^200$' || curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.internal/contacte/ | grep -q '^200$'"
         }, {
           "task-id": "wp-contact-form",
           "tarea": "Formulari a la pàgina de contacte",
           "status": "Pending",
           "tooltip": "Dins de la pàgina de contacte, busca l'etiqueta HTML <form>. Si no hi és, potser has creat la pàgina però no has posat el plugin de contacte.",
           "extrafield": "None",
-          "command": "curl -skL https://wordpress.%GRUP%.smx2.local/contact/ | grep -i '<form' || curl -skL https://wordpress.%GRUP%.smx2.local/contacte/ | grep -i '<form'"
+          "command": "curl -skL https://wordpress.%GRUP%.smx2.internal/contact/ | grep -i '<form' || curl -skL https://wordpress.%GRUP%.smx2.internal/contacte/ | grep -i '<form'"
         }, {
           "task-id": "wp-uploads-dir",
           "tarea": "Directori d’uploads existeix",
@@ -829,14 +829,14 @@
           "status": "Pending",
           "tooltip": "Comprova que wp-login.php carrega. Si falla, pot ser un problema de permisos o de PHP.",
           "extrafield": "None",
-          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.local/wp-login.php | grep -Eq '^(200|302)$'"
+          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wordpress.%GRUP%.smx2.internal/wp-login.php | grep -Eq '^(200|302)$'"
         }, {
         "task-id": "wp-http-to-https-redirect",
         "tarea": "Redirecció HTTP cap a HTTPS",
         "status": "Pending",
         "tooltip": "Comprova que l'accés per HTTP no serveix contingut i redirigeix correctament cap a HTTPS (301 o 302 amb capçalera Location https://).",
         "extrafield": "None",
-        "command": "curl -sI http://wordpress.%GRUP%.smx2.local/ | grep -Eq 'HTTP/1\\.[01] (301|302)' && curl -sI http://wordpress.%GRUP%.smx2.local/ | grep -Ei '^Location: https://'"
+        "command": "curl -sI http://wordpress.%GRUP%.smx2.internal/ | grep -Eq 'HTTP/1\\.[01] (301|302)' && curl -sI http://wordpress.%GRUP%.smx2.internal/ | grep -Ei '^Location: https://'"
       }
   ]
     },
