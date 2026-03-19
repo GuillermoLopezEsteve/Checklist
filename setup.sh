@@ -88,12 +88,12 @@ with open('${DEMOS_JSON}', 'w') as f:
 
 mkdir -p ${RUNTIME_DIR}/data
 #pending "Copying group data files from data template: $DATA_TEMPLATE"
-for ((i=1; i<=N_GROUPS; i++)); do
-    printf -v idx "%02d" "$i"
-    file="${RUNTIME_DIR}/data/data${idx}.json"
-    cp $DATA_TEMPLATE $file \
-       && success "Copying $file" || fail "Couldnt copy $DATA_TEMPLATE to $file"
-done
+#for ((i=1; i<=N_GROUPS; i++)); do
+#    printf -v idx "%02d" "$i"
+#    file="${RUNTIME_DIR}/data/data${idx}.json"
+#    cp $DATA_TEMPLATE $file \
+#       && success "Copying $file" || fail "Couldnt copy $DATA_TEMPLATE to $file"
+#done
 
 
 pending "Trying to set up Timezone"

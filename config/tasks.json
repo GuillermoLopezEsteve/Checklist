@@ -158,6 +158,62 @@
           "tooltip": "Verifica si existeix una interfície de xarxa tipus 'wg0' (WireGuard) o 'tun0' (OpenVPN), indicant que la VPN està aixecada.",
           "extrafield": "None",
           "command": "ip link show | grep -Eq '\\b(wg0|tun0|tap0)\\b'"
+        }, {
+          "task-id": "ssh-x11-forwarding",
+          "tarea": "X11 Forwarding habilitat al servidor",
+          "status": "Pending",
+          "tooltip": "El X11 Forwarding permet executar aplicacions gràfiques remotament a través de SSH. Verifica que 'X11Forwarding yes' està actiu a sshd_config.",
+          "extrafield": "None",
+          "command": "sshd -T 2>/dev/null | grep -Eq '^x11forwarding yes$'"
+        }, {
+          "task-id": "ca-xca-install",
+          "tarea": "XCA instal·lat",
+          "status": "Pending",
+          "tooltip": "XCA és una eina gràfica per gestionar Autoritats de Certificació (CA). Verifica que el paquet 'xca' és al sistema. url:https://hohnstaedt.de/xca/:url",
+          "extrafield": "None",
+          "command": "command -v xca >/dev/null 2>&1 || dpkg -l | grep -Eq '^ii\\s+xca\\s'"
+        }, {
+          "task-id": "ca-dir-exists",
+          "tarea": "Directori CA creat",
+          "status": "Pending",
+          "tooltip": "Comprova que existeix un directori per guardar els fitxers de la CA (claus, certificats, base de dades XCA).",
+          "extrafield": "None",
+          "command": "test -d /etc/ssl/ca || test -d /root/ca || find /root /home -maxdepth 3 -name '*.xdb' 2>/dev/null | grep -q ."
+        }, {
+          "task-id": "ca-trusted-system",
+          "tarea": "CA afegida al trust store del sistema",
+          "status": "Pending",
+          "tooltip": "Per a que curl, navegadors i serveis confïin en els certificats del grup, la CA ha d'estar al trust store. Comprova '/usr/local/share/ca-certificates/'.",
+          "extrafield": "None",
+          "command": "ls /usr/local/share/ca-certificates/*.crt 2>/dev/null | grep -q . || ls /etc/ssl/certs/ | grep -qiE 'group|grup'"
+        }, {
+          "task-id": "ca-user-ca-key",
+          "tarea": "User CA creada (per ssh-keygen)",
+          "status": "Pending",
+          "tooltip": "Comprova que existeix una clau privada de CA d'usuaris (User CA groupXX) per signar certificats SSH amb ssh-keygen.",
+          "extrafield": "None",
+          "command": "find /etc /root /home -maxdepth 5 \\( -name '*user*ca*' -o -name '*ca*user*' \\) 2>/dev/null | grep -q ."
+        }, {
+          "task-id": "ca-cert-script",
+          "tarea": "Script de generació de certificats SSH existeix",
+          "status": "Pending",
+          "tooltip": "Ha d'existir un script bash que automàticament crea i signa un certificat SSH per a un usuari donat (accepta paràmetres -u i -CA).",
+          "extrafield": "None",
+          "command": "find /scripts /root /home/guille -maxdepth 3 -name '*.sh' 2>/dev/null | xargs grep -l 'ssh-keygen' 2>/dev/null | grep -q ."
+        }, {
+          "task-id": "ca-cert-script-exec",
+          "tarea": "Script de certificats és executable",
+          "status": "Pending",
+          "tooltip": "L'script de generació de certificats SSH ha de tenir el bit d'execució (+x) activat.",
+          "extrafield": "None",
+          "command": "find /scripts /root /home/guille -maxdepth 3 -name '*.sh' 2>/dev/null | xargs grep -l 'ssh-keygen' 2>/dev/null | head -1 | xargs test -x 2>/dev/null"
+        }, {
+          "task-id": "ca-service-certs",
+          "tarea": "Certificats de servei creats",
+          "status": "Pending",
+          "tooltip": "Cada servei necessita el seu propi certificat TLS amb Common Name i SAN correctes. Comprova que existeixen almenys 3 fitxers .crt a /etc/ssl/.",
+          "extrafield": "None",
+          "command": "find /etc/ssl/certs /etc/ssl/private -name '*.crt' -o -name '*.pem' 2>/dev/null | wc -l | awk '{exit ($1 < 3)}'"
         }
       ]
     },
@@ -375,6 +431,34 @@
           "tooltip": "Comprova que dins de '/etc/bind' existeix una declaració 'zone '%GRUP%.smx2.internal'' que apunta a un fitxer.",
           "extrafield": "None",
           "command": "grep -R 'zone \\'%GRUP%\\.local\\'' /etc/bind"
+        }, {
+          "task-id": "dns-cname-webmail",
+          "tarea": "CNAME webmail creat",
+          "status": "Pending",
+          "tooltip": "Verifica que 'webmail.%GRUP%.smx2.internal' resol a una IP (necessari per al virtual host de webmail).",
+          "extrafield": "None",
+          "command": "dig +short webmail.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
+        }, {
+          "task-id": "dns-cname-wiki",
+          "tarea": "CNAME wiki creat",
+          "status": "Pending",
+          "tooltip": "Verifica que 'wiki.%GRUP%.smx2.internal' resol a una IP (necessari per al virtual host de MediaWiki).",
+          "extrafield": "None",
+          "command": "dig +short wiki.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
+        }, {
+          "task-id": "dns-cname-phpmyadmin",
+          "tarea": "CNAME phpmyadmin creat",
+          "status": "Pending",
+          "tooltip": "Verifica que 'phpmyadmin.%GRUP%.smx2.internal' resol a una IP.",
+          "extrafield": "None",
+          "command": "dig +short phpmyadmin.%GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
+        }, {
+          "task-id": "dns-dnssec-signed",
+          "tarea": "Zona signada amb DNSSEC",
+          "status": "Pending",
+          "tooltip": "DNSSEC afegeix signatures digitals als registres DNS per prevenir atacs de cache poisoning. Comprova que la zona té registres RRSIG. url:https://www.cloudflare.com/dns/dnssec/:url",
+          "extrafield": "None",
+          "command": "dig +dnssec %GRUP%.smx2.internal SOA @127.0.0.1 | grep -q 'RRSIG'"
         }
       ]
     },
@@ -550,6 +634,76 @@
           "tooltip": "Taula 'admins_of_services' conte alguna dada",
           "extrafield": "None",
           "command": "mysql -N -e 'SELECT 1 FROM admin_panel.admins_of_services LIMIT 1;' | grep -q 1"
+        }, {
+          "task-id": "web-vhost-webmail",
+          "tarea": "Virtual host webmail enabled",
+          "status": "Pending",
+          "tooltip": "Comprova que hi ha un fitxer de configuració actiu per al webmail (webmail.%GRUP%.smx2.internal).",
+          "extrafield": "None",
+          "command": "ls /etc/apache2/sites-enabled/ | grep -qi webmail"
+        }, {
+          "task-id": "web-vhost-wiki",
+          "tarea": "Virtual host wiki enabled",
+          "status": "Pending",
+          "tooltip": "Comprova que hi ha un fitxer de configuració actiu per a la wiki (wiki.%GRUP%.smx2.internal).",
+          "extrafield": "None",
+          "command": "ls /etc/apache2/sites-enabled/ | grep -qi wiki"
+        }, {
+          "task-id": "web-vhost-phpmyadmin",
+          "tarea": "Virtual host phpmyadmin enabled",
+          "status": "Pending",
+          "tooltip": "Comprova que hi ha un fitxer de configuració actiu per a PhpMyAdmin (phpmyadmin.%GRUP%.smx2.internal).",
+          "extrafield": "None",
+          "command": "ls /etc/apache2/sites-enabled/ | grep -qi phpmyadmin"
+        }, {
+          "task-id": "tickets-dir-exists",
+          "tarea": "Fitxers osTicket presents",
+          "status": "Pending",
+          "tooltip": "Comprova que el fitxer de configuració d'osTicket (ost-config.php) existeix al servidor web. url:https://osticket.com/:url",
+          "extrafield": "None",
+          "command": "find /var/www -name 'ost-config.php' 2>/dev/null | grep -q ."
+        }, {
+          "task-id": "tickets-vhost-exists",
+          "tarea": "Virtual host tickets configurat",
+          "status": "Pending",
+          "tooltip": "Comprova que hi ha un fitxer de configuració d'Apache actiu per al subdomini tickets.%GRUP%.smx2.internal.",
+          "extrafield": "None",
+          "command": "grep -rq 'tickets.%GRUP%.smx2.internal' /etc/apache2/sites-enabled/"
+        }, {
+          "task-id": "tickets-https-enabled",
+          "tarea": "HTTPS actiu als tickets",
+          "status": "Pending",
+          "tooltip": "Comprova que el virtualhost HTTPS d'osTicket respon correctament.",
+          "extrafield": "None",
+          "command": "curl -sk -o /dev/null -w '%{http_code}' https://tickets.%GRUP%.smx2.internal/ | grep -Eq '^(200|301|302)$'"
+        }, {
+          "task-id": "tickets-cert-trusted",
+          "tarea": "Certificat HTTPS dels tickets és de confiança",
+          "status": "Pending",
+          "tooltip": "Valida que el certificat d'osTicket està signat per la CA del grup.",
+          "extrafield": "None",
+          "command": "curl -sS -o /dev/null -w '%{http_code}' https://tickets.%GRUP%.smx2.internal/ | grep -Eq '^(200|301|302)$'"
+        }, {
+          "task-id": "tickets-html-check",
+          "tarea": "osTicket retorna HTML",
+          "status": "Pending",
+          "tooltip": "La portada d'osTicket ha de retornar contingut HTML vàlid.",
+          "extrafield": "None",
+          "command": "curl -sk https://tickets.%GRUP%.smx2.internal/ | grep -Eiq '<!doctype html|<html'"
+        }, {
+          "task-id": "tickets-db-exists",
+          "tarea": "Base de dades osTicket existeix",
+          "status": "Pending",
+          "tooltip": "osTicket guarda totes les dades (tiquets, usuaris, departaments) a MySQL/MariaDB.",
+          "extrafield": "None",
+          "command": "mysql -e 'SHOW DATABASES;' 2>/dev/null | grep -Eqi 'osticket|ticket'"
+        }, {
+          "task-id": "tickets-http-redirect",
+          "tarea": "Redirecció HTTP → HTTPS als tickets",
+          "status": "Pending",
+          "tooltip": "Comprova que l'accés per HTTP redirigeix correctament cap a HTTPS.",
+          "extrafield": "None",
+          "command": "curl -sI http://tickets.%GRUP%.smx2.internal/ | grep -Eq 'HTTP/1\\.[01] (301|302)' && curl -sI http://tickets.%GRUP%.smx2.internal/ | grep -Ei '^Location: https://'"
         }
       ]
     },
@@ -837,7 +991,91 @@
         "tooltip": "Comprova que l'accés per HTTP no serveix contingut i redirigeix correctament cap a HTTPS (301 o 302 amb capçalera Location https://).",
         "extrafield": "None",
         "command": "curl -sI http://wordpress.%GRUP%.smx2.internal/ | grep -Eq 'HTTP/1\\.[01] (301|302)' && curl -sI http://wordpress.%GRUP%.smx2.internal/ | grep -Ei '^Location: https://'"
-      }
+      }, {
+          "task-id": "webmail-vhost-exists",
+          "tarea": "Virtual host webmail configurat",
+          "status": "Pending",
+          "tooltip": "Comprova que hi ha un fitxer de configuració d'Apache actiu per al subdomini webmail.%GRUP%.smx2.internal.",
+          "extrafield": "None",
+          "command": "grep -rq 'webmail.%GRUP%.smx2.internal' /etc/apache2/sites-enabled/"
+        }, {
+          "task-id": "webmail-https-enabled",
+          "tarea": "HTTPS actiu al webmail",
+          "status": "Pending",
+          "tooltip": "Comprova que el virtualhost HTTPS del webmail respon (codi 200, 301 o 302). Accepta certificat no fiable per diagnosi.",
+          "extrafield": "None",
+          "command": "curl -sk -o /dev/null -w '%{http_code}' https://webmail.%GRUP%.smx2.internal/ | grep -Eq '^(200|301|302)$'"
+        }, {
+          "task-id": "webmail-cert-trusted",
+          "tarea": "Certificat HTTPS del webmail és de confiança",
+          "status": "Pending",
+          "tooltip": "Valida que el certificat del webmail està signat per la CA del grup (curl sense -k no ha de donar error TLS).",
+          "extrafield": "None",
+          "command": "curl -sS -o /dev/null -w '%{http_code}' https://webmail.%GRUP%.smx2.internal/ | grep -Eq '^(200|301|302)$'"
+        }, {
+          "task-id": "webmail-html-check",
+          "tarea": "Webmail retorna HTML",
+          "status": "Pending",
+          "tooltip": "Comprova que el que retorna el servidor és realment HTML (busca <!doctype html> o <html>).",
+          "extrafield": "None",
+          "command": "curl -sk https://webmail.%GRUP%.smx2.internal/ | grep -Eiq '<!doctype html|<html'"
+        }, {
+          "task-id": "webmail-http-redirect",
+          "tarea": "Redirecció HTTP → HTTPS al webmail",
+          "status": "Pending",
+          "tooltip": "Comprova que l'accés per HTTP redirigeix correctament cap a HTTPS (301 o 302 amb capçalera Location https://).",
+          "extrafield": "None",
+          "command": "curl -sI http://webmail.%GRUP%.smx2.internal/ | grep -Eq 'HTTP/1\\.[01] (301|302)' && curl -sI http://webmail.%GRUP%.smx2.internal/ | grep -Ei '^Location: https://'"
+        }, {
+          "task-id": "wiki-localsettings",
+          "tarea": "LocalSettings.php configurat",
+          "status": "Pending",
+          "tooltip": "MediaWiki es configura via 'LocalSettings.php'. Si existeix i té contingut, la instal·lació ha estat completada. url:https://www.mediawiki.org/wiki/Manual:LocalSettings.php:url",
+          "extrafield": "None",
+          "command": "find /var/www -name 'LocalSettings.php' -size +1c 2>/dev/null | grep -q ."
+        }, {
+          "task-id": "wiki-vhost-exists",
+          "tarea": "Virtual host wiki configurat",
+          "status": "Pending",
+          "tooltip": "Comprova que hi ha un fitxer de configuració d'Apache actiu per al subdomini wiki.%GRUP%.smx2.internal.",
+          "extrafield": "None",
+          "command": "grep -rq 'wiki.%GRUP%.smx2.internal' /etc/apache2/sites-enabled/"
+        }, {
+          "task-id": "wiki-https-enabled",
+          "tarea": "HTTPS actiu a la wiki",
+          "status": "Pending",
+          "tooltip": "Comprova que el virtualhost HTTPS de MediaWiki respon correctament.",
+          "extrafield": "None",
+          "command": "curl -sk -o /dev/null -w '%{http_code}' https://wiki.%GRUP%.smx2.internal/ | grep -Eq '^(200|301|302)$'"
+        }, {
+          "task-id": "wiki-cert-trusted",
+          "tarea": "Certificat HTTPS de la wiki és de confiança",
+          "status": "Pending",
+          "tooltip": "Valida que el certificat de MediaWiki està signat per la CA del grup.",
+          "extrafield": "None",
+          "command": "curl -sS -o /dev/null -w '%{http_code}' https://wiki.%GRUP%.smx2.internal/ | grep -Eq '^(200|301|302)$'"
+        }, {
+          "task-id": "wiki-html-check",
+          "tarea": "MediaWiki retorna HTML",
+          "status": "Pending",
+          "tooltip": "La portada de la wiki ha de retornar contingut HTML vàlid.",
+          "extrafield": "None",
+          "command": "curl -sk https://wiki.%GRUP%.smx2.internal/ | grep -Eiq '<!doctype html|<html'"
+        }, {
+          "task-id": "wiki-db-exists",
+          "tarea": "Base de dades wiki existeix",
+          "status": "Pending",
+          "tooltip": "MediaWiki guarda tot el contingut (articles, usuaris) a MySQL/MariaDB.",
+          "extrafield": "None",
+          "command": "mysql -e 'SHOW DATABASES;' 2>/dev/null | grep -Eqi 'wiki|mediawiki'"
+        }, {
+          "task-id": "wiki-http-redirect",
+          "tarea": "Redirecció HTTP → HTTPS a la wiki",
+          "status": "Pending",
+          "tooltip": "Comprova que l'accés per HTTP redirigeix correctament cap a HTTPS.",
+          "extrafield": "None",
+          "command": "curl -sI http://wiki.%GRUP%.smx2.internal/ | grep -Eq 'HTTP/1\\.[01] (301|302)' && curl -sI http://wiki.%GRUP%.smx2.internal/ | grep -Ei '^Location: https://'"
+        }
   ]
     },
     {
@@ -1152,6 +1390,20 @@
           "tooltip": "No s'ha d'usar 'flask run' en producció. Verifica que el procés corre sota Gunicorn o uWSGI. url:https://gunicorn.org/:url",
           "extrafield": "None",
           "command": "ps aux | grep [g]unicorn >/dev/null 2>&1 || ps aux | grep [u]wsgi >/dev/null 2>&1"
+        }, {
+          "task-id": "scr-scripts-root-dir",
+          "tarea": "Directori /scripts existeix",
+          "status": "Pending",
+          "tooltip": "Els scripts del sistema han d'estar a la carpeta /scripts a l'arrel del sistema (no dins de /var/www).",
+          "extrafield": "None",
+          "command": "test -d /scripts"
+        }, {
+          "task-id": "scr-scripts-count",
+          "tarea": "Almenys 5 scripts a /scripts",
+          "status": "Pending",
+          "tooltip": "Comprova que hi ha prou scripts creats a la carpeta /scripts (bash i/o python).",
+          "extrafield": "None",
+          "command": "find /scripts -maxdepth 1 -type f \\( -name '*.sh' -o -name '*.py' \\) | wc -l | awk '{exit ($1 < 5)}'"
         }
       ]
     },
@@ -1299,6 +1551,20 @@
           "tooltip": "Comprova que el firewall no està bloquejant el port 21 (connexió TCP establerta).",
           "extrafield": "None",
           "command": "bash -lc 'cat < /dev/null > /dev/tcp/127.0.0.1/21'"
+        }, {
+          "task-id": "ftp-root-dir",
+          "tarea": "Directori /FTP existeix",
+          "status": "Pending",
+          "tooltip": "El directori arrel del FTP ha de ser /FTP a l'arrel del sistema. Cada usuari tindrà la seva subcarpeta (ex: /FTP/alice).",
+          "extrafield": "None",
+          "command": "test -d /FTP"
+        }, {
+          "task-id": "ftp-user-dirs",
+          "tarea": "Subcarpetes d'usuaris a /FTP",
+          "status": "Pending",
+          "tooltip": "Comprova que existeixen subdirectoris per als usuaris dins de /FTP.",
+          "extrafield": "None",
+          "command": "find /FTP -mindepth 1 -maxdepth 1 -type d | grep -q ."
         }
       ]
     }
