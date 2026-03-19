@@ -152,7 +152,13 @@ def group_checklist(number: int):
     - demo completion data
     - next refresh timestamp
     """
-    allTasks = myData.get_tasks_data(number, DATA_DIR)
+    try:
+        allTasks = myData.get_tasks_data(number, DATA_DIR)
+    except FileNotFoundError:
+        gid = str(int(number)).zfill(2)
+        dest = DATA_DIR / f"data{gid}.json"
+        shutil.copyfile(DATA_TEMPLATE, dest)
+        allTasks = myData.get_tasks_data(number, DATA_DIR)
     for zone in allTasks.get("zones", []):
         zone["id"] = zone.get("title", "").replace(" ", "")
 
@@ -195,7 +201,7 @@ def medallas(number: int):
     """
     medallas = badges.get_badges_group(number, DATA_DIR)
     demosDone = badges.has_all_demos(number, DATA_DIR)
-    print(medallas)
+    # print(medallas)
     return render_template(
         "badges.html",
         number=number,
@@ -501,6 +507,7 @@ def setup(n: int):
     myExcel.update_demo_data(DEMO_SRC)
     myData.update_demos_timestamp(TIMESTAMP_PATH, iso_now_cet())
 
+
 if __name__ == "__main__":
     """
     Application entry point.
@@ -515,6 +522,7 @@ if __name__ == "__main__":
         except ValueError:
             print("INVALID ARGUMENT: " + sys.argv[1])
             N_GROUPS = 12
-    setup(N_GROUPS)
     app.run()
 
+
+setup(N_GROUPS)
