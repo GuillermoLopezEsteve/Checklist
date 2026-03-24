@@ -59,7 +59,7 @@
           "status": "Pending",
           "tooltip": "SSH és molt estricte amb els permisos: la carpeta .ssh ha de ser 700 i el fitxer authorized_keys 600, o la connexió fallarà.",
           "extrafield": "None",
-          "command": "[[$(stat -c '%U:%G %a' /home/guille/.ssh/authorized_keys)=='guille:guille 600']] && [[$(stat -c '%U:%G %a' /home/guille/.ssh)=='guille:guille 700']]"
+          "command": "[[ \"$(stat -c '%U:%G %a' /home/guille/.ssh/authorized_keys)\" == 'guille:guille 600' ]] && [[ \"$(stat -c '%U:%G %a' /home/guille/.ssh)\" == 'guille:guille 700' ]]"
         }, {
           "task-id": "ssh-root-disabled",
           "tarea": "Accés root deshabilitat per SSH",
