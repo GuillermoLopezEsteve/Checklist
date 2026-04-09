@@ -178,7 +178,7 @@
           "status": "Pending",
           "tooltip": "Comprova que existeix un directori per guardar els fitxers de la CA (claus, certificats, base de dades XCA).",
           "extrafield": "None",
-          "command": "test -d /etc/ssl/ca || test -d /root/ca || find /root /home -maxdepth 3 -name '*.xdb' 2>/dev/null | grep -q ."
+          "command": "test -d /etc/ssl/ca || test -d /root/ca || find /root /home -maxdepth 5 -name '*.xdb' 2>/dev/null | grep -q ."
         }, {
           "task-id": "ca-trusted-system",
           "tarea": "CA afegida al trust store del sistema",
@@ -270,13 +270,6 @@
           "tooltip": "Verifica que la zona %GRUP%.smx2.internal té definits servidors autoritatius correctes.",
           "extrafield": "None",
           "command": "dig +short NS %GRUP%.smx2.internal @127.0.0.1 | grep -q '.'"
-        }, {
-          "task-id": "dns-zone-transfer",
-          "tarea": "Comprova que la zona esclava pot sincronitzar-se",
-          "status": "Pending",
-          "tooltip": "Assegura que la zona %GRUP%.smx2.internal es pot transferir des del mestre i que la transferència de zona funciona correctament.",
-          "extrafield": "None",
-          "command": "dig AXFR %GRUP%.smx2.internal @127.0.0.1 | grep -q 'SOA'"
         }, {
           "task-id": "dns-master-not-local",
           "tarea": "Comprova que el mestre no està local",
@@ -395,7 +388,7 @@
           "status": "Pending",
           "tooltip": "Quan preguntem al servidor per la seva pròpia zona, ha de respondre amb el flag 'aa' (Authoritative Answer), no com a recursiu.",
           "extrafield": "None",
-          "command": "dig %GRUP%.smx2.internal SOA @127.0.0.1 +noall +flags | grep -q ' aa '"
+          "command": "dig %GRUP%.smx2.internal SOA @127.0.0.1 | grep flags | grep -q ' aa '"
         }, {
           "task-id": "dns-no-axfr",
           "tarea": "Transferència de zona bloquejada (AXFR)",
@@ -430,7 +423,7 @@
           "status": "Pending",
           "tooltip": "Comprova que dins de '/etc/bind' existeix una declaració 'zone '%GRUP%.smx2.internal'' que apunta a un fitxer.",
           "extrafield": "None",
-          "command": "grep -R 'zone \\'%GRUP%\\.local\\'' /etc/bind"
+          "command": "grep -R 'zone \\'%GRUP%\\.internal\\'' /etc/bind"
         }, {
           "task-id": "dns-cname-webmail",
           "tarea": "CNAME webmail creat",
@@ -1453,27 +1446,13 @@
           "tooltip": "La configuració principal és a '/etc/vsftpd.conf'. Sense això, el servei no arrenca.",
           "extrafield": "None",
           "command": "test -f /etc/vsftpd.conf"
-        }, {
-          "task-id": "ftp-conf-perms",
-          "tarea": "Configuració sense permisos insegurs",
-          "status": "Pending",
-          "tooltip": "Seguretat: El fitxer de configuració només ha de ser modificable per root. Mai 777.",
-          "extrafield": "None",
-          "command": "test $(( $(stat -c '%a' /etc/vsftpd.conf) % 10 )) -lt 2"
-        }, {
+        },  {
           "task-id": "ftp-anon-disabled",
           "tarea": "Anonymous desactivat",
           "status": "Pending",
           "tooltip": "Per seguretat, 'anonymous_enable' ha de ser NO per evitar accessos no autoritzats.",
           "extrafield": "None",
           "command": "grep -o '^[^#]*' /etc/vsftpd.conf | grep -Eiq '^\\s*anonymous_enable\\s*=\\s*NO\\s*$'"
-        }, {
-          "task-id": "ftp-anon-fail",
-          "tarea": "Intent d’anonymous falla",
-          "status": "Pending",
-          "tooltip": "Prova real: Intenta fer login amb l'usuari 'anonymous'. El servidor ha de rebutjar la connexió (codi 530).",
-          "extrafield": "None",
-          "command": "bash -lc 'printf 'USER anonymous\\r\\nPASS test\\r\\nQUIT\\r\\n' | nc -w 3 127.0.0.1 21' | grep -Eq '^(530|500|501)'"
         }, {
           "task-id": "ftp-local-enable",
           "tarea": "Usuaris locals permesos",
